@@ -1,0 +1,1616 @@
+#+TITLE: X-Tof's Emacs Config
+
+* CONFIG
+** Personal Info/Gnus Setup
+
+#+begin_src emacs-lisp
+  (setq user-full-name "Marc-P. Christophe"
+        user-mail-address "m@xtof.net")
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+  (setq gnus-select-method
+    '(nnimap "xtof.net"
+      (nnimap-address "mail.xtof.net")
+      (nnimap-server-port 993)
+      (nnimap-stream ssl)))
+
+(setq starttls-use-gnutls t
+      starttls-gnutls-program "gnutls-cli"
+      starttls-extra-arguments '("--insecure"))
+
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server "mail.xtof.net"
+      smtpmail-default-smtp-server "mail.xtof.net"
+      smtpmail-smtp-service 587
+      smtpmail-starttls-credentials '(("mail.xtof.net" 587 nil nil))
+      smtpmail-auth-credentials '(("mail.xtof.net" 587 "m@xtof.net" nil))
+      smtpmail-local-domain "xtof.net")
+#+END_SRC
+
+** Backups
+
+#+begin_src emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+end_src
+
+Disk space is cheap. Save lots.
+
+#+begin_src emacs-lisp
+;;(setq delete-old-versions -1)
+;;(setq version-control t)
+;;(setq vc-make-backup-files t)
+;;(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+#+end_src
+
+** History
+
+From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+#+begin_src emacs-lisp
+;;(setq savehist-file "~/.emacs.d/savehist")
+;;(savehist-mode 1)
+;;(setq history-length t)
+;;(setq history-delete-duplicates t)
+;;(setq savehist-save-minibuffer-history 1)
+;;(setq savehist-additional-variables
+;;      '(kill-ring
+;;        search-ring
+;;        regexp-search-ring))
+#+end_src
+
+** Packages
+*** Initialize Package System
+
+#+begin_src emacs-lisp
+  (require 'package)
+
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+
+  (package-initialize)
+
+  (when (not package-archive-contents)
+        (package-refresh-contents))
+#+end_src
+
+*** Additional Package load Paths
+
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/elisp")
+#+end_src
+
+*** List Packages
+
+#+begin_src emacs-lisp
+  (defvar xtof/my-packages '(use-package
+                             helm
+                             helm-swoop
+                             guide-key
+                             org
+                             solarized-theme
+zenburn-theme
+                             clojure-mode
+                             smartparens
+                             cider
+                             magit
+                             rainbow-delimiters
+                             ledger-mode
+                             projectile
+aggressive-indent
+pretty-mode
+rainbow-blocks
+org-ac
+ac-helm
+ac-cider
+fill-column-indicator
+workgroups2
+indent-guide
+exec-path-from-shell
+web-mode
+web-beautify
+js2-mode
+skewer-mode
+helm-projectile
+4clojure
+org2blog
+ac-html))
+
+#+end_src
+    
+** Visual Config
+*** Font
+
+#+begin_src emacs-lisp
+  ;;(set-face-attribute 'default nil :font "Terminus (TTF)" :height 110)
+  (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+#+end_src
+
+*** Windows
+
+#+begin_src emacs-lisp
+  (when window-system
+        (tooltip-mode -1)
+        (tool-bar-mode -1)
+        (menu-bar-mode -1)
+        (scroll-bar-mode -1))
+#+end_src
+
+#+begin_src emacs-lisp
+  (global-linum-mode 1)
+  (setq initial-frame-alist '((top . 1) (left . 1) (width . 100) (height . 60)))
+  (setq inhibit-startup-screen t)
+#+end_src
+** Misc Config
+
+#+begin_src emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)   
+  ;;(setq-default fill-column 80)
+#+end_src
+
+UTF-8
+From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+
+#+begin_src emacs-lisp
+  (prefer-coding-system 'utf-8)
+  (when (display-graphic-p)
+    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+end_src
+
+** Frequently-accessed files
+
+Registers allow you to jump to a file or other location quickly. To
+jump to a register, use =C-x r j= followed by the letter of the
+register. Using registers for all these file shortcuts is probably a bit of a waste since I can easily define my own keymap, but since I rarely go beyond register A anyway...
+
+#+begin_src emacs-lisp :results silent
+  (mapcar
+   (lambda (r)
+     (set-register (car r) (cons 'file (cdr r))))
+   '((?x . "~/.emacs.d/xtof.org")
+     (?p . "~/Documents/org/projects.org")
+     (?l . "~/Documents/org/log.org")
+     (?f . "~/Documents/org/flagged.org")
+     (?m . "~/Documents/org/memos.org")
+     (?i . "~/Documents/org/inbox.org")
+     (?I . "~/.emacs.d/init.el")
+     (?b . "~/Documents/ledger/budget.ledger")
+  ))
+#+end_src
+
+** Zone
+#+begin_src emacs-lisp
+
+  (require 'zone)
+
+(defun zone-choose (pgm)
+    "Choose a PGM to run for `zone'."
+    (interactive
+     (list
+      (completing-read
+       "Program: "
+       (mapcar 'symbol-name zone-programs))))
+    (let ((zone-programs (list (intern pgm))))
+      (zone)))
+
+
+;;(setq zone-programs [zone-pgm-paragraph-spaz])
+
+#+end_src
+** Shut The Fuck Up
+#+begin_src emacs-lisp
+  (setq visible-bell 1)
+;;  (setq visible-bell nil)
+;;  (setq ring-bell-function `(lambda ()
+;;    (set-face-background 'default "DodgerBlue")
+;;    (set-face-background 'default "black")))
+#+end_src
+* INIT
+** Load Packages
+
+#+begin_src emacs-lisp
+  (dolist (p xtof/my-packages)
+          (unless (package-installed-p p)
+                  (package-install p)))
+#+end_src
+   
+** Initialize Packages
+#+begin_src emacs-lisp
+  (require 'use-package)
+#+end_src
+*** Color Theme
+
+# #+begin_src emacs-lisp
+#   (use-package zenburn-theme
+#     :init
+#     (load-theme 'zenburn t))
+# #+end_src
+
+# #+begin_src emacs-lisp
+#   (use-package solarized
+#     :init
+#     (progn
+      
+#       ;; make the fringe stand out from the background
+#       (setq solarized-distinct-fringe-background t)
+
+#       ;; make the modeline high contrast
+#       (setq solarized-high-contrast-mode-line t)
+
+#       ;; Use less bolding
+#       (setq solarized-use-less-bold t)
+
+#       ;; Use more italics
+#       (setq solarized-use-more-italic t)
+
+#       ;; Use less colors for indicators such as git:gutter, flycheck and similar.
+# ;;      (setq solarized-emphasize-indicators nil)
+
+#       ;; Don't change size of org-mode headlines (but keep other size-changes)
+#       (setq solarized-scale-org-headlines nil)
+
+#       ;; Avoid all font-size changes
+#       (setq solarized-height-minus-1 1)
+#       (setq solarized-height-plus-1 1)
+#       (setq solarized-height-plus-2 1)
+#       (setq solarized-height-plus-3 1)
+#       (setq solarized-height-plus-4 1)
+
+#       (load-theme 'solarized-dark t))
+
+#       (set-face-foreground 'secondary-selection "darkblue")
+#       (set-face-background 'secondary-selection "lightblue")
+#       (set-face-background 'font-lock-doc-face "black")
+#       (set-face-foreground 'font-lock-doc-face "wheat")
+#       (set-face-background 'font-lock-string-face "black")
+#       (set-face-foreground 'org-todo "green")
+#       (set-face-background 'org-todo "black")
+# ;; Some more tweaks to solarized:
+# ;;    (when window-system
+# ;;      (custom-set-faces
+# ;;        '(erc-input-face ((t (:foreground "antique white"))))
+# ;;        '(helm-selection ((t (:background "ForestGreen" :foreground "black"))))
+# ;;        '(org-agenda-clocking ((t (:inherit secondary-selection :foreground "black"))) t)
+# ;;        '(org-agenda-done ((t (:foreground "dim gray" :strike-through nil))))
+# ;;        '(org-done ((t (:foreground "PaleGreen" :weight normal :strike-through t))))
+# ;;        '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
+# ;;        '(org-headline-done ((((class color) (min-colors 16) (background dark)) (:foreground "LightSalmon" :strike-through t))))
+# ;;        '(outline-1 ((t (:inherit font-lock-function-name-face :foreground "cornflower blue"))))))
+# )
+# #+end_src
+
+#+begin_src emacs-lisp
+  (use-package gotham-theme
+    :ensure gotham-theme
+    :config
+    (load-theme 'gotham t))
+#+end_src
+
+*** Helm
+
+#+begin_src emacs-lisp
+  (use-package helm
+    :init
+    (progn 
+    (require 'helm-config) 
+      (setq helm-candidate-number-limit 100)
+      ;; From https://gist.github.com/antifuchs/9238468
+      (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+            helm-input-idle-delay 0.01  ; this actually updates things
+                                        ; reeeelatively quickly.
+            helm-quick-update t
+            helm-M-x-requires-pattern nil
+            helm-ff-skip-boring-files t)
+    (helm-mode))
+    :config
+    (progn
+      ;; I don't like the way switch-to-buffer uses history, since
+      ;; that confuses me when it comes to buffers I've already
+      ;; killed. Let's use ido instead.
+     (add-to-list 'helm-completing-read-handlers-alist 
+                   '(switch-to-buffer . ido))
+      ;; Unicode
+      (add-to-list 'helm-completing-read-handlers-alist 
+                   '(insert-char . ido)))
+     :bind (("C-c h" . helm-mini) 
+            ("M-x" . helm-M-x)))
+  (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
+#+end_src
+
+*** Helm-swoop
+#+begin_src emacs-lisp
+  (use-package helm-swoop
+    :bind (("C-S-s" . helm-swoop)))
+#+end_src
+*** helm-projectile
+#+begin_src emacs-lisp
+  (use-package helm-projectile
+    :init (helm-projectile-on))
+#+end_src
+*** Guide-key
+It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
+#+begin_src emacs-lisp
+  (use-package guide-key
+    :init
+    (setq guide-key/guide-key-sequence '("C-x"
+                                         "C-c"
+                                         "C-c p"
+                                         "C-c C-x"))
+    (guide-key-mode 1))  ; Enable guide-key-mode
+#+end_src
+*** Org-mode
+
+#+begin_src emacs-lisp
+  (use-package org
+    :init
+      (progn
+        (setq org-directory "~/Documents/org")
+        (setq org-default-notes-file "~/Documents/org/inbox.org")
+
+        ;; mobile org
+        (setq org-mobile-inbox-for-pull "~/Documents/org/inbox.org")
+        (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+        (add-hook 'after-init-hook 'org-mobile-pull)
+        (add-hook 'kill-emacs-hook 'org-mobile-push)
+
+
+        ;; refile
+        (setq org-reverse-note-order t)
+        (setq org-refile-use-outline-path nil)
+        (setq org-refile-allow-creating-parent-nodes 'confirm)
+        (setq org-refile-use-cache nil)
+        (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+        (setq org-blank-before-new-entry nil)) 
+    :config
+      (progn
+        (setq org-tag-alist '(
+          ("@work" . ?b) 
+          ("@home" . ?h) 
+          ("@writing" . ?w)
+          ("@errands" . ?e) 
+          ("@drawing" . ?d)
+          ("@coding" . ?c)
+          ("@phone" . ?p)
+          ("@reading" . ?r)
+          ("@computer" . ?l)
+;;        ("quantified" . ?q)
+          ("lowenergy" . ?0)
+          ("highenergy" . ?1)))) 
+    :bind
+      (("C-c l" . org-store-link)
+       ("C-c L" . org-insert-link-global)
+       ("C-c O" . org-open-at-point-global)
+       ;;("<f9> <f9>" . org-agenda-list)
+       ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
+       ;;("C-TAB" . org-cycle org-mode-map)
+       ;;("C-c v" . org-show-todo-tree org-mode-map)
+       ;;("C-c C-r" . org-refile org-mode-map)
+       ;;("C-c R" . org-reveal org-mode-map)
+    )
+  )
+#+end_src
+
+=append-next-kill= is more useful to me than =org-table-copy-region=.
+
+#+begin_src emacs-lisp
+;;  (eval-after-load 'org
+;;    '(progn
+;;       (bind-key "C-M-w" 'append-next-kill org-mode-map)))
+#+end_src
+
+# **** Estimating WPM
+I'm curious about how fast I type some things.
+#+begin_src emacs-lisp
+;;(require 'org-clock)
+;;(defun sacha/org-entry-wpm ()
+;;  (interactive)
+;;  (save-restriction
+;;    (save-excursion
+;;      (org-narrow-to-subtree)
+;;      (goto-char (point-min))
+;;      (let* ((words (count-words-region (point-min) (point-max)))
+;;	     (minutes (org-clock-sum-current-item))
+;;	     (wpm (/ words minutes)))
+;;	(message "WPM: %d (words: %d, minutes: %d)" wpm words minutes)
+;;	(kill-new (number-to-string wpm))))))
+#+end_src
+
+**** Modules
+
+Org has a whole bunch of optional modules. These are the ones I'm
+currently experimenting with.
+#+begin_src emacs-lisp
+  (setq org-modules '(
+;;                      org-bbdb 
+;;                      org-gnus
+;;                      org-drill
+;;                      org-info
+;;                      org-jsinfo
+                      org-habit
+;;                      org-irc
+                      org-mouse
+;;                      org-annotate-file
+;;                      org-eval
+;;                      org-expiry
+;;                      org-interactive-query
+;;                      org-man
+                      org-panel
+;;                      org-screen
+;;                      org-toc
+                     ))
+(org-load-modules-maybe t)
+(setq org-expiry-inactive-timestamps t)
+(eval-after-load 'org-mode
+     (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel))
+#+end_src
+
+**** Tag tasks with GTD-ish contexts
+
+This defines keyboard shortcuts for those, too.
+
+#+begin_src emacs-lisp
+  
+#+end_src
+
+**** Track TODO state
+
+The parentheses indicate keyboard shortcuts that I can use to set the task state. @ and ! toggle logging.
+
+#+begin_src emacs-lisp
+  (setq org-use-fast-todo-selection t) ;; actually seems to be true by default
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; next action
+           "NEXT(n!/!)"
+           ;;      "TOBLOG(b)"  ; next action
+           "STARTED(s)"
+           "WAITING(w@/!)"
+           "SOMEDAY(.)"
+           "|"
+           "DONE(x!)"
+           "CANCELLED(c@)")
+          (sequence
+           "TODELEGATE(-)"
+           "DELEGATED(d)"
+           "COMPLETE(x)")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-todo-keyword-faces
+        '(("TODO" :foreground "firebrick" :weight bold)
+          ("NEXT" :foreground "red" :weight bold)
+          ("STARTED" :foreground "gold" :weight bold)
+          ("WAITING" :foreground "chocolate" :weight bold)
+          ("SOMEDAY" :foreground "light steel blue" :weight bold)
+          ("DONE" :foreground "olive drab" :weight bold)
+          ("CANCELLED" :foreground "dim gray" :weight bold)
+          ("TODELEGATE" :foreground "firebrick" :weight bold)
+          ("DELEGATED" :foreground "chocolate" :weight bold)
+          ("COMPLETE" :foreground "olive drab" :weight bold)))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; Parent can't be marked as done unless all children are done
+  (setq org-enforce-todo-dependencies t)
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+#+end_src
+
+# #+begin_src emacs-lisp
+#   (setq org-todo-state-tags-triggers
+#         (quote (("CANCELLED" ("CANCELLED" . t))
+#                 ("WAITING" ("WAITING" . t))
+#                 ("HOLD" ("WAITING") ("HOLD" . t))
+#                 (done ("WAITING") ("HOLD"))
+#                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+#                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+#                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+# #+end_src
+**** Projects
+
+Projects are headings with the =:project:= tag, so we generally don't
+want that tag inherited, except when we display unscheduled tasks that
+don't belong to any projects.
+
+#+begin_src emacs-lisp
+;;  (setq org-tags-exclude-from-inheritance '("project"))
+#+end_src
+
+This code makes it easy for me to focus on one project and its tasks.
+
+# #+begin_src emacs-lisp
+#   (add-to-list 'org-speed-commands-user '("N" org-narrow-to-subtree))
+#   (add-to-list 'org-speed-commands-user '("W" widen))
+#   (defun sacha/org-agenda-for-subtree ()
+#     (interactive)
+#     (if (derived-mode-p 'org-agenda-mode)
+#       (let* ((marker (or (org-get-at-bol 'org-marker)
+#                          (org-agenda-error)))
+#              (hdmarker (or (org-get-at-bol 'org-hd-marker) marker))
+#              (pos (marker-position marker))
+#              (col (current-column))
+#              newhead)
+#         (org-with-remote-undo (marker-buffer marker)
+#           (with-current-buffer (marker-buffer marker)
+#             (widen)
+#            (let ((org-agenda-view-columns-initially t))
+#              (org-agenda nil "t" 'subtree)))))
+#       (let ((org-agenda-view-columns-initially t))
+#         (org-agenda nil "t" 'subtree))))
+#   (add-to-list 'org-speed-commands-user '("T" sacha/org-agenda-for-subtree))
+# #+end_src
+
+There's probably a proper way to do this, maybe with =<=. Oh, that would work nicely. =< C-c a t= too.
+
+**** Enable filtering by effort estimates
+
+That way, it's easy to see short tasks that I can finish.
+
+#+begin_src emacs-lisp
+;;  (add-to-list 'org-global-properties
+;;        '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
+#+end_src
+
+**** Enable filtering by project theme
+
+That way, it's easy to see the overview.
+
+#+begin_src emacs-lisp
+;;  (add-to-list 'org-global-properties
+;;        '("Theme_ALL". "Health Money Bitches"))
+#+end_src
+
+**** Track time
+
+#+begin_src emacs-lisp
+  (setq org-clock-idle-time nil)
+  (setq org-log-done 'time)
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate)
+  (setq org-clock-report-include-clocking-task t)
+  (defadvice org-clock-in (after sacha activate)
+    "Mark STARTED when clocked in."
+    (save-excursion
+      (catch 'exit
+        (cond
+         ((derived-mode-p 'org-agenda-mode)
+          (let* ((marker (or (org-get-at-bol 'org-marker)
+                             (org-agenda-error)))
+                 (hdmarker (or (org-get-at-bol 'org-hd-marker) marker))
+                 (pos (marker-position marker))
+                 (col (current-column))
+                 newhead)
+            (org-with-remote-undo (marker-buffer marker)
+              (with-current-buffer (marker-buffer marker)
+                (widen)
+                (goto-char pos)
+                (org-back-to-heading t)
+                (if (org-get-todo-state)
+                    (org-todo "STARTED"))))))
+         (t (if (org-get-todo-state)
+                    (org-todo "STARTED")))))))
+#+end_src
+     
+Too many clock entries clutter up a heading.
+
+#+begin_src emacs-lisp
+  (setq org-log-into-drawer "LOGBOOK")
+  (setq org-clock-into-drawer 1)
+#+end_src
+
+**** Habits
+
+     I like using org-habits to track consistency. My task names tend
+     to be a bit long, though, so I've configured the graph column to
+     show a little bit more to the right.
+     
+#+begin_src emacs-lisp
+  (setq org-habit-graph-column 80)
+  (setq org-habit-show-habits-only-for-today t)
+#+end_src
+
+If you want to use habits, be sure to schedule your tasks and add a STYLE property with the value of =habit= to the tasks you want displayed.
+
+**** Estimating tasks
+    
+From "Add an effort estimate on the fly when clocking in" on the
+[[http://orgmode.org/worg/org-hacks.html][Org Hacks]] page:
+
+#+begin_src emacs-lisp
+  (defun xtof/org-mode-ask-effort ()
+    "Ask for an effort estimate when clocking in."
+    (unless (org-entry-get (point) "Effort")
+      (let ((effort
+             (completing-read
+              "Effort: "
+              (org-entry-get-multivalued-property (point) "Effort"))))
+        (unless (equal effort "")
+          (org-set-property "Effort" effort)))))
+
+  (add-hook 'org-clock-in-prepare-hook 'xtof/org-mode-ask-effort)
+#+end_src
+
+**** Flexible scheduling of tasks
+
+I (theoretically) want to be able to schedule tasks for dates like the first Saturday
+of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-mode-how-to-schedule-repeating-tasks-for-the-first-saturday-of-every-month][someone else has figured that out!]]
+
+#+begin_src emacs-lisp
+;; Get this from https://raw.github.com/chenfengyuan/elisp/master/next-spec-day.el
+;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
+#+end_src
+
+**** Org-capture
+
+#+begin_src emacs-lisp
+  (defvar xtof/org-basic-task-template
+    "* TODO %^{Task} %^G
+    %?
+    :PROPERTIES:
+    :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
+    :END:")
+
+  (defvar xtof/org-basic-project-template 
+    "* %^{Project} %^Gproject:
+    %?
+    :PROPERTIES:
+    :END:")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :init
+      (progn
+        (setq org-capture-templates 
+          `(("t"
+             "Task"
+             entry (file+headline "~/Documents/org/inbox.org" "Tasks")
+             ,xtof/org-basic-task-template)
+          ("m"
+	    "Memo" 
+	     entry (file+datetree "~/Documents/org/memos.org") 
+	     "* To:%^{To|Self} Date:%U Subject:%^{Subject} %^G %?") 
+;;	  ("t" 
+;;	   "Task" 
+;;	   entry (file+headline "~/Documents/org/inbox.org") 
+;;	   "* TODO %^{Description} %^G %?") 
+	  ("l" 
+	    "Log" 
+	    entry (file+datetree "~/Documents/org/log.org") 
+	    "* %U %^{Description} %?" 
+	    :immediate-finish t)
+	  ("p" 
+	    "Project" 
+	    entry (file+headline "~/Documents/org/projects.org" "Projects") 
+	    ,xtof/org-basic-project-template)
+          ("h"
+            "Habit"
+            entry (file "~/Documents/org/inbox.org")
+            "* TODO %?\n  SCHEDULED: %t\n  OPENED: %U\n  :PROPERTIES:\n  :STYLE: habit\n  :END:\n  %i"))))
+    :bind
+      (("C-c c" . org-capture)))
+#+end_src
+
+**** Org-Agenda
+***** pre-configure
+
+Org agenda custom commands
+
+There are quite a few custom commands here, and I often forget to use
+them. =) But it's good to define them, and over time, I'll get the
+hang of using these more!
+
+| Key         | Description                                                                                     |
+| .           | What am I waiting for?                                                                          |
+| T           | Not really an agenda command - shows the to-do tree in the current file                         |
+| b           | Shows business-related tasks                                                                    |
+| o           | Shows personal tasks and miscellaneous tasks (o: organizer)                                     |
+| w           | *Show all tasks for the upcoming week                                                            |
+| W           | *Show all tasks for the upcoming week, aside from the routine ones                               |
+| g ...       | Show tasks by context: b - business; c - coding; w - writing; p - phone; d - drawing, h - home  |
+| 0           | *Show common contexts with up to 3 tasks each, so that I can choose what I feel like working on |
+| ) (shift-0) | Show common contexts with all the tasks associated with them                                    |
+| 9           | Show common contexts with up to 3 unscheduled tasks each                                        |
+| ( (shift-9) | Show common contexts with all the unscheduled tasks associated with them                        |
+| d           | Timeline for today (agenda, clock summary)                                                      |
+| u           | Unscheduled tasks to do if I have free time                                                     |
+| U           | Unscheduled tasks that are not part of projects                                                 |
+| P           | Tasks by priority                                                                               |
+| p           | My projects                                                                                     |
+| 2           | Projects with tasks                                                                             |
+
+# ;;    (defun sacha/org-agenda-skip-scheduled ()
+# ;;      (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+# ;;    (setq org-agenda-custom-commands
+# ;;          `(("T" tags-todo "TODO=\"TODO\"-goal-routine-SCHEDULED={.+}")
+# ;;            ("b" todo ""
+# ;;             ((org-agenda-files '("~/personal/business.org"))))
+# ;;            ("B" todo ""
+# ;;             ((org-agenda-files '("~/Dropbox/books"))))
+# ;;            ("o" todo ""
+# ;;             ((org-agenda-files '("~/personal/organizer.org"))))
+# ;;            ("c" todo ""
+# ;;             ((org-agenda-prefix-format "")
+# ;;              (org-agenda-cmp-user-defined 'sacha/org-sort-agenda-items-todo)
+# ;;              (org-agenda-view-columns-initially t)
+# ;;              ))
+# ;;            ;; Weekly review
+
+# ;;            ("2" "Bi-weekly review" agenda "" ((org-agenda-span 14) (org-agenda-log-mode 1)))
+# ;;            ("gb" "Business" todo ""  
+# ;;             ((org-agenda-files '("~/personal/business.org"))
+# ;;              (org-agenda-view-columns-initially t)))
+# ;;            ("gc" "Coding" tags-todo "@coding" 
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gw" "Writing" tags-todo "@writing"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gp" "Phone" tags-todo "@phone"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gd" "Drawing" tags-todo "@drawing"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gh" "Home" tags-todo "@home"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;           ("ge" "Errands" tags-todo "@errands"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;
+# ;;            (")" "All by context"
+# ;;             ,sacha/org-agenda-contexts
+# ;;             ((org-agenda-sorting-strategy '(priority-down effort-down))
+# ;;              (sacha/org-agenda-limit-items nil)))
+# ;;            ("9" "Unscheduled top 3 by context"
+# ;;             ,sacha/org-agenda-contexts
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;             (org-agenda-sorting-strategy '(priority-down effort-down))
+# ;;              (sacha/org-agenda-limit-items 3)))
+# ;;            ("(" "All unscheduled by context"
+# ;;             ,sacha/org-agenda-contexts
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;              (org-agenda-sorting-strategy '(priority-down effort-down))
+# ;;              ))
+# ;;            ("d" "Timeline for today" ((agenda "" ))
+# ;;             ((org-agenda-ndays 1)
+# ;;              (org-agenda-show-log t)
+# ;;              (org-agenda-log-mode-items '(clock closed))
+# ;;              (org-agenda-clockreport-mode t)
+# ;;              (org-agenda-entry-types '())))
+# ;;            ("." "Waiting for" todo "WAITING")
+# ;;            ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING\"-project"
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;              (org-agenda-view-columns-initially t)
+# ;;              (org-tags-exclude-from-inheritance '("project"))
+# ;;              (org-agenda-overriding-header "Unscheduled TODO entries: ")
+# ;;              (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
+# ;;              (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
+# ;;            ("U" "Unscheduled tasks outside projects" tags-todo "-project"
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;              (org-tags-exclude-from-inheritance nil)
+# ;;              (org-agenda-view-columns-initially t)
+# ;;              (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
+# ;;              (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
+# ;;            ("P" "By priority"
+# ;;             ((tags-todo "+PRIORITY=\"A\"")
+# ;;              (tags-todo "+PRIORITY=\"B\"")
+# ;;              (tags-todo "+PRIORITY=\"\"")
+# ;;              (tags-todo "+PRIORITY=\"C\""))
+# ;;             ((org-agenda-prefix-format "%-10c %-10T %e ")
+# ;;              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+# ;;            ("pp" tags "+project-someday-TODO=\"DONE\""
+# ;;             ((org-tags-exclude-from-inheritance '("project"))
+# ;;              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+# ;;            ("p." tags "+project-TODO=\"DONE\""
+# ;;             ((org-tags-exclude-from-inheritance '("project"))
+# ;;              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+# ;;            ("S" tags-todo "TODO=\"STARTED\"")
+# ;;            ("2" "List projects with tasks" sacha/org-agenda-projects-and-tasks
+# ;;             "+PROJECT"
+# ;;               ((sacha/org-agenda-limit-items 3)))))
+# ;;  (bind-key "<apps> a" 'org-agenda)
+# #+end_src
+
+Make it easy to mark a task as done
+
+#+begin_src emacs-lisp
+;;  (defun sacha/org-agenda-done (&optional arg)
+;;    "Mark current TODO as done.
+;;    This changes the line at point, all other lines in the agenda referring to
+;;    the same tree node, and the headline of the tree node in the Org-mode file."
+;;    (interactive "P")
+;;    (org-agenda-todo "DONE"))
+;;    ;; Override the key definition for org-exit
+;;  (define-key org-agenda-mode-map "x" 'sacha/org-agenda-done)
+#+end_src
+
+Make it easy to mark a task as done and create a follow-up task
+
+#+begin_src emacs-lisp
+;;  (defun sacha/org-agenda-mark-done-and-add-followup ()
+;;    "Mark the current TODO as done and add another task after it.
+;;    Creates it at the same level as the previous task, so it's better to use
+;;    this with to-do items than with projects or headings."
+;;    (interactive)
+;;    (org-agenda-todo "DONE")
+;;    (org-agenda-switch-to)
+;;    (org-capture 0 "t"))
+;;    ;; Override the key definition
+;;  (define-key org-agenda-mode-map "X" 'sacha/org-agenda-mark-done-and-add-followup)
+#+end_src
+
+Capture something based on the agenda
+
+#+begin_src emacs-lisp
+;;(defun sacha/org-agenda-new ()
+;;  "Create a new note or task at the current agenda item.
+;;Creates it at the same level as the previous task, so it's better to use
+;;this with to-do items than with projects or headings."
+;;  (interactive)
+;;  (org-agenda-switch-to)
+;;  (org-capture 0))
+;;;; New key assignment
+;;(define-key org-agenda-mode-map "N" 'sacha/org-agenda-new)
+#+end_src
+***** helper fns
+#+begin_src emacs-lisp
+
+  ;;
+  ;;
+  (defun bh/find-project-task ()
+    "Move point to the parent (project) task if any"
+    (save-restriction
+      (widen)
+      (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+        (while (org-up-heading-safe)
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq parent-task (point))))
+        (goto-char parent-task)
+        parent-task)))
+  ;;
+  ;;
+
+
+  (defun bh/is-project-p ()
+    "Any task with a todo keyword subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                    (< (point) subtree-end)
+                    (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        has-subtask)))
+
+  (defun bh/is-project-subtree-p ()
+    "Any task with a todo keyword that is in a project subtree.
+    Callers of this function already widen the buffer view."
+    (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
+                                (point))))
+      (save-excursion
+        (bh/find-project-task)
+        (if (equal (point) task)
+            nil
+          t))))
+
+  (defun bh/is-task-p ()
+    "Any task with a todo keyword and no subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                    (< (point) subtree-end)
+                    (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        (and is-a-task (not has-subtask)))))
+
+  (defun bh/is-subproject-p ()
+    "Any task which is a subtask of another project"
+    (let ((is-subproject)
+          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+      (save-excursion
+        (while (and (not is-subproject) (org-up-heading-safe))
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq is-subproject t))))
+      (and is-a-task is-subproject)))
+
+  (defun bh/list-sublevels-for-projects-indented ()
+    "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+      This is normally used by skipping functions where this variable is already local to the agenda."
+    (if (marker-buffer org-agenda-restrict-begin)
+        (setq org-tags-match-list-sublevels 'indented)
+      (setq org-tags-match-list-sublevels nil))
+    nil)
+
+  (defun bh/list-sublevels-for-projects ()
+    "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+      This is normally used by skipping functions where this variable is already local to the agenda."
+    (if (marker-buffer org-agenda-restrict-begin)
+        (setq org-tags-match-list-sublevels t)
+      (setq org-tags-match-list-sublevels nil))
+    nil)
+
+  (defvar bh/hide-scheduled-and-waiting-next-tasks t)
+
+  (defun bh/toggle-next-task-display ()
+    (interactive)
+    (setq bh/hide-scheduled-and-waiting-next-tasks (not bh/hide-scheduled-and-waiting-next-tasks))
+    (when  (equal major-mode 'org-agenda-mode)
+      (org-agenda-redo))
+    (message "%s WAITING and SCHEDULED NEXT Tasks" (if bh/hide-scheduled-and-waiting-next-tasks "Hide" "Show")))
+
+  (defun bh/skip-stuck-projects ()
+    "Skip trees that are not stuck projects"
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (if (bh/is-project-p)
+            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                   (has-next ))
+              (save-excursion
+                (forward-line 1)
+                (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                  (unless (member "WAITING" (org-get-tags-at))
+                    (setq has-next t))))
+              (if has-next
+                  nil
+                next-headline)) ; a stuck project, has subtasks but no next task
+          nil))))
+
+  (defun bh/skip-non-stuck-projects ()
+    "Skip trees that are not stuck projects"
+    ;; (bh/list-sublevels-for-projects-indented)
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (if (bh/is-project-p)
+            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                   (has-next ))
+              (save-excursion
+                (forward-line 1)
+                (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                  (unless (member "WAITING" (org-get-tags-at))
+                    (setq has-next t))))
+              (if has-next
+                  next-headline
+                nil)) ; a stuck project, has subtasks but no next task
+          next-headline))))
+
+  (defun bh/skip-non-projects ()
+    "Skip trees that are not projects"
+    ;; (bh/list-sublevels-for-projects-indented)
+    (if (save-excursion (bh/skip-non-stuck-projects))
+        (save-restriction
+          (widen)
+          (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+            (cond
+             ((bh/is-project-p)
+              nil)
+             ((and (bh/is-project-subtree-p) (not (bh/is-task-p)))
+              nil)
+             (t
+              subtree-end))))
+      (save-excursion (org-end-of-subtree t))))
+
+  (defun bh/skip-project-trees-and-habits ()
+    "Skip trees that are projects"
+    (save-restriction
+      (widen)
+      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (cond
+         ((bh/is-project-p)
+          subtree-end)
+         ((org-is-habit-p)
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-projects-and-habits-and-single-tasks ()
+    "Skip trees that are projects, tasks that are habits, single non-project tasks"
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (cond
+         ((org-is-habit-p)
+          next-headline)
+         ((and bh/hide-scheduled-and-waiting-next-tasks
+               (member "WAITING" (org-get-tags-at)))
+          next-headline)
+         ((bh/is-project-p)
+          next-headline)
+         ((and (bh/is-task-p) (not (bh/is-project-subtree-p)))
+          next-headline)
+         (t
+          nil)))))
+
+  (defun bh/skip-project-tasks-maybe ()
+    "Show tasks related to the current restriction.
+    When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
+    When not restricted, skip project and sub-project tasks, habits, and project related tasks."
+    (save-restriction
+      (widen)
+      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+             (next-headline (save-excursion (or (outline-next-heading) (point-max))))
+             (limit-to-project (marker-buffer org-agenda-restrict-begin)))
+        (cond
+         ((bh/is-project-p)
+          next-headline)
+         ((org-is-habit-p)
+          subtree-end)
+         ((and (not limit-to-project)
+               (bh/is-project-subtree-p))
+          subtree-end)
+         ((and limit-to-project
+               (bh/is-project-subtree-p)
+               (member (org-get-todo-state) (list "NEXT")))
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-project-tasks ()
+    "Show non-project tasks.
+    Skip project and sub-project tasks, habits, and project related tasks."
+    (save-restriction
+      (widen)
+      (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (cond
+         ((bh/is-project-p)
+          subtree-end)
+         ((org-is-habit-p)
+          subtree-end)
+         ((bh/is-project-subtree-p)
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-non-project-tasks ()
+    "Show project tasks.
+    Skip project and sub-project tasks, habits, and loose non-project tasks."
+    (save-restriction
+      (widen)
+      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+             (next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (cond
+         ((bh/is-project-p)
+          next-headline)
+         ((org-is-habit-p)
+          subtree-end)
+         ((and (bh/is-project-subtree-p)
+               (member (org-get-todo-state) (list "NEXT")))
+          subtree-end)
+         ((not (bh/is-project-subtree-p))
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-projects-and-habits ()
+    "Skip trees that are projects and tasks that are habits"
+    (save-restriction
+      (widen)
+      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (cond
+         ((bh/is-project-p)
+          subtree-end)
+         ((org-is-habit-p)
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-non-subprojects ()
+    "Skip trees that are not projects"
+    (let ((next-headline (save-excursion (outline-next-heading))))
+      (if (bh/is-subproject-p)
+          nil
+        next-headline)))
+#+end_src
+***** xtof/org-agenda-init
+#+begin_src emacs-lisp
+  (defvar xtof/org-agenda-contexts
+    '((tags-todo "+@phone")
+      (tags-todo "+@work")
+      (tags-todo "+@drawing")a
+      (tags-todo "+@coding")
+      (tags-todo "+@writing")
+      (tags-todo "+@computer")
+      (tags-todo "+@home")
+      (tags-todo "+@errands"))
+    "Usual list of contexts.")
+
+  ;; Do not dim blocked tasks
+  ;;(setq org-agenda-dim-blocked-tasks t)
+
+  ;; Compact the block agenda view
+  (setq org-agenda-compact-blocks t)
+
+  (defun xtof/org-agenda-init ()
+    "init org agenda"
+    (progn
+      (setq org-agenda-tags-column -136)
+      ;; (setq org-agenda-use-tag-inheritance nil)
+      (setq org-agenda-files (quote ("~/Documents/org/inbox.org"
+                                     "~/Documents/org/log.org"
+                                     "~/Documents/org/memos.org"
+                                     "~/Documents/org/flagged.org"
+                                     "~/Documents/org/projects.org")))
+      ;; (setq org-agenda-time-grid
+      ;;     '((daily today require-timed)
+      ;;     "----------------"
+      ;;     (800 1000 1200 1400 1600 1800)))
+      (setq org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS")
+      (setq org-agenda-span 2)
+      (setq org-agenda-sticky nil)
+      (setq org-agenda-show-log t)
+      (setq org-agenda-custom-commands
+            '(
+              ;;                 ("0" "Top 3 by context" xtof/org-agenda-contexts
+              ;;                   (
+              ;;(org-agenda-sorting-strategy '(priority-up effort-down))
+              ;;                    (xtof/org-agenda-limit-items 3)))
+
+              ("o" "Agenda and Office-related tasks"
+               ((agenda ""
+                        ((org-agenda-use-tag-inheritance nil)))
+                (tags-todo "work")
+                (tags "@work")))
+              
+              ("p" "projects"
+               ((tags ":project:"
+                      ((org-agenda-use-tag-inheritance t)))))
+
+              ("w" "Weekly review" agenda ""
+               ((org-agenda-span 7)
+                (org-agenda-log-mode 1)))
+
+              ("W" "Weekly review sans routines" agenda "" 
+               ((org-agenda-span 7) 
+                (org-agenda-log-mode 1)
+                (org-agenda-tag-filter-preset '("-routine"))))
+              
+              (" " "Agenda"
+               ((agenda "" nil)
+                (todo "NEXT")
+                (stuck "")))
+              )
+            )
+      ))
+#+end_src
+***** xtof/org-agenda-config
+***** finialize
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    ;;:ensure org-agenda
+    :config (xtof/org-agenda-init)
+    :bind
+      (("C-c a" . org-agenda))
+  )
+#+end_src
+**** Org-ac
+#+begin_src emacs-lisp
+  (use-package org-ac
+    :ensure org-ac
+    :config (progn
+      (org-ac/config-default)))
+#+end_src
+**** Org2Blog
+#+begin_src emacs-lisp
+  (use-package org2blog-autoloads
+    :ensure org2blog
+    :init
+    (progn
+      (setq org2blog/wp-blog-alist
+      '(("wordpress"
+         :url "http://username.wordpress.com/xmlrpc.php"
+         :username "username"
+         :default-title "Hello World"
+         :default-categories ("org2blog" "emacs")
+         :tags-as-categories nil)
+        ("my-blog"
+         :url "http://www.marcchristophe.com/xmlrpc.php"
+         :username "mc")))))
+#+end_src
+**** Ledger Mode
+#+begin_src emacs-lisp
+(use-package ledger-mode
+  :init
+  (progn
+    (setq ledger-binary-path "/opt/local/bin/ledger")
+    (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
+#+end_src
+*** Clojure Mode (lispy shit)
+#+begin_src emacs-lisp
+;;  (use-package clojure-mode-extra-font-locking
+;;    :init
+;;    (progn
+;;      (clojure-mode-extra-font-locking)))
+#+end_src
+**** Smartparens
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :ensure smartparens
+    :config (progn
+            (require 'smartparens-config)
+            (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+            (add-hook 'emacs-lisp-mode-hook 'smartparens-strict-mode)
+            (show-smartparens-global-mode 1)))
+#+end_src
+**** rainbow-delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure rainbow-delimiters
+    :config (progn
+              (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
+#+end_src
+**** rainbow-blocks
+#+begin_src emacs-lisp
+  (use-package rainbow-blocks
+    :ensure rainbow-blocks
+    :config (progn
+              (add-hook 'html-mode-hook 'rainbow-blocks-mode)))
+#+end_src
+**** 4Clojure
+#+begin_src emacs-lisp
+  (use-package 4clojure)
+#+end_src 
+*** Projectile
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :init
+    (progn
+        (projectile-global-mode)))
+#+end_src
+
+*** Aggressive-Indent
+
+#+begin_src emacs-lisp
+  (use-package aggressive-indent
+    :init
+    (progn
+        (global-aggressive-indent-mode 1)
+        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
+#+end_src
+
+*** Pretty Mode
+
+#+begin_src emacs-lisp
+  (use-package pretty-mode
+    :init
+    (progn
+        (global-pretty-mode t)))
+#+end_src
+
+*** ac-helmm
+
+#+begin_src emacs-lisp
+  (use-package ac-helm
+    :init
+    (progn
+      (global-set-key (kbd "C-:") 'ac-complete-with-helm)
+      (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)))
+#+end_src
+
+*** cider
+
+#+begin_src emacs-lisp
+  (use-package cider
+    :init
+    (progn
+      (add-hook 'clojure-mode-hook 'cider-mode)
+;;(defadvice 4clojure-open-question (around 4clojure-open-question-around)
+;;  "Start a cider/nREPL connection if one hasn't already been started when
+;;opening 4clojure questions"
+;;  ad-do-it
+;;  (unless cider-current-clojure-buffer
+;;    (cider-jack-in)))
+))
+#+end_src
+
+*** ac-cider
+
+#+begin_src emacs-lisp
+  (use-package ac-cider
+    :ensure ac-cider
+    :init (progn
+      (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+      (add-hook 'cider-mode-hook 'ac-cider-setup)
+      (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+      (eval-after-load "auto-complete"
+        '(add-to-list 'ac-modes 'cider-mode))
+
+      (defun set-auto-complete-as-completion-at-point-function ()
+        (setq completion-at-point-functions '(auto-complete)))
+
+      (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+      (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)))
+#+end_src
+
+*** fci-mode
+#+begin_src emacs-lisp
+  (use-package fill-column-indicator
+    :ensure fill-column-indicator
+    :config 
+    (progn
+      (defadvice previous-line (around avoid-jumpy-fci activate)
+        (if (symbol-value 'fci-mode)
+          (progn (fci-mode -1) ad-do-it (fci-mode 1))
+            ad-do-it))
+      (setq fci-rule-width 1)
+      (setq fci-rule-use-dashes t)
+      (setq fci-rule-column 80)
+      (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+      (global-fci-mode 1)))
+#+end_src
+*** workgroups2
+#+begin_src emacs-lisp
+  (use-package workgroups2
+    :ensure workgroups2
+    :config (progn
+              (workgroups-mode 1)))
+#+end_src
+*** indent-guide :DISABLED:
+#+begin_src emacs-lisp
+;;  (use-package indent-guide
+;;    :ensure
+;;    :config
+;;    (progn
+;;      (setq indent-guide-char "|")
+;;      (indent-guide-global-mode)))
+#+end_src
+*** exec-path-from-shell
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :init
+    (progn
+      (when (memq window-system '(mac ns))
+            (exec-path-from-shell-initialize))))
+#+end_src
+*** WEB
+**** web-mode
+#+begin_src emacs-lisp
+;;  (use-package web-mode
+;;    :init 
+;;    (progn
+;;      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))))
+#+end_src
+**** web-beautify
+#+begin_src emacs-lisp
+  (use-package web-beautify
+    :init 
+    (progn
+
+(eval-after-load 'js2-mode
+  '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
+
+(eval-after-load 'json-mode
+  '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
+
+(eval-after-load 'sgml-mode
+  '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
+
+(eval-after-load 'css-mode
+  '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
+
+(eval-after-load 'js2-mode
+  '(add-hook 'js2-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+
+(eval-after-load 'json-mode
+  '(add-hook 'json-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+
+(eval-after-load 'sgml-mode
+  '(add-hook 'html-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+
+(eval-after-load 'css-mode
+  '(add-hook 'css-mode-hook
+             (lambda ()
+               (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
+#+end_src
+**** js2-mode
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :init
+    (progn
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+    ;;You may also want to hook it in for shell scripts running via node.js:
+    ;;(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
+    ))
+#+end_src
+**** skewer-mode
+#+begin_src emacs-lisp
+  (use-package skewer-mode
+    :init
+    (progn
+      (add-hook 'js2-mode-hook 'skewer-mode)
+      (add-hook 'css-mode-hook 'skewer-css-mode)
+      (add-hook 'html-mode-hook 'skewer-html-mode)))
+#+end_src
+**** ac-html
+;;#+begin_src emacs-lisp
+;;  (use-package ac-html
+;;    :init
+;;    (progn
+;;      (add-hook 'html-mode-hook 'ac-html-enable)
+ ;;     (add-to-list 'ac-sources 'ac-source-html-attribute-value)
+ ;;     (add-to-list 'ac-sources 'ac-source-html-tag)
+ ;;     (add-to-list 'ac-sources 'ac-source-html-attribute)
+;;If you are using web-mode:
+;;Additionally you need to add these lines:
+;;(add-to-list 'web-mode-ac-sources-alist
+;;             '("html" . (ac-source-html-attribute-value
+;;                         ac-source-html-tag
+;;                         ac-source-html-attribute)))
+;;If you are using haml-mode:
+;;use `ac-source-haml-tag' and `ac-source-haml-attribute'
+;;))
+;;#+end_src
+#+begin_src emacs-lisp
+(use-package web-mode auto-complete
+  :ensure web-mode
+  :init (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  :config
+  (progn
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-ac-sources-alist
+          '(("css" . (ac-source-css-property))
+            ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
+          )))
+#+end_src
+**** ace-jump-mode
+#+begin_src emacs-lisp
+  (use-package ace-jump-mode
+    :ensure ace-jump-mode
+    :bind ("M-SPC" . ace-jump-mode))
+  (bind-key "M-S-SPC" 'just-one-space)
+ #+end_src
+**** auto-complete
+#+begin_src emacs-lisp
+  (use-package auto-complete
+    :ensure auto-complete
+    :config (ac-config-default))
+#+end_src
+**** volatile-highlights
+#+begin_src emacs-lisp
+  (use-package volatile-highlights
+    :ensure volatile-highlights
+    :config (volatile-highlights-mode t))
+#+end_src
+*** GIT
+**** magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure magit)
+#+end_src
+**** git-commit-mode
+#+begin_src emacs-lisp
+  (use-package git-commit-mode
+    :ensure git-commit-mode)
+#+end_src
+**** gitconfig-mode
+#+begin_src emacs-lisp
+  (use-package gitconfig-mode
+    :ensure gitconfig-mode)
+#+end_src
+**** gitconfig-mode
+#+begin_src emacs-lisp
+  (use-package gitignore-mode
+    :ensure gitignore-mode)
+#+end_src
+**** gitattributes-mode
+#+begin_src emacs-lisp
+  (use-package gitattributes-mode
+    :ensure gitattributes-mode)
+#+end_src
+* STARTUP
+
+#+begin_src emacs-lisp
+
+  (zone-when-idle 120)
+  (add-hook 'after-init-hook (lambda () (org-agenda nil "a")))
+
+#+end_src
+  
+
+* SCRATCH
+
+
+# (custom-set-variables
+#  ;; custom-set-variables was added by Custom.
+#  ;; If you edit it by hand, you could mess it up, so be careful.
+#  ;; Your init file should contain only one such instance.
+#  ;; If there is more than one, they won't work right.
+#  '(ansi-color-names-vector
+#    ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
+#  '(compilation-message-face (quote default))
+#  '(cua-global-mark-cursor-color "#2aa198")
+#  '(cua-normal-cursor-color "#657b83")
+#  '(cua-overwrite-cursor-color "#b58900")
+#  '(cua-read-only-cursor-color "#859900")
+#  '(custom-safe-themes
+#    (quote
+#     ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "9dae95cdbed1505d45322ef8b5aa90ccb6cb59e0ff26fef0b8f411dfc416c552" default)))
+#  '(fci-rule-color "#eee8d5")
+#  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+#  '(highlight-symbol-colors
+#    (--map
+#     (solarized-color-blend it "#fdf6e3" 0.25)
+#     (quote
+#      ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+#  '(highlight-symbol-foreground-color "#586e75")
+#  '(highlight-tail-colors
+#    (quote
+#     (("#eee8d5" . 0)
+#      ("#B4C342" . 20)
+#      ("#69CABF" . 30)
+#      ("#69B7F0" . 50)
+#      ("#DEB542" . 60)
+#      ("#F2804F" . 70)
+#      ("#F771AC" . 85)
+#      ("#eee8d5" . 100))))
+#  '(hl-bg-colors
+#    (quote
+#     ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
+#  '(hl-fg-colors
+#    (quote
+#     ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
+#  '(ledger-reports
+#    (quote
+#     (("monthly expense report" "ledger --monthly register ^expenses")
+#      ("bal" "ledger -f %(ledger-file) bal")
+#      ("reg" "ledger -f %(ledger-file) reg")
+#      ("payee" "ledger -f %(ledger-file) reg @%(payee)")
+#      ("account" "ledger -f %(ledger-file) reg %(account)"))))
+#  '(magit-use-overlays nil)
+#
+#  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
+#  '(term-default-bg-color "#fdf6e3")
+#  '(term-default-fg-color "#657b83")
+#  '(vc-annotate-background nil)
+#  '(vc-annotate-color-map
+#    (quote
+#     ((20 . "#dc322f")
+#      (40 . "#c85d17")
+#      (60 . "#be730b")
+#      (80 . "#b58900")
+#      (100 . "#a58e00")
+#      (120 . "#9d9100")
+#      (140 . "#959300")
+#      (160 . "#8d9600")
+#      (180 . "#859900")
+#      (200 . "#669b32")
+#      (220 . "#579d4c")
+#      (240 . "#489e65")
+#      (260 . "#399f7e")
+#      (280 . "#2aa198")
+#      (300 . "#2898af")
+#      (320 . "#2793ba")
+#      (340 . "#268fc6")
+#      (360 . "#268bd2"))))
+#  '(vc-annotate-very-old-color nil)
+#  '(weechat-color-list
+#    (quote
+#     (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496"))))
+# (custom-set-faces
+#  ;; custom-set-faces was added by Custom.
+#  ;; If you edit it by hand, you could mess it up, so be careful.
+#  ;; Your init file should contain only one such instance.
+#  ;; If there is more than one, they won't work right.
+#  )

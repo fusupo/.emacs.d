@@ -1,0 +1,12 @@
+*.el
+*.elc
+*.eld
+*.dat
+auto-save-list/
+elpa/
+elisp/
+eshell/
+games/
+savehist
+bookmarks
+.org-id-locations

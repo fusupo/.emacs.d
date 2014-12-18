@@ -1,8 +1,14 @@
 (require 'org)
 (require 'ob-tangle)
 
+
+
 ;; load up all literate org-mode files in this directory
-(org-babel-load-file (expand-file-name "~/.emacs.d/xtof.org"))
+(defvar config-files '("/Users/fusupo/.emacs.d/xtof.org"
+		       "/Users/fusupo/.emacs.d/config_startup.org"))
+(defun load-config (filename)
+  (org-babel-load-file filename))
+(mapc #'load-config config-files)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -16,7 +22,15 @@
  '(global-fci-mode t)
  '(org-agenda-files
    (quote
-    ("~/Documents/org/inbox.org" "~/Documents/org/log.org" "~/Documents/org/memos.org" "~/Documents/org/flagged.org" "~/Documents/org/projects.org" "~/Documents/org/notes.org" "/Users/fusupo/Documents/org/.org2blog.org" "/Users/fusupo/Documents/org/cooking.org" "/Users/fusupo/Documents/org/meditationlog.org")))
+    ("~/Documents/org/inbox.org"
+     "~/Documents/org/log.org"
+     "~/Documents/org/memos.org"
+     "~/Documents/org/flagged.org"
+     "~/Documents/org/projects.org"
+     "~/Documents/org/notes.org"
+     "/Users/fusupo/Documents/org/.org2blog.org"
+     "/Users/fusupo/Documents/org/cooking.org"
+     "/Users/fusupo/Documents/org/meditationlog.org")))
  '(org-babel-load-languages (quote ((emacs-lisp . t) (scheme . t))))
  '(org-level-color-stars-only t)
  '(org-src-fontify-natively t)

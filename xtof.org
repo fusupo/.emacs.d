@@ -8,54 +8,25 @@
         user-mail-address "m@xtof.net")
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
-  (setq gnus-select-method
-    '(nnimap "xtof.net"
-      (nnimap-address "mail.xtof.net")
-      (nnimap-server-port 993)
-      (nnimap-stream ssl)))
-
-(setq starttls-use-gnutls t
-      starttls-gnutls-program "gnutls-cli"
-      starttls-extra-arguments '("--insecure"))
-
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server "mail.xtof.net"
-      smtpmail-default-smtp-server "mail.xtof.net"
-      smtpmail-smtp-service 587
-      smtpmail-starttls-credentials '(("mail.xtof.net" 587 nil nil))
-      smtpmail-auth-credentials '(("mail.xtof.net" 587 "m@xtof.net" nil))
-      smtpmail-local-domain "xtof.net")
-#+END_SRC
-
 ** Backups
 
 #+begin_src emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+end_src
 
-Disk space is cheap. Save lots.
-
-#+begin_src emacs-lisp
-;;(setq delete-old-versions -1)
-;;(setq version-control t)
-;;(setq vc-make-backup-files t)
-;;(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
-#+end_src
-
 ** History
 
 From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 #+begin_src emacs-lisp
-;;(setq savehist-file "~/.emacs.d/savehist")
-;;(savehist-mode 1)
-;;(setq history-length t)
-;;(setq history-delete-duplicates t)
-;;(setq savehist-save-minibuffer-history 1)
-;;(setq savehist-additional-variables
-;;      '(kill-ring
-;;        search-ring
-;;        regexp-search-ring))
+  (setq savehist-file "~/.emacs.d/savehist")
+  (savehist-mode 1)
+  (setq history-length t)
+  (setq history-delete-duplicates t)
+  (setq savehist-save-minibuffer-history 1)
+  (setq savehist-additional-variables
+        '(kill-ring
+          search-ring
+          regexp-search-ring))
 #+end_src
 
 ** Packages
@@ -220,6 +191,27 @@ register. Using registers for all these file shortcuts is probably a bit of a wa
 #+end_src
    
 ** Initialize Packages
+*** gnus
+#+BEGIN_SRC emacs-lisp
+  (setq gnus-select-method
+    '(nnimap "xtof.net"
+      (nnimap-address "mail.xtof.net")
+      (nnimap-server-port 993)
+      (nnimap-stream ssl)))
+
+(setq starttls-use-gnutls t
+      starttls-gnutls-program "gnutls-cli"
+      starttls-extra-arguments '("--insecure"))
+
+(setq message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server "mail.xtof.net"
+      smtpmail-default-smtp-server "mail.xtof.net"
+      smtpmail-smtp-service 587
+      smtpmail-starttls-credentials '(("mail.xtof.net" 587 nil nil))
+      smtpmail-auth-credentials '(("mail.xtof.net" 587 "m@xtof.net" nil))
+      smtpmail-local-domain "xtof.net")
+#+END_SRC
+
 #+begin_src emacs-lisp
   (require 'use-package)
 #+end_src
@@ -1525,15 +1517,7 @@ Capture something based on the agenda
   (use-package gitattributes-mode
     :ensure gitattributes-mode)
 #+end_src
-* STARTUP
 
-#+begin_src emacs-lisp
-
-  (zone-when-idle 120)
-  (add-hook 'after-init-hook (lambda () (org-agenda nil "a")))
-
-#+end_src
-  
 
 * SCRATCH
 

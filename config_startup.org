@@ -1,0 +1,11 @@
+#+TITLE: config_startup
+
+* STARTUP
+
+#+begin_src emacs-lisp
+
+  (zone-when-idle 120)
+  (add-hook 'after-init-hook (lambda () (org-agenda nil "a")))
+
+#+end_src
+  

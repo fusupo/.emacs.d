@@ -1,0 +1,5 @@
+#+TITLE: README
+
+* Xtofs .emacs config
+This is a Frankenstein monster of other peoples hard efforts I've ripped off from
+accross the net. I plan to live with emacs, so hopefully this will evolve.

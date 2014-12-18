@@ -83,37 +83,37 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 
 #+begin_src emacs-lisp
   (defvar xtof/my-packages '(use-package
-                             helm
-                             helm-swoop
-                             guide-key
-                             org
-                             solarized-theme
-zenburn-theme
-                             clojure-mode
-                             smartparens
-                             cider
-                             magit
-                             rainbow-delimiters
-                             ledger-mode
-                             projectile
-aggressive-indent
-pretty-mode
-rainbow-blocks
-org-ac
-ac-helm
-ac-cider
-fill-column-indicator
-workgroups2
-indent-guide
-exec-path-from-shell
-web-mode
-web-beautify
-js2-mode
-skewer-mode
-helm-projectile
-4clojure
-org2blog
-ac-html))
+                              helm
+                              helm-swoop
+                              guide-key
+                              org
+                              solarized-theme
+                              zenburn-theme
+                              clojure-mode
+                              smartparens
+                              cider
+                              magit
+                              rainbow-delimiters
+                              ledger-mode
+                              projectile
+                              aggressive-indent
+                              pretty-mode
+                              rainbow-blocks
+                              org-ac
+                              ac-helm
+                              ac-cider
+                              fill-column-indicator
+                              workgroups2
+                              indent-guide
+                              exec-path-from-shell
+                              web-mode
+                              web-beautify
+                              js2-mode
+                              skewer-mode
+                              helm-projectile
+                              4clojure
+                              org2blog
+                              ac-html))
 
 #+end_src
     
@@ -204,6 +204,12 @@ register. Using registers for all these file shortcuts is probably a bit of a wa
 ;;    (set-face-background 'default "DodgerBlue")
 ;;    (set-face-background 'default "black")))
 #+end_src
+** SCHEME
+#+begin_src emacs-lisp
+(setenv "MITSCHEME_LIBRARY_PATH"
+    "/Applications/Scheme.app/Contents/Resources/")
+
+#+end_src
 * INIT
 ** Load Packages
 
@@ -219,70 +225,64 @@ register. Using registers for all these file shortcuts is probably a bit of a wa
 #+end_src
 *** Color Theme
 
-# #+begin_src emacs-lisp
-#   (use-package zenburn-theme
-#     :init
-#     (load-theme 'zenburn t))
-# #+end_src
+#+begin_src emacs-lisp
+  ;; (use-package solarized
+  ;;   :ensure solarized-theme
+  ;;   :config (progn
+              
+  ;;             ;; make the fringe stand out from the background
+  ;;             (setq solarized-distinct-fringe-background t)
 
-# #+begin_src emacs-lisp
-#   (use-package solarized
-#     :init
-#     (progn
-      
-#       ;; make the fringe stand out from the background
-#       (setq solarized-distinct-fringe-background t)
+  ;;             ;; make the modeline high contrast
+  ;;             (setq solarized-high-contrast-mode-line t)
 
-#       ;; make the modeline high contrast
-#       (setq solarized-high-contrast-mode-line t)
+  ;;             ;; Use less bolding
+  ;;             (setq solarized-use-less-bold t)
 
-#       ;; Use less bolding
-#       (setq solarized-use-less-bold t)
+  ;;             ;; Use more italics
+  ;;             (setq solarized-use-more-italic t)
 
-#       ;; Use more italics
-#       (setq solarized-use-more-italic t)
+  ;;             ;; Use less colors for indicators such as git:gutter, flycheck and similar.
+  ;;             ;;      (setq solarized-emphasize-indicators nil)
 
-#       ;; Use less colors for indicators such as git:gutter, flycheck and similar.
-# ;;      (setq solarized-emphasize-indicators nil)
+  ;;             ;; Don't change size of org-mode headlines (but keep other size-changes)
+  ;;             (setq solarized-scale-org-headlines nil)
 
-#       ;; Don't change size of org-mode headlines (but keep other size-changes)
-#       (setq solarized-scale-org-headlines nil)
+  ;;             ;; Avoid all font-size changes
+  ;;             (setq solarized-height-minus-1 1)
+  ;;             (setq solarized-height-plus-1 1)
+  ;;             (setq solarized-height-plus-2 1)
+  ;;             (setq solarized-height-plus-3 1)
+  ;;             (setq solarized-height-plus-4 1)
 
-#       ;; Avoid all font-size changes
-#       (setq solarized-height-minus-1 1)
-#       (setq solarized-height-plus-1 1)
-#       (setq solarized-height-plus-2 1)
-#       (setq solarized-height-plus-3 1)
-#       (setq solarized-height-plus-4 1)
+  ;;             (load-theme 'solarized-dark t)
+  ;;             (set-face-foreground 'secondary-selection "darkblue")
+  ;;             (set-face-background 'secondary-selection "lightblue")
+  ;;             (set-face-background 'font-lock-doc-face "black")
+  ;;             (set-face-foreground 'font-lock-doc-face "wheat")
+  ;;             (set-face-background 'font-lock-string-face "black")
+  ;;             (set-face-foreground 'org-todo "green")
+  ;;             (set-face-background 'org-todo "black")
+              
+  ;;             ;; Some more tweaks to solarized:
+  ;;             ;;    (when window-system
+  ;;             ;;      (custom-set-faces
+  ;;             ;;        '(erc-input-face ((t (:foreground "antique white"))))
+  ;;             ;;        '(helm-selection ((t (:background "ForestGreen" :foreground "black"))))
+  ;;             ;;        '(org-agenda-clocking ((t (:inherit secondary-selection :foreground "black"))) t)
+  ;;             ;;        '(org-agenda-done ((t (:foreground "dim gray" :strike-through nil))))
+  ;;             ;;        '(org-done ((t (:foreground "PaleGreen" :weight normal :strike-through t))))
+  ;;             ;;        '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
+  ;;             ;;        '(org-headline-done ((((class color) (min-colors 16) (background dark)) (:foreground "LightSalmon" :strike-through t))))
+  ;;             ;;        '(outline-1 ((t (:inherit font-lock-function-name-face :foreground "cornflower blue")))))))
 
-#       (load-theme 'solarized-dark t))
-
-#       (set-face-foreground 'secondary-selection "darkblue")
-#       (set-face-background 'secondary-selection "lightblue")
-#       (set-face-background 'font-lock-doc-face "black")
-#       (set-face-foreground 'font-lock-doc-face "wheat")
-#       (set-face-background 'font-lock-string-face "black")
-#       (set-face-foreground 'org-todo "green")
-#       (set-face-background 'org-todo "black")
-# ;; Some more tweaks to solarized:
-# ;;    (when window-system
-# ;;      (custom-set-faces
-# ;;        '(erc-input-face ((t (:foreground "antique white"))))
-# ;;        '(helm-selection ((t (:background "ForestGreen" :foreground "black"))))
-# ;;        '(org-agenda-clocking ((t (:inherit secondary-selection :foreground "black"))) t)
-# ;;        '(org-agenda-done ((t (:foreground "dim gray" :strike-through nil))))
-# ;;        '(org-done ((t (:foreground "PaleGreen" :weight normal :strike-through t))))
-# ;;        '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
-# ;;        '(org-headline-done ((((class color) (min-colors 16) (background dark)) (:foreground "LightSalmon" :strike-through t))))
-# ;;        '(outline-1 ((t (:inherit font-lock-function-name-face :foreground "cornflower blue"))))))
-# )
-# #+end_src
+  ;;             ))
+#+end_src
 
 #+begin_src emacs-lisp
   (use-package gotham-theme
     :ensure gotham-theme
-    :config
-    (load-theme 'gotham t))
+    :config (load-theme 'gotham t))
 #+end_src
 
 *** Helm
@@ -341,52 +341,54 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
 
 #+begin_src emacs-lisp
   (use-package org
-    :init
-      (progn
-        (setq org-directory "~/Documents/org")
-        (setq org-default-notes-file "~/Documents/org/inbox.org")
-
-        ;; mobile org
-        (setq org-mobile-inbox-for-pull "~/Documents/org/inbox.org")
-        (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-        (add-hook 'after-init-hook 'org-mobile-pull)
-        (add-hook 'kill-emacs-hook 'org-mobile-push)
-
-
-        ;; refile
-        (setq org-reverse-note-order t)
-        (setq org-refile-use-outline-path nil)
-        (setq org-refile-allow-creating-parent-nodes 'confirm)
-        (setq org-refile-use-cache nil)
-        (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-        (setq org-blank-before-new-entry nil)) 
+    :ensure org
     :config
-      (progn
-        (setq org-tag-alist '(
-          ("@work" . ?b) 
-          ("@home" . ?h) 
-          ("@writing" . ?w)
-          ("@errands" . ?e) 
-          ("@drawing" . ?d)
-          ("@coding" . ?c)
-          ("@phone" . ?p)
-          ("@reading" . ?r)
-          ("@computer" . ?l)
-;;        ("quantified" . ?q)
-          ("lowenergy" . ?0)
-          ("highenergy" . ?1)))) 
+    (progn
+      (setq org-directory "~/Documents/org")
+      (setq org-default-notes-file "~/Documents/org/inbox.org")
+      (setq org-mobile-files '(org-agenda-files "~/Documents/org/"))
+
+      ;; mobile org
+      (setq org-mobile-inbox-for-pull "~/Documents/org/inbox.org")
+      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+      (add-hook 'after-init-hook 'org-mobile-pull)
+      (add-hook 'kill-emacs-hook 'org-mobile-push)
+
+
+      ;; refile
+      (setq org-reverse-note-order t)
+      (setq org-refile-use-outline-path nil)
+      (setq org-refile-allow-creating-parent-nodes 'confirm)
+      (setq org-refile-use-cache nil)
+      (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+      (setq org-blank-before-new-entry nil)) 
+    :config
+    (progn
+      (setq org-tag-alist '(
+                            ("@work" . ?b) 
+                            ("@home" . ?h) 
+                            ("@writing" . ?w)
+                            ("@errands" . ?e) 
+                            ("@drawing" . ?d)
+                            ("@coding" . ?c)
+                            ("@phone" . ?p)
+                            ("@reading" . ?r)
+                            ("@computer" . ?l)
+                            ;;        ("quantified" . ?q)
+                            ("lowenergy" . ?0)
+                            ("highenergy" . ?1)))) 
     :bind
-      (("C-c l" . org-store-link)
-       ("C-c L" . org-insert-link-global)
-       ("C-c O" . org-open-at-point-global)
-       ;;("<f9> <f9>" . org-agenda-list)
-       ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
-       ;;("C-TAB" . org-cycle org-mode-map)
-       ;;("C-c v" . org-show-todo-tree org-mode-map)
-       ;;("C-c C-r" . org-refile org-mode-map)
-       ;;("C-c R" . org-reveal org-mode-map)
+    (("C-c l" . org-store-link)
+     ("C-c L" . org-insert-link-global)
+     ("C-c O" . org-open-at-point-global)
+     ;;("<f9> <f9>" . org-agenda-list)
+     ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
+     ;;("C-TAB" . org-cycle org-mode-map)
+     ;;("C-c v" . org-show-todo-tree org-mode-map)
+     ;;("C-c C-r" . org-refile org-mode-map)
+     ;;("C-c R" . org-reveal org-mode-map)
+     )
     )
-  )
 #+end_src
 
 =append-next-kill= is more useful to me than =org-table-copy-region=.
@@ -441,14 +443,6 @@ currently experimenting with.
 (setq org-expiry-inactive-timestamps t)
 (eval-after-load 'org-mode
      (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel))
-#+end_src
-
-**** Tag tasks with GTD-ish contexts
-
-This defines keyboard shortcuts for those, too.
-
-#+begin_src emacs-lisp
-  
 #+end_src
 
 **** Track TODO state
@@ -564,7 +558,6 @@ That way, it's easy to see the overview.
 #+end_src
 
 **** Track time
-
 #+begin_src emacs-lisp
   (setq org-clock-idle-time nil)
   (setq org-log-done 'time)
@@ -578,7 +571,7 @@ That way, it's easy to see the overview.
         (cond
          ((derived-mode-p 'org-agenda-mode)
           (let* ((marker (or (org-get-at-bol 'org-marker)
-                             (org-agenda-error)))
+                            (org-agenda-error)))
                  (hdmarker (or (org-get-at-bol 'org-hd-marker) marker))
                  (pos (marker-position marker))
                  (col (current-column))
@@ -591,16 +584,14 @@ That way, it's easy to see the overview.
                 (if (org-get-todo-state)
                     (org-todo "STARTED"))))))
          (t (if (org-get-todo-state)
-                    (org-todo "STARTED")))))))
+                (org-todo "STARTED")))))))
 #+end_src
-     
-Too many clock entries clutter up a heading.
 
+Too many clock entries clutter up a heading.
 #+begin_src emacs-lisp
   (setq org-log-into-drawer "LOGBOOK")
   (setq org-clock-into-drawer 1)
 #+end_src
-
 **** Habits
 
      I like using org-habits to track consistency. My task names tend
@@ -610,6 +601,7 @@ Too many clock entries clutter up a heading.
 #+begin_src emacs-lisp
   (setq org-habit-graph-column 80)
   (setq org-habit-show-habits-only-for-today t)
+  (setq org-habit-show-all-today t)
 #+end_src
 
 If you want to use habits, be sure to schedule your tasks and add a STYLE property with the value of =habit= to the tasks you want displayed.
@@ -643,7 +635,7 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
 ;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
 #+end_src
 
-**** Org-capture
+**** org-capture
 
 #+begin_src emacs-lisp
   (defvar xtof/org-basic-task-template
@@ -652,7 +644,6 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
     :PROPERTIES:
     :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
     :END:")
-
   (defvar xtof/org-basic-project-template 
     "* %^{Project} %^Gproject:
     %?
@@ -662,36 +653,35 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
 
 #+begin_src emacs-lisp
   (use-package org-capture
-    :init
-      (progn
-        (setq org-capture-templates 
-          `(("t"
-             "Task"
-             entry (file+headline "~/Documents/org/inbox.org" "Tasks")
-             ,xtof/org-basic-task-template)
-          ("m"
-	    "Memo" 
-	     entry (file+datetree "~/Documents/org/memos.org") 
-	     "* To:%^{To|Self} Date:%U Subject:%^{Subject} %^G %?") 
-;;	  ("t" 
-;;	   "Task" 
-;;	   entry (file+headline "~/Documents/org/inbox.org") 
-;;	   "* TODO %^{Description} %^G %?") 
-	  ("l" 
-	    "Log" 
-	    entry (file+datetree "~/Documents/org/log.org") 
-	    "* %U %^{Description} %?" 
-	    :immediate-finish t)
-	  ("p" 
-	    "Project" 
-	    entry (file+headline "~/Documents/org/projects.org" "Projects") 
-	    ,xtof/org-basic-project-template)
-          ("h"
-            "Habit"
-            entry (file "~/Documents/org/inbox.org")
-            "* TODO %?\n  SCHEDULED: %t\n  OPENED: %U\n  :PROPERTIES:\n  :STYLE: habit\n  :END:\n  %i"))))
-    :bind
-      (("C-c c" . org-capture)))
+    :ensure org
+    :config (progn
+              (setq org-capture-templates 
+                    `(("t"
+                       "Task"
+                       entry (file+headline "~/Documents/org/inbox.org" "Tasks")
+                       ,xtof/org-basic-task-template)
+                      ("m"
+                       "Memo" 
+                       entry (file+datetree "~/Documents/org/memos.org") 
+                       "* To:%^{To|Self} Date:%U Subject:%^{Subject} %^G %?") 
+                      ("l" 
+                       "Log" 
+                       entry (file+datetree "~/Documents/org/log.org") 
+                       "* %U %^{Description} %?" 
+                       :immediate-finish t)
+                      ("p" 
+                       "Project" 
+                       entry (file+headline "~/Documents/org/projects.org" "Projects") 
+                       ,xtof/org-basic-project-template)
+                      ("h"
+                       "Habit"
+                       entry (file "~/Documents/org/inbox.org")
+                       "* TODO %?\n  SCHEDULED: %t\n  OPENED: %U\n  :PROPERTIES:\n  :STYLE: habit\n  :END:\n  %i")
+                      ("n"
+                       "Note"
+                       entry (file+headline "~/Documents/org/notes.org" "Notes")
+                       "* %^{Title}\n%?"))))
+    :bind (("C-c c" . org-capture)))
 #+end_src
 
 **** Org-Agenda
@@ -1129,7 +1119,7 @@ Capture something based on the agenda
   ;;(setq org-agenda-dim-blocked-tasks t)
 
   ;; Compact the block agenda view
-  (setq org-agenda-compact-blocks t)
+  ;;(setq org-agenda-compact-blocks t)
 
   (defun xtof/org-agenda-init ()
     "init org agenda"
@@ -1140,7 +1130,8 @@ Capture something based on the agenda
                                      "~/Documents/org/log.org"
                                      "~/Documents/org/memos.org"
                                      "~/Documents/org/flagged.org"
-                                     "~/Documents/org/projects.org")))
+                                     "~/Documents/org/projects.org"
+                                     "~/Documents/org/notes.org")))
       ;; (setq org-agenda-time-grid
       ;;     '((daily today require-timed)
       ;;     "----------------"
@@ -1182,6 +1173,21 @@ Capture something based on the agenda
               )
             )
       ))
+
+  (defun xtof/org-after-todo-state-change-hook ()
+    "ultimateley do some things on specific todo(habit) close events"
+   (interactive)
+(let ((todo-state (org-entry-get (point) "TODO"))
+       (style (org-entry-get (point) "STYLE"))
+       (title (nth 4 (org-heading-components))))
+(cond ((string-equal todo-state "DONE")
+       (progn 
+           (print todo-state)
+           (print title)
+           (print style))
+        (t nil)))))
+  (add-hook 'org-after-todo-state-change-hook 'xtof/org-after-todo-state-change-hook)
+
 #+end_src
 ***** xtof/org-agenda-config
 ***** finialize

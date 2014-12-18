@@ -4,8 +4,9 @@
 
 
 ;; load up all literate org-mode files in this directory
-(defvar config-files '("/Users/fusupo/.emacs.d/xtof.org"
-		       "/Users/fusupo/.emacs.d/config_startup.org"))
+(defvar config-files '("/Users/fusupo/.emacs.d/xtof_config.org"
+		       "/Users/fusupo/.emacs.d/xtof_init.org"
+		       "/Users/fusupo/.emacs.d/xtof_startup.org"))
 (defun load-config (filename)
   (org-babel-load-file filename))
 (mapc #'load-config config-files)

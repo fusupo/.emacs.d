@@ -57,10 +57,12 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
               (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
 #+end_src
 
-*** volatile-highlights
+*** volatile-highlights						   :DISABLED:
+
 #+begin_src emacs-lisp
   (use-package volatile-highlights
     :ensure volatile-highlights
+    :disabled t
     :config (volatile-highlights-mode t))
 #+end_src
 
@@ -73,10 +75,11 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
             (global-pretty-mode t)))
 #+end_src
 
-*** fci-mode
+*** fci-mode							   :DISABLED:
 #+begin_src emacs-lisp
   (use-package fill-column-indicator
     :ensure fill-column-indicator
+    :disabled t
     :config 
     (progn
       (defadvice previous-line (around avoid-jumpy-fci activate)
@@ -86,18 +89,22 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
       (setq fci-rule-width 1)
       (setq fci-rule-use-dashes t)
       (setq fci-rule-column 80)
+      (setq fci-dash-pattern 0.25)
+      (setq fci-rule-color "DeepSkyBlue4")
       (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
       (global-fci-mode 1)))
 #+end_src
 *** indent-guide						   :DISABLED:
+
 #+begin_src emacs-lisp
-;;  (use-package indent-guide
-;;    :ensure indent-guide
-;;    :config
-;;    (progn
-;;      (setq indent-guide-char "|")
-;;      (indent-guide-global-mode)))
+  (use-package indent-guide
+    :ensure indent-guide
+    :disabled t
+    :config (progn
+              (setq indent-guide-char "|")
+              (indent-guide-global-mode)))
 #+end_src
+
 *** Zone
 #+begin_src emacs-lisp
 
@@ -118,7 +125,7 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
 #+end_src
 
 ** Feel
-*** auto-complete
+*** auto-complete						   :DISABLED:
 
 #+begin_src emacs-lisp
   (use-package auto-complete
@@ -392,12 +399,13 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
 ))
 #+end_src
 
-**** ac-cider
+**** ac-cider							   :DISABLED:
 
 #+begin_src emacs-lisp
   (use-package ac-cider
     :ensure ac-cider
     :defer t
+    :disabled t
     :config (progn
       (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
       (add-hook 'cider-mode-hook 'ac-cider-setup)
@@ -473,7 +481,11 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
                                   ("@computer" . ?l)
                                   ;;        ("quantified" . ?q)
                                   ("lowenergy" . ?0)
-                                  ("highenergy" . ?1))))
+                                  ("highenergy" . ?1)))
+
+            ;; look & feel
+            (setq org-level-color-stars-only t)
+            (setq org-src-fontify-natively t))
     :config (progn
               ;; mbile org
               (add-hook 'after-init-hook 'org-mobile-pull)
@@ -728,6 +740,7 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
 #+begin_src emacs-lisp
   (use-package org-capture
     :ensure org
+    :defer t
     :config (progn
               (setq org-capture-templates 
                     `(("t"
@@ -1205,7 +1218,10 @@ Capture something based on the agenda
                                      "~/Documents/org/memos.org"
                                      "~/Documents/org/flagged.org"
                                      "~/Documents/org/projects.org"
-                                     "~/Documents/org/notes.org")))
+                                     "~/Documents/org/notes.org"
+                                     "/Users/fusupo/Documents/org/.org2blog.org"
+                                     "/Users/fusupo/Documents/org/cooking.org"
+                                     "/Users/fusupo/Documents/org/meditationlog.org")))
       ;; (setq org-agenda-time-grid
       ;;     '((daily today require-timed)
       ;;     "----------------"
@@ -1279,15 +1295,9 @@ Capture something based on the agenda
     :defer t
     :init (progn
             (setq org2blog/wp-blog-alist
-                  '(("wordpress"
-                     :url "http://username.wordpress.com/xmlrpc.php"
-                     :username "username"
-                     :default-title "Hello World"
-                     :default-categories ("org2blog" "emacs")
-                     :tags-as-categories nil)
-                    ("my-blog"
-                     :url "http://www.marcchristophe.com/xmlrpc.php"
-                     :username "mc")))))
+                  '(("marcchristophe.com"
+                     :url xtof/wp-blog-alist-url
+                     :username xtof/wp-blog-alist-username)))))
 #+end_src
 
 ** Ledger Mode
@@ -1297,7 +1307,7 @@ Capture something based on the agenda
     :ensure ledger-mode
     :defer t
     :init (progn
-            (setq ledger-binary-path "/opt/local/bin/ledger")
+            (setq ledger-binary-path xof/ledger-path)
             (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
 #+end_src
 
@@ -1315,8 +1325,8 @@ Capture something based on the agenda
 
 #+BEGIN_SRC emacs-lisp
   (setq gnus-select-method
-        '(nnimap "xtof.net"
-                 (nnimap-address "mail.xtof.net")
+        `(nnimap "xtof.net"
+                 (nnimap-address ,xtof/gnus-nnimap-address)
                  (nnimap-server-port 993)
                  (nnimap-stream ssl)))
 
@@ -1325,11 +1335,18 @@ Capture something based on the agenda
         starttls-extra-arguments '("--insecure"))
 
   (setq message-send-mail-function 'smtpmail-send-it
-        smtpmail-smtp-server "mail.xtof.net"
-        smtpmail-default-smtp-server "mail.xtof.net"
+        smtpmail-smtp-server xtof/gnus-nnimap-address
+        smtpmail-default-smtp-server xtof/gnus-nnimap-address
         smtpmail-smtp-service 587
-        smtpmail-starttls-credentials '(("mail.xtof.net" 587 nil nil))
-        smtpmail-auth-credentials '(("mail.xtof.net" 587 "m@xtof.net" nil))
-        smtpmail-local-domain "xtof.net")
+        smtpmail-starttls-credentials `((,xtof/gnus-nnimap-address 587 nil nil))
+        smtpmail-auth-credentials `((,xtof/gnus-nnimap-address 587 ,xtof/gnus-auth-user nil))
+        smtpmail-local-domain xtof/gnus-local-domain)
 #+END_SRC
 
+* company-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure company
+    :config (progn
+              (add-hook 'after-init-hook 'global-company-mode)))
+#+END_SRC

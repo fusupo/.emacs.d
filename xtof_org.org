@@ -1,0 +1,857 @@
+#+TITLE xtof_org
+
+* Init
+
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure org
+    :defer t
+    :init (progn
+            (setq org-directory xtof/org-directory)
+            (setq org-default-notes-file  (format "%s/%s" xtof/org-directory "inbox.org"))
+            (setq org-mobile-files '(org-agenda-files xtof/org-directory))
+
+            ;; mobile org
+            (setq org-mobile-inbox-for-pull (format "%s/%s" xtof/org-directory "inbox.org"))
+            (setq org-mobile-directory xtof/org-mobile-directory)
+
+
+            ;; refile
+            (setq org-reverse-note-order t)
+            (setq org-refile-use-outline-path nil)
+            (setq org-refile-allow-creating-parent-nodes 'confirm)
+            (setq org-refile-use-cache nil)
+            (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+            (setq org-blank-before-new-entry nil)
+
+            ;; tags
+            (setq org-tag-alist '(("@work" . ?b) 
+                                  ("@home" . ?h) 
+                                  ("@writing" . ?w)
+                                  ("@errands" . ?e) 
+                                  ("@drawing" . ?d)
+                                  ("@coding" . ?c)
+                                  ("@phone" . ?p)
+                                  ("@reading" . ?r)
+                                  ("@computer" . ?l)
+                                  ;;        ("quantified" . ?q)
+                                  ("lowenergy" . ?0)
+                                  ("highenergy" . ?1)))
+
+            ;; look & feel
+            (setq org-level-color-stars-only t)
+            (setq org-src-fontify-natively t))
+    :config (progn
+              ;; mbile org
+              (add-hook 'after-init-hook 'org-mobile-pull)
+              (add-hook 'kill-emacs-hook 'org-mobile-push))
+    :bind(("C-c l" . org-store-link)
+          ("C-c L" . org-insert-link-global)
+          ("C-c O" . org-open-at-point-global)
+          ;;("<f9> <f9>" . org-agenda-list)
+          ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
+          ;;("C-TAB" . org-cycle org-mode-map)
+          ;;("C-c v" . org-show-todo-tree org-mode-map)
+          ;;("C-c C-r" . org-refile org-mode-map)
+          ;;("C-c R" . org-reveal org-mode-map)
+          ))
+#+end_src
+
+* Modules
+
+Org has a whole bunch of optional modules. These are the ones I'm
+currently experimenting with.
+#+begin_src emacs-lisp
+  (setq org-modules '(
+;;                      org-bbdb 
+;;                      org-gnus
+;;                      org-drill
+;;                      org-info
+;;                      org-jsinfo
+                      org-habit
+;;                      org-irc
+                      org-mouse
+;;                      org-annotate-file
+;;                      org-eval
+;;                      org-expiry
+;;                      org-interactive-query
+;;                      org-man
+                      org-panel
+;;                      org-screen
+;;                      org-toc
+                     ))
+(org-load-modules-maybe t)
+(setq org-expiry-inactive-timestamps t)
+(eval-after-load 'org-mode
+     (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel))
+#+end_src
+
+* Track TODO state
+
+The parentheses indicate keyboard shortcuts that I can use to set the task state. @ and ! toggle logging.
+
+#+begin_src emacs-lisp
+  (setq org-use-fast-todo-selection t) ;; actually seems to be true by default
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; next action
+           "NEXT(n!/!)"
+           ;;      "TOBLOG(b)"  ; next action
+           "STARTED(s)"
+           "WAITING(w@/!)"
+           "SOMEDAY(.)"
+           "|"
+           "DONE(x!)"
+           "CANCELLED(c@)")
+          (sequence
+           "TODELEGATE(-)"
+           "DELEGATED(d)"
+           "COMPLETE(x)")))
+#+end_src
+
+#+begin_src emacs-lisp
+  (setq org-todo-keyword-faces
+        '(("TODO" :foreground "firebrick" :weight bold)
+          ("NEXT" :foreground "red" :weight bold)
+          ("STARTED" :foreground "gold" :weight bold)
+          ("WAITING" :foreground "chocolate" :weight bold)
+          ("SOMEDAY" :foreground "light steel blue" :weight bold)
+          ("DONE" :foreground "olive drab" :weight bold)
+          ("CANCELLED" :foreground "dim gray" :weight bold)
+          ("TODELEGATE" :foreground "firebrick" :weight bold)
+          ("DELEGATED" :foreground "chocolate" :weight bold)
+          ("COMPLETE" :foreground "olive drab" :weight bold)))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; Parent can't be marked as done unless all children are done
+  (setq org-enforce-todo-dependencies t)
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+#+end_src
+
+# #+begin_src emacs-lisp
+#   (setq org-todo-state-tags-triggers
+#         (quote (("CANCELLED" ("CANCELLED" . t))
+#                 ("WAITING" ("WAITING" . t))
+#                 ("HOLD" ("WAITING") ("HOLD" . t))
+#                 (done ("WAITING") ("HOLD"))
+#                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+#                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+#                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+# #+end_src
+* Projects
+
+Projects are headings with the =:project:= tag, so we generally don't
+want that tag inherited, except when we display unscheduled tasks that
+don't belong to any projects.
+
+#+begin_src emacs-lisp
+;;  (setq org-tags-exclude-from-inheritance '("project"))
+#+end_src
+
+This code makes it easy for me to focus on one project and its tasks.
+
+# #+begin_src emacs-lisp
+#   (add-to-list 'org-speed-commands-user '("N" org-narrow-to-subtree))
+#   (add-to-list 'org-speed-commands-user '("W" widen))
+#   (defun sacha/org-agenda-for-subtree ()
+#     (interactive)
+#     (if (derived-mode-p 'org-agenda-mode)
+#       (let* ((marker (or (org-get-at-bol 'org-marker)
+#                          (org-agenda-error)))
+#              (hdmarker (or (org-get-at-bol 'org-hd-marker) marker))
+#              (pos (marker-position marker))
+#              (col (current-column))
+#              newhead)
+#         (org-with-remote-undo (marker-buffer marker)
+#           (with-current-buffer (marker-buffer marker)
+#             (widen)
+#            (let ((org-agenda-view-columns-initially t))
+#              (org-agenda nil "t" 'subtree)))))
+#       (let ((org-agenda-view-columns-initially t))
+#         (org-agenda nil "t" 'subtree))))
+#   (add-to-list 'org-speed-commands-user '("T" sacha/org-agenda-for-subtree))
+# #+end_src
+
+There's probably a proper way to do this, maybe with =<=. Oh, that would work nicely. =< C-c a t= too.
+
+* Enable filtering by effort estimates
+
+That way, it's easy to see short tasks that I can finish.
+
+#+begin_src emacs-lisp
+;;  (add-to-list 'org-global-properties
+;;        '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
+#+end_src
+
+* Enable filtering by project theme
+
+That way, it's easy to see the overview.
+
+#+begin_src emacs-lisp
+;;  (add-to-list 'org-global-properties
+;;        '("Theme_ALL". "Health Money Bitches"))
+#+end_src
+
+* Track time
+#+begin_src emacs-lisp
+  (setq org-clock-idle-time nil)
+  (setq org-log-done 'time)
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate)
+  (setq org-clock-report-include-clocking-task t)
+  (defadvice org-clock-in (after sacha activate)
+    "Mark STARTED when clocked in."
+    (save-excursion
+      (catch 'exit
+        (cond
+         ((derived-mode-p 'org-agenda-mode)
+          (let* ((marker (or (org-get-at-bol 'org-marker)
+                            (org-agenda-error)))
+                 (hdmarker (or (org-get-at-bol 'org-hd-marker) marker))
+                 (pos (marker-position marker))
+                 (col (current-column))
+                 newhead)
+            (org-with-remote-undo (marker-buffer marker)
+              (with-current-buffer (marker-buffer marker)
+                (widen)
+                (goto-char pos)
+                (org-back-to-heading t)
+                (if (org-get-todo-state)
+                    (org-todo "STARTED"))))))
+         (t (if (org-get-todo-state)
+                (org-todo "STARTED")))))))
+#+end_src
+
+Too many clock entries clutter up a heading.
+#+begin_src emacs-lisp
+  (setq org-log-into-drawer "LOGBOOK")
+  (setq org-clock-into-drawer 1)
+#+end_src
+* Habits
+
+     I like using org-habits to track consistency. My task names tend
+     to be a bit long, though, so I've configured the graph column to
+     show a little bit more to the right.
+     
+#+begin_src emacs-lisp
+  (setq org-habit-graph-column 80)
+  (setq org-habit-show-habits-only-for-today t)
+  (setq org-habit-show-all-today t)
+#+end_src
+
+If you want to use habits, be sure to schedule your tasks and add a STYLE property with the value of =habit= to the tasks you want displayed.
+
+* Estimating tasks
+    
+From "Add an effort estimate on the fly when clocking in" on the
+[[http://orgmode.org/worg/org-hacks.html][Org Hacks]] page:
+
+#+begin_src emacs-lisp
+  (defun xtof/org-mode-ask-effort ()
+    "Ask for an effort estimate when clocking in."
+    (unless (org-entry-get (point) "Effort")
+      (let ((effort
+             (completing-read
+              "Effort: "
+              (org-entry-get-multivalued-property (point) "Effort"))))
+        (unless (equal effort "")
+          (org-set-property "Effort" effort)))))
+
+  (add-hook 'org-clock-in-prepare-hook 'xtof/org-mode-ask-effort)
+#+end_src
+
+* Flexible scheduling of tasks
+
+I (theoretically) want to be able to schedule tasks for dates like the first Saturday
+of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-mode-how-to-schedule-repeating-tasks-for-the-first-saturday-of-every-month][someone else has figured that out!]]
+
+#+begin_src emacs-lisp
+;; Get this from https://raw.github.com/chenfengyuan/elisp/master/next-spec-day.el
+;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
+#+end_src
+
+* org-capture
+
+#+begin_src emacs-lisp
+  (defvar xtof/org-basic-task-template
+    "* TODO %^{Task} %^G
+    %?
+    :PROPERTIES:
+    :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
+    :END:")
+  (defvar xtof/org-basic-project-template 
+    "* %^{Project} %^Gproject:
+    %?
+    :PROPERTIES:
+    :END:")
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-capture
+    :ensure org
+    :defer t
+    :config (progn
+              (setq org-capture-templates 
+                    `(("t"
+                       "Task"
+                       entry (file+headline "~/Documents/org/inbox.org" "Tasks")
+                       ,xtof/org-basic-task-template)
+                      ("m"
+                       "Memo" 
+                       entry (file+datetree "~/Documents/org/memos.org") 
+                       "* To:%^{To|Self} Date:%U Subject:%^{Subject} %^G %?") 
+                      ("l" 
+                       "Log" 
+                       entry (file+datetree "~/Documents/org/log.org") 
+                       "* %U %^{Description} %?" 
+                       :immediate-finish t)
+                      ("p" 
+                       "Project" 
+                       entry (file+headline "~/Documents/org/projects.org" "Projects") 
+                       ,xtof/org-basic-project-template)
+                      ("h"
+                       "Habit"
+                       entry (file "~/Documents/org/inbox.org")
+                       "* TODO %?\n  SCHEDULED: %t\n  OPENED: %U\n  :PROPERTIES:\n  :STYLE: habit\n  :END:\n  %i")
+                      ("n"
+                       "Note"
+                       entry (file+headline "~/Documents/org/notes.org" "Notes")
+                       "* %^{Title}\n%?"))))
+    :bind (("C-c c" . org-capture)))
+#+end_src
+
+* Org-Agenda
+** pre-configure
+
+Org agenda custom commands
+
+There are quite a few custom commands here, and I often forget to use
+them. =) But it's good to define them, and over time, I'll get the
+hang of using these more!
+
+| Key         | Description                                                                                     |
+| .           | What am I waiting for?                                                                          |
+| T           | Not really an agenda command - shows the to-do tree in the current file                         |
+| b           | Shows business-related tasks                                                                    |
+| o           | Shows personal tasks and miscellaneous tasks (o: organizer)                                     |
+| w           | *Show all tasks for the upcoming week                                                            |
+| W           | *Show all tasks for the upcoming week, aside from the routine ones                               |
+| g ...       | Show tasks by context: b - business; c - coding; w - writing; p - phone; d - drawing, h - home  |
+| 0           | *Show common contexts with up to 3 tasks each, so that I can choose what I feel like working on |
+| ) (shift-0) | Show common contexts with all the tasks associated with them                                    |
+| 9           | Show common contexts with up to 3 unscheduled tasks each                                        |
+| ( (shift-9) | Show common contexts with all the unscheduled tasks associated with them                        |
+| d           | Timeline for today (agenda, clock summary)                                                      |
+| u           | Unscheduled tasks to do if I have free time                                                     |
+| U           | Unscheduled tasks that are not part of projects                                                 |
+| P           | Tasks by priority                                                                               |
+| p           | My projects                                                                                     |
+| 2           | Projects with tasks                                                                             |
+
+# ;;    (defun sacha/org-agenda-skip-scheduled ()
+# ;;      (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
+# ;;    (setq org-agenda-custom-commands
+# ;;          `(("T" tags-todo "TODO=\"TODO\"-goal-routine-SCHEDULED={.+}")
+# ;;            ("b" todo ""
+# ;;             ((org-agenda-files '("~/personal/business.org"))))
+# ;;            ("B" todo ""
+# ;;             ((org-agenda-files '("~/Dropbox/books"))))
+# ;;            ("o" todo ""
+# ;;             ((org-agenda-files '("~/personal/organizer.org"))))
+# ;;            ("c" todo ""
+# ;;             ((org-agenda-prefix-format "")
+# ;;              (org-agenda-cmp-user-defined 'sacha/org-sort-agenda-items-todo)
+# ;;              (org-agenda-view-columns-initially t)
+# ;;              ))
+# ;;            ;; Weekly review
+
+# ;;            ("2" "Bi-weekly review" agenda "" ((org-agenda-span 14) (org-agenda-log-mode 1)))
+# ;;            ("gb" "Business" todo ""  
+# ;;             ((org-agenda-files '("~/personal/business.org"))
+# ;;              (org-agenda-view-columns-initially t)))
+# ;;            ("gc" "Coding" tags-todo "@coding" 
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gw" "Writing" tags-todo "@writing"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gp" "Phone" tags-todo "@phone"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gd" "Drawing" tags-todo "@drawing"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;            ("gh" "Home" tags-todo "@home"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;           ("ge" "Errands" tags-todo "@errands"
+# ;;             ((org-agenda-view-columns-initially t)))
+# ;;
+# ;;            (")" "All by context"
+# ;;             ,sacha/org-agenda-contexts
+# ;;             ((org-agenda-sorting-strategy '(priority-down effort-down))
+# ;;              (sacha/org-agenda-limit-items nil)))
+# ;;            ("9" "Unscheduled top 3 by context"
+# ;;             ,sacha/org-agenda-contexts
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;             (org-agenda-sorting-strategy '(priority-down effort-down))
+# ;;              (sacha/org-agenda-limit-items 3)))
+# ;;            ("(" "All unscheduled by context"
+# ;;             ,sacha/org-agenda-contexts
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;              (org-agenda-sorting-strategy '(priority-down effort-down))
+# ;;              ))
+# ;;            ("d" "Timeline for today" ((agenda "" ))
+# ;;             ((org-agenda-ndays 1)
+# ;;              (org-agenda-show-log t)
+# ;;              (org-agenda-log-mode-items '(clock closed))
+# ;;              (org-agenda-clockreport-mode t)
+# ;;              (org-agenda-entry-types '())))
+# ;;            ("." "Waiting for" todo "WAITING")
+# ;;            ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING\"-project"
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;              (org-agenda-view-columns-initially t)
+# ;;              (org-tags-exclude-from-inheritance '("project"))
+# ;;              (org-agenda-overriding-header "Unscheduled TODO entries: ")
+# ;;              (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
+# ;;              (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
+# ;;            ("U" "Unscheduled tasks outside projects" tags-todo "-project"
+# ;;             ((org-agenda-skip-function 'sacha/org-agenda-skip-scheduled)
+# ;;              (org-tags-exclude-from-inheritance nil)
+# ;;              (org-agenda-view-columns-initially t)
+# ;;              (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
+# ;;              (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
+# ;;            ("P" "By priority"
+# ;;             ((tags-todo "+PRIORITY=\"A\"")
+# ;;              (tags-todo "+PRIORITY=\"B\"")
+# ;;              (tags-todo "+PRIORITY=\"\"")
+# ;;              (tags-todo "+PRIORITY=\"C\""))
+# ;;             ((org-agenda-prefix-format "%-10c %-10T %e ")
+# ;;              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+# ;;            ("pp" tags "+project-someday-TODO=\"DONE\""
+# ;;             ((org-tags-exclude-from-inheritance '("project"))
+# ;;              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+# ;;            ("p." tags "+project-TODO=\"DONE\""
+# ;;             ((org-tags-exclude-from-inheritance '("project"))
+# ;;              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+# ;;            ("S" tags-todo "TODO=\"STARTED\"")
+# ;;            ("2" "List projects with tasks" sacha/org-agenda-projects-and-tasks
+# ;;             "+PROJECT"
+# ;;               ((sacha/org-agenda-limit-items 3)))))
+# ;;  (bind-key "<apps> a" 'org-agenda)
+# #+end_src
+
+Make it easy to mark a task as done
+
+#+begin_src emacs-lisp
+;;  (defun sacha/org-agenda-done (&optional arg)
+;;    "Mark current TODO as done.
+;;    This changes the line at point, all other lines in the agenda referring to
+;;    the same tree node, and the headline of the tree node in the Org-mode file."
+;;    (interactive "P")
+;;    (org-agenda-todo "DONE"))
+;;    ;; Override the key definition for org-exit
+;;  (define-key org-agenda-mode-map "x" 'sacha/org-agenda-done)
+#+end_src
+
+Make it easy to mark a task as done and create a follow-up task
+
+#+begin_src emacs-lisp
+;;  (defun sacha/org-agenda-mark-done-and-add-followup ()
+;;    "Mark the current TODO as done and add another task after it.
+;;    Creates it at the same level as the previous task, so it's better to use
+;;    this with to-do items than with projects or headings."
+;;    (interactive)
+;;    (org-agenda-todo "DONE")
+;;    (org-agenda-switch-to)
+;;    (org-capture 0 "t"))
+;;    ;; Override the key definition
+;;  (define-key org-agenda-mode-map "X" 'sacha/org-agenda-mark-done-and-add-followup)
+#+end_src
+
+Capture something based on the agenda
+
+#+begin_src emacs-lisp
+;;(defun sacha/org-agenda-new ()
+;;  "Create a new note or task at the current agenda item.
+;;Creates it at the same level as the previous task, so it's better to use
+;;this with to-do items than with projects or headings."
+;;  (interactive)
+;;  (org-agenda-switch-to)
+;;  (org-capture 0))
+;;;; New key assignment
+;;(define-key org-agenda-mode-map "N" 'sacha/org-agenda-new)
+#+end_src
+
+** helper fns
+
+#+begin_src emacs-lisp
+  (defun bh/find-project-task ()
+    "Move point to the parent (project) task if any"
+    (save-restriction
+      (widen)
+      (let ((parent-task (save-excursion (org-back-to-heading 'invisible-ok) (point))))
+        (while (org-up-heading-safe)
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq parent-task (point))))
+        (goto-char parent-task)
+        parent-task)))
+  ;;
+  ;;
+
+  (defun bh/is-project-p ()
+    "Any task with a todo keyword subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                    (< (point) subtree-end)
+                    (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        has-subtask)))
+
+  (defun bh/is-project-subtree-p ()
+    "Any task with a todo keyword that is in a project subtree.
+    Callers of this function already widen the buffer view."
+    (let ((task (save-excursion (org-back-to-heading 'invisible-ok)
+                                (point))))
+      (save-excursion
+        (bh/find-project-task)
+        (if (equal (point) task)
+            nil
+          t))))
+
+  (defun bh/is-task-p ()
+    "Any task with a todo keyword and no subtask"
+    (save-restriction
+      (widen)
+      (let ((has-subtask)
+            (subtree-end (save-excursion (org-end-of-subtree t)))
+            (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+        (save-excursion
+          (forward-line 1)
+          (while (and (not has-subtask)
+                    (< (point) subtree-end)
+                    (re-search-forward "^\*+ " subtree-end t))
+            (when (member (org-get-todo-state) org-todo-keywords-1)
+              (setq has-subtask t))))
+        (and is-a-task (not has-subtask)))))
+
+  (defun bh/is-subproject-p ()
+    "Any task which is a subtask of another project"
+    (let ((is-subproject)
+          (is-a-task (member (nth 2 (org-heading-components)) org-todo-keywords-1)))
+      (save-excursion
+        (while (and (not is-subproject) (org-up-heading-safe))
+          (when (member (nth 2 (org-heading-components)) org-todo-keywords-1)
+            (setq is-subproject t))))
+      (and is-a-task is-subproject)))
+
+  (defun bh/list-sublevels-for-projects-indented ()
+    "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+      This is normally used by skipping functions where this variable is already local to the agenda."
+    (if (marker-buffer org-agenda-restrict-begin)
+        (setq org-tags-match-list-sublevels 'indented)
+      (setq org-tags-match-list-sublevels nil))
+    nil)
+
+  (defun bh/list-sublevels-for-projects ()
+    "Set org-tags-match-list-sublevels so when restricted to a subtree we list all subtasks.
+      This is normally used by skipping functions where this variable is already local to the agenda."
+    (if (marker-buffer org-agenda-restrict-begin)
+        (setq org-tags-match-list-sublevels t)
+      (setq org-tags-match-list-sublevels nil))
+    nil)
+
+  (defvar bh/hide-scheduled-and-waiting-next-tasks t)
+
+  (defun bh/toggle-next-task-display ()
+    (interactive)
+    (setq bh/hide-scheduled-and-waiting-next-tasks (not bh/hide-scheduled-and-waiting-next-tasks))
+    (when  (equal major-mode 'org-agenda-mode)
+      (org-agenda-redo))
+    (message "%s WAITING and SCHEDULED NEXT Tasks" (if bh/hide-scheduled-and-waiting-next-tasks "Hide" "Show")))
+
+  (defun bh/skip-stuck-projects ()
+    "Skip trees that are not stuck projects"
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (if (bh/is-project-p)
+            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                   (has-next ))
+              (save-excursion
+                (forward-line 1)
+                (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                  (unless (member "WAITING" (org-get-tags-at))
+                    (setq has-next t))))
+              (if has-next
+                  nil
+                next-headline)) ; a stuck project, has subtasks but no next task
+          nil))))
+
+  (defun bh/skip-non-stuck-projects ()
+    "Skip trees that are not stuck projects"
+    ;; (bh/list-sublevels-for-projects-indented)
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (if (bh/is-project-p)
+            (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                   (has-next ))
+              (save-excursion
+                (forward-line 1)
+                (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
+                  (unless (member "WAITING" (org-get-tags-at))
+                    (setq has-next t))))
+              (if has-next
+                  next-headline
+                nil)) ; a stuck project, has subtasks but no next task
+          next-headline))))
+
+  (defun bh/skip-non-projects ()
+    "Skip trees that are not projects"
+    ;; (bh/list-sublevels-for-projects-indented)
+    (if (save-excursion (bh/skip-non-stuck-projects))
+        (save-restriction
+          (widen)
+          (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+            (cond
+             ((bh/is-project-p)
+              nil)
+             ((and (bh/is-project-subtree-p) (not (bh/is-task-p)))
+              nil)
+             (t
+              subtree-end))))
+      (save-excursion (org-end-of-subtree t))))
+
+  (defun bh/skip-project-trees-and-habits ()
+    "Skip trees that are projects"
+    (save-restriction
+      (widen)
+      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (cond
+         ((bh/is-project-p)
+          subtree-end)
+         ((org-is-habit-p)
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-projects-and-habits-and-single-tasks ()
+    "Skip trees that are projects, tasks that are habits, single non-project tasks"
+    (save-restriction
+      (widen)
+      (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (cond
+         ((org-is-habit-p)
+          next-headline)
+         ((and bh/hide-scheduled-and-waiting-next-tasks
+               (member "WAITING" (org-get-tags-at)))
+          next-headline)
+         ((bh/is-project-p)
+          next-headline)
+         ((and (bh/is-task-p) (not (bh/is-project-subtree-p)))
+          next-headline)
+         (t
+          nil)))))
+
+  (defun bh/skip-project-tasks-maybe ()
+    "Show tasks related to the current restriction.
+    When restricted to a project, skip project and sub project tasks, habits, NEXT tasks, and loose tasks.
+    When not restricted, skip project and sub-project tasks, habits, and project related tasks."
+    (save-restriction
+      (widen)
+      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+             (next-headline (save-excursion (or (outline-next-heading) (point-max))))
+             (limit-to-project (marker-buffer org-agenda-restrict-begin)))
+        (cond
+         ((bh/is-project-p)
+          next-headline)
+         ((org-is-habit-p)
+          subtree-end)
+         ((and (not limit-to-project)
+               (bh/is-project-subtree-p))
+          subtree-end)
+         ((and limit-to-project
+               (bh/is-project-subtree-p)
+               (member (org-get-todo-state) (list "NEXT")))
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-project-tasks ()
+    "Show non-project tasks.
+    Skip project and sub-project tasks, habits, and project related tasks."
+    (save-restriction
+      (widen)
+      (let* ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (cond
+         ((bh/is-project-p)
+          subtree-end)
+         ((org-is-habit-p)
+          subtree-end)
+         ((bh/is-project-subtree-p)
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-non-project-tasks ()
+    "Show project tasks.
+    Skip project and sub-project tasks, habits, and loose non-project tasks."
+    (save-restriction
+      (widen)
+      (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+             (next-headline (save-excursion (or (outline-next-heading) (point-max)))))
+        (cond
+         ((bh/is-project-p)
+          next-headline)
+         ((org-is-habit-p)
+          subtree-end)
+         ((and (bh/is-project-subtree-p)
+               (member (org-get-todo-state) (list "NEXT")))
+          subtree-end)
+         ((not (bh/is-project-subtree-p))
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-projects-and-habits ()
+    "Skip trees that are projects and tasks that are habits"
+    (save-restriction
+      (widen)
+      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+        (cond
+         ((bh/is-project-p)
+          subtree-end)
+         ((org-is-habit-p)
+          subtree-end)
+         (t
+          nil)))))
+
+  (defun bh/skip-non-subprojects ()
+    "Skip trees that are not projects"
+    (let ((next-headline (save-excursion (outline-next-heading))))
+      (if (bh/is-subproject-p)
+          nil
+        next-headline)))
+#+end_src
+
+** xtof/org-agenda-init
+
+#+begin_src emacs-lisp
+  (defvar xtof/org-agenda-contexts
+    '((tags-todo "+@phone")
+      (tags-todo "+@work")
+      (tags-todo "+@drawing")a
+      (tags-todo "+@coding")
+      (tags-todo "+@writing")
+      (tags-todo "+@computer")
+      (tags-todo "+@home")
+      (tags-todo "+@errands"))
+    "Usual list of contexts.")
+
+  ;; Do not dim blocked tasks
+  ;;(setq org-agenda-dim-blocked-tasks t)
+
+  ;; Compact the block agenda view
+  ;;(setq org-agenda-compact-blocks t)
+
+  (defun xtof/org-agenda-init ()
+    "init org agenda"
+    (progn
+      (setq org-agenda-tags-column -136)
+      ;; (setq org-agenda-use-tag-inheritance nil)
+      (setq org-agenda-files (quote ("~/Documents/org/inbox.org"
+                                     "~/Documents/org/log.org"
+                                     "~/Documents/org/memos.org"
+                                     "~/Documents/org/flagged.org"
+                                     "~/Documents/org/projects.org"
+                                     "~/Documents/org/notes.org"
+                                     "/Users/fusupo/Documents/org/.org2blog.org"
+                                     "/Users/fusupo/Documents/org/cooking.org"
+                                     "/Users/fusupo/Documents/org/meditationlog.org")))
+      ;; (setq org-agenda-time-grid
+      ;;     '((daily today require-timed)
+      ;;     "----------------"
+      ;;     (800 1000 1200 1400 1600 1800)))
+      (setq org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS")
+      (setq org-agenda-span 2)
+      (setq org-agenda-sticky nil)
+      (setq org-agenda-show-log t)
+      (setq org-agenda-custom-commands
+            '(
+              ;;                 ("0" "Top 3 by context" xtof/org-agenda-contexts
+              ;;                   (
+              ;;(org-agenda-sorting-strategy '(priority-up effort-down))
+              ;;                    (xtof/org-agenda-limit-items 3)))
+
+              ("o" "Agenda and Office-related tasks"
+               ((agenda ""
+                        ((org-agenda-use-tag-inheritance nil)))
+                (tags-todo "work")
+                (tags "@work")))
+              
+              ("p" "projects"
+               ((tags ":project:"
+                      ((org-agenda-use-tag-inheritance t)))))
+
+              ("w" "Weekly review" agenda ""
+               ((org-agenda-span 7)
+                (org-agenda-log-mode 1)))
+
+              ("W" "Weekly review sans routines" agenda "" 
+               ((org-agenda-span 7) 
+                (org-agenda-log-mode 1)
+                (org-agenda-tag-filter-preset '("-routine"))))
+              
+              (" " "Agenda"
+               ((agenda "" nil)
+                (todo "NEXT")
+                (stuck "")))
+              )
+            )
+      ))
+
+#+end_src
+** xtof/org-agenda-config
+** finialize
+
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :ensure org
+    :config (xtof/org-agenda-init)
+    :bind
+      (("C-c a" . org-agenda))
+  )
+#+end_src
+
+* Org-ac							   :DISABLED:
+
+#+begin_src emacs-lisp
+  (use-package org-ac
+    :ensure org-ac
+    :disabled t
+    :config (progn
+      (org-ac/config-default)))
+#+end_src
+
+* Org2Blog
+
+#+begin_src emacs-lisp
+  (use-package org2blog-autoloads
+    :ensure org2blog
+    :defer t
+    :init (progn
+            (setq org2blog/wp-blog-alist
+                  '(("marcchristophe.com"
+                     :url xtof/wp-blog-alist-url
+                     :username xtof/wp-blog-alist-username)))))
+#+end_src
+

@@ -100,6 +100,7 @@ Init use-package
      (set-register (car r) (cons 'file (cdr r))))
    '((?c . "~/.emacs.d/xtof_config.org")
      (?i . "~/.emacs.d/xtof_init.org")
+     (?o . "~/.emacs.d/xtof_org.org")
      (?s . "~/.emacs.d/xtof_startup.org")
      (?p . "~/Documents/org/projects.org")
      (?l . "~/Documents/org/log.org")

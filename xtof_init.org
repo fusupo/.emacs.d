@@ -1,94 +1,32 @@
 #+TITLE: xtof_init
 
-* INIT
-** Load Packages
+* Utilities
+** exec-path-from-shell
 
 #+begin_src emacs-lisp
-  (dolist (p xtof/my-packages)
-          (unless (package-installed-p p)
-                  (package-install p)))
+  (use-package exec-path-from-shell
+    :ensure exec-path-from-shell
+    :config (progn
+            (when (memq window-system '(mac ns))
+              (exec-path-from-shell-initialize))))
 #+end_src
-   
-** Initialize Packages
-*** gnus
-#+BEGIN_SRC emacs-lisp
-  (setq gnus-select-method
-    '(nnimap "xtof.net"
-      (nnimap-address "mail.xtof.net")
-      (nnimap-server-port 993)
-      (nnimap-stream ssl)))
 
-(setq starttls-use-gnutls t
-      starttls-gnutls-program "gnutls-cli"
-      starttls-extra-arguments '("--insecure"))
+** Guide-key
 
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server "mail.xtof.net"
-      smtpmail-default-smtp-server "mail.xtof.net"
-      smtpmail-smtp-service 587
-      smtpmail-starttls-credentials '(("mail.xtof.net" 587 nil nil))
-      smtpmail-auth-credentials '(("mail.xtof.net" 587 "m@xtof.net" nil))
-      smtpmail-local-domain "xtof.net")
-#+END_SRC
-
+It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
 #+begin_src emacs-lisp
-  (require 'use-package)
+  (use-package guide-key
+    :ensure guide-key
+    :init (progn  (setq guide-key/guide-key-sequence '("C-x"
+                                                       "C-c"
+                                                       "C-c p"
+                                                       "C-c C-x")))
+    :config (guide-key-mode 1)) ; Enable guide-key-mode
 #+end_src
-*** Color Theme
 
-#+begin_src emacs-lisp
-  ;; (use-package solarized
-  ;;   :ensure solarized-theme
-  ;;   :config (progn
-              
-  ;;             ;; make the fringe stand out from the background
-  ;;             (setq solarized-distinct-fringe-background t)
-
-  ;;             ;; make the modeline high contrast
-  ;;             (setq solarized-high-contrast-mode-line t)
-
-  ;;             ;; Use less bolding
-  ;;             (setq solarized-use-less-bold t)
-
-  ;;             ;; Use more italics
-  ;;             (setq solarized-use-more-italic t)
-
-  ;;             ;; Use less colors for indicators such as git:gutter, flycheck and similar.
-  ;;             ;;      (setq solarized-emphasize-indicators nil)
-
-  ;;             ;; Don't change size of org-mode headlines (but keep other size-changes)
-  ;;             (setq solarized-scale-org-headlines nil)
-
-  ;;             ;; Avoid all font-size changes
-  ;;             (setq solarized-height-minus-1 1)
-  ;;             (setq solarized-height-plus-1 1)
-  ;;             (setq solarized-height-plus-2 1)
-  ;;             (setq solarized-height-plus-3 1)
-  ;;             (setq solarized-height-plus-4 1)
-
-  ;;             (load-theme 'solarized-dark t)
-  ;;             (set-face-foreground 'secondary-selection "darkblue")
-  ;;             (set-face-background 'secondary-selection "lightblue")
-  ;;             (set-face-background 'font-lock-doc-face "black")
-  ;;             (set-face-foreground 'font-lock-doc-face "wheat")
-  ;;             (set-face-background 'font-lock-string-face "black")
-  ;;             (set-face-foreground 'org-todo "green")
-  ;;             (set-face-background 'org-todo "black")
-              
-  ;;             ;; Some more tweaks to solarized:
-  ;;             ;;    (when window-system
-  ;;             ;;      (custom-set-faces
-  ;;             ;;        '(erc-input-face ((t (:foreground "antique white"))))
-  ;;             ;;        '(helm-selection ((t (:background "ForestGreen" :foreground "black"))))
-  ;;             ;;        '(org-agenda-clocking ((t (:inherit secondary-selection :foreground "black"))) t)
-  ;;             ;;        '(org-agenda-done ((t (:foreground "dim gray" :strike-through nil))))
-  ;;             ;;        '(org-done ((t (:foreground "PaleGreen" :weight normal :strike-through t))))
-  ;;             ;;        '(org-clock-overlay ((t (:background "SkyBlue4" :foreground "black"))))
-  ;;             ;;        '(org-headline-done ((((class color) (min-colors 16) (background dark)) (:foreground "LightSalmon" :strike-through t))))
-  ;;             ;;        '(outline-1 ((t (:inherit font-lock-function-name-face :foreground "cornflower blue")))))))
-
-  ;;             ))
-#+end_src
+* Look & Feel
+** Look
+*** Color Theme (gotham-theme)
 
 #+begin_src emacs-lisp
   (use-package gotham-theme
@@ -96,138 +34,463 @@
     :config (load-theme 'gotham t))
 #+end_src
 
+*** Smartparens
+
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :ensure smartparens
+    :config (progn
+            (require 'smartparens-config)
+            (add-hook 'emacs-lisp-mode-hook 'smartparens-strict-mode)
+            (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+            (show-smartparens-global-mode 1)))
+#+end_src
+
+*** rainbow-delimiters
+
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure rainbow-delimiters
+    :config (progn
+              (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
+#+end_src
+
+*** volatile-highlights
+#+begin_src emacs-lisp
+  (use-package volatile-highlights
+    :ensure volatile-highlights
+    :config (volatile-highlights-mode t))
+#+end_src
+
+*** Pretty Mode
+
+#+begin_src emacs-lisp
+  (use-package pretty-mode
+    :ensure pretty-mode
+    :init (progn
+            (global-pretty-mode t)))
+#+end_src
+
+*** fci-mode
+#+begin_src emacs-lisp
+  (use-package fill-column-indicator
+    :ensure fill-column-indicator
+    :config 
+    (progn
+      (defadvice previous-line (around avoid-jumpy-fci activate)
+        (if (symbol-value 'fci-mode)
+          (progn (fci-mode -1) ad-do-it (fci-mode 1))
+            ad-do-it))
+      (setq fci-rule-width 1)
+      (setq fci-rule-use-dashes t)
+      (setq fci-rule-column 80)
+      (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+      (global-fci-mode 1)))
+#+end_src
+*** indent-guide						   :DISABLED:
+#+begin_src emacs-lisp
+;;  (use-package indent-guide
+;;    :ensure indent-guide
+;;    :config
+;;    (progn
+;;      (setq indent-guide-char "|")
+;;      (indent-guide-global-mode)))
+#+end_src
+*** Zone
+#+begin_src emacs-lisp
+
+  (require 'zone)
+
+(defun zone-choose (pgm)
+    "Choose a PGM to run for `zone'."
+    (interactive
+     (list
+      (completing-read
+       "Program: "
+       (mapcar 'symbol-name zone-programs))))
+    (let ((zone-programs (list (intern pgm))))
+      (zone)))
+
+
+;;(setq zone-programs [zone-pgm-paragraph-spaz])
+#+end_src
+
+** Feel
+*** auto-complete
+
+#+begin_src emacs-lisp
+  (use-package auto-complete
+    :ensure auto-complete
+    :disabled t
+    :config (progn 
+               (ac-config-default)
+               (setq popup-use-optimized-column-computation nil)))
+#+end_src
+
 *** Helm
 
 #+begin_src emacs-lisp
   (use-package helm
-    :init
-    (progn 
-    (require 'helm-config) 
-      (setq helm-candidate-number-limit 100)
-      ;; From https://gist.github.com/antifuchs/9238468
-      (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-            helm-input-idle-delay 0.01  ; this actually updates things
-                                        ; reeeelatively quickly.
-            helm-quick-update t
-            helm-M-x-requires-pattern nil
-            helm-ff-skip-boring-files t)
-    (helm-mode))
-    :config
-    (progn
-      ;; I don't like the way switch-to-buffer uses history, since
-      ;; that confuses me when it comes to buffers I've already
-      ;; killed. Let's use ido instead.
-     (add-to-list 'helm-completing-read-handlers-alist 
-                   '(switch-to-buffer . ido))
-      ;; Unicode
-      (add-to-list 'helm-completing-read-handlers-alist 
-                   '(insert-char . ido)))
-     :bind (("C-c h" . helm-mini) 
-            ("M-x" . helm-M-x)))
+    :ensure helm
+    :init (progn 
+            (require 'helm-config) 
+            (setq helm-candidate-number-limit 100)
+            ;; From https://gist.github.com/antifuchs/9238468
+            (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+                  helm-input-idle-delay 0.01  ; this actually updates things
+                                          ; reeeelatively quickly.
+                  helm-quick-update t
+                  helm-M-x-requires-pattern nil
+                  helm-ff-skip-boring-files t)
+            (helm-mode))
+    :config (progn
+              ;; I don't like the way switch-to-buffer uses history, since
+              ;; that confuses me when it comes to buffers I've already
+              ;; killed. Let's use ido instead.
+              ;; (add-to-list 'helm-completing-read-handlers-alist 
+              ;;           '(switch-to-buffer . ido))
+              ;; Unicode
+              (add-to-list 'helm-completing-read-handlers-alist 
+                           '(insert-char . ido)))
+    :bind (("C-c h" . helm-mini) 
+           ("M-x" . helm-M-x)))
   (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
 #+end_src
 
-*** Helm-swoop
+**** Helm-swoop
+
 #+begin_src emacs-lisp
   (use-package helm-swoop
+    :ensure helm-swoop
     :bind (("C-S-s" . helm-swoop)))
 #+end_src
-*** helm-projectile
+
+**** helm-projectile
+
 #+begin_src emacs-lisp
   (use-package helm-projectile
+    :ensure helm-projectile
     :init (helm-projectile-on))
 #+end_src
-*** Guide-key
-It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
+
+*** Aggressive-Indent						   :DISABLED:
+
 #+begin_src emacs-lisp
-  (use-package guide-key
-    :init
-    (setq guide-key/guide-key-sequence '("C-x"
-                                         "C-c"
-                                         "C-c p"
-                                         "C-c C-x"))
-    (guide-key-mode 1))  ; Enable guide-key-mode
+;;  (use-package aggressive-indent
+;;    :init
+;;    (progn
+;;        (global-aggressive-indent-mode 1)
+;;        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+;;        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
 #+end_src
-*** Org-mode
+
+*** workgroups2
+
+#+begin_src emacs-lisp
+  (use-package workgroups2
+    :ensure workgroups2
+    :config (progn
+              (workgroups-mode 1)))
+#+end_src
+* Navigation
+** ace-jump-mode
+
+#+begin_src emacs-lisp
+  (use-package ace-jump-mode
+    :ensure ace-jump-mode
+    :bind ("M-SPC" . ace-jump-mode))
+  (bind-key "M-S-SPC" 'just-one-space)
+ #+end_src
+
+* Version Control
+** GIT
+*** magit
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure magit
+    :defer t)
+#+end_src
+
+*** git-commit-mode
+
+#+begin_src emacs-lisp
+  (use-package git-commit-mode
+    :ensure git-commit-mode
+    :defer t)
+#+end_src
+
+*** gitconfig-mode
+
+#+begin_src emacs-lisp
+  (use-package gitconfig-mode
+    :ensure gitconfig-mode
+    :defer t)
+#+end_src
+
+*** gitignore-mode
+
+#+begin_src emacs-lisp
+  (use-package gitignore-mode
+    :ensure gitignore-mode
+    :defer t)
+#+end_src
+
+*** gitattributes-mode
+
+#+begin_src emacs-lisp
+  (use-package gitattributes-mode
+    :ensure gitattributes-mode
+    :defer t)
+#+end_src
+
+* Language Support
+** WEB
+*** web-mode
+
+#+begin_src emacs-lisp
+;;  (use-package web-mode
+;;    :init 
+;;    (progn
+;;      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))))
+#+end_src
+
+*** web-beautify
+
+#+begin_src emacs-lisp
+  (use-package web-beautify
+    :ensure web-beautify
+    :defer t
+    :config (progn
+            
+            (eval-after-load 'js2-mode
+              '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
+
+            (eval-after-load 'json-mode
+              '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
+
+            (eval-after-load 'sgml-mode
+              '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
+
+            (eval-after-load 'css-mode
+              '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
+
+            (eval-after-load 'js2-mode
+              '(add-hook 'js2-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+
+            (eval-after-load 'json-mode
+              '(add-hook 'json-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+
+            (eval-after-load 'sgml-mode
+              '(add-hook 'html-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+
+            (eval-after-load 'css-mode
+              '(add-hook 'css-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
+#+end_src
+
+*** js2-mode
+
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :ensure js2-mode
+    :mode "\\.js\\'"
+    :interpreter "node")
+#+end_src
+
+*** skewer-mode
+
+#+begin_src emacs-lisp
+  (use-package skewer-mode
+    :ensure skewer-mode
+    :defer t
+    :config (progn
+              (add-hook 'js2-mode-hook 'skewer-mode)
+              (add-hook 'css-mode-hook 'skewer-css-mode)
+              (add-hook 'html-mode-hook 'skewer-html-mode)))
+#+end_src
+
+*** ac-html
+# ;;#+begin_src emacs-lisp
+# ;;  (use-package ac-html
+# ;;    :init
+# ;;    (progn
+# ;;      (add-hook 'html-mode-hook 'ac-html-enable)
+#  ;;     (add-to-list 'ac-sources 'ac-source-html-attribute-value)
+#  ;;     (add-to-list 'ac-sources 'ac-source-html-tag)
+#  ;;     (add-to-list 'ac-sources 'ac-source-html-attribute)
+# ;;If you are using web-mode:
+# ;;Additionally you need to add these lines:
+# ;;(add-to-list 'web-mode-ac-sources-alist
+# ;;             '("html" . (ac-source-html-attribute-value
+# ;;                         ac-source-html-tag
+# ;;                         ac-source-html-attribute)))
+# ;;If you are using haml-mode:
+# ;;use `ac-source-haml-tag' and `ac-source-haml-attribute'
+# ;;))
+# ;;#+end_src
+# ;;#+begin_src emacs-lisp
+# (use-package web-mode auto-complete
+#   :ensure web-mode
+#   :init (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+#   :config
+#   (progn
+#     (setq web-mode-enable-current-element-highlight t)
+#     (setq web-mode-ac-sources-alist
+#           '(("css" . (ac-source-css-property))
+#             ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
+#           )))
+# #+end_src
+** Lisp
+*** Clojure
+
+#+begin_src emacs-lisp
+  (use-package clojure-mode
+    :ensure clojure-mode
+    :defer t)
+#+end_src
+
+**** cider
+
+#+begin_src emacs-lisp
+  (use-package cider
+    :ensure cider
+    :defer t
+    :config (progn
+      (add-hook 'clojure-mode-hook 'cider-mode)
+      ;; Enable eldoc in Clojure buffers:
+      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+      ;; Log communication with the nREPL server (extremely useful for debugging CIDER problems):
+      ;; (The log will go to the buffer *nrepl-messages*.)
+      (setq nrepl-log-messages t)
+      ;; You can hide the *nrepl-connection* and *nrepl-server* buffers from appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
+      ;; When using switch-to-buffer, pressing SPC after the command will make the hidden buffers visible. They'll always be visible in list-buffers (C-x C-b).
+      (setq nrepl-hide-special-buffers t)
+      ;;Error messages may be wrapped for readability. If this value is nil, messages will not be wrapped; if it is truthy but non-numeric, the default fill-column will be used.
+      (setq cider-stacktrace-fill-column 80)
+      ;; The REPL buffer name can also display the port on which the nREPL server is running. Buffer name will look like cider-repl project-name:port.
+      (setq nrepl-buffer-name-show-port t)
+
+      (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
+      (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+
+      ;;(defadvice 4clojure-open-question (around 4clojure-open-question-around)
+      ;;  "Start a cider/nREPL connection if one hasn't already been started when
+      ;;opening 4clojure questions"
+      ;;  ad-do-it
+      ;;  (unless cider-current-clojure-buffer
+      ;;    (cider-jack-in)))
+))
+#+end_src
+
+**** ac-cider
+
+#+begin_src emacs-lisp
+  (use-package ac-cider
+    :ensure ac-cider
+    :defer t
+    :config (progn
+      (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+      (add-hook 'cider-mode-hook 'ac-cider-setup)
+      (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+      (eval-after-load "auto-complete"
+        '(add-to-list 'ac-modes 'cider-mode))
+
+      (defun set-auto-complete-as-completion-at-point-function ()
+        (setq completion-at-point-functions '(auto-complete)))
+
+      (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+      (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)))
+#+end_src
+
+**** 4Clojure
+
+#+begin_src emacs-lisp
+  (use-package 4clojure
+    :ensure 4clojure
+    :defer t)
+#+end_src
+
+*** eLisp
+
+#+begin_src emacs-lisp
+;;  (use-package clojure-mode-extra-font-locking
+;;    :init
+;;    (progn
+;;      (clojure-mode-extra-font-locking)))
+#+end_src
+
+*** SCHEME (mit-scheme)
+
+#+begin_src emacs-lisp
+  (setenv "MITSCHEME_LIBRARY_PATH"
+          xtof/mitschem-library-path)
+#+end_src
+
+* Productivity
+** Org-mode
 
 #+begin_src emacs-lisp
   (use-package org
     :ensure org
-    :config
-    (progn
-      (setq org-directory "~/Documents/org")
-      (setq org-default-notes-file "~/Documents/org/inbox.org")
-      (setq org-mobile-files '(org-agenda-files "~/Documents/org/"))
+    :defer t
+    :init (progn
+            (setq org-directory xtof/org-directory)
+            (setq org-default-notes-file  (format "%s/%s" xtof/org-directory "inbox.org"))
+            (setq org-mobile-files '(org-agenda-files xtof/org-directory))
 
-      ;; mobile org
-      (setq org-mobile-inbox-for-pull "~/Documents/org/inbox.org")
-      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-      (add-hook 'after-init-hook 'org-mobile-pull)
-      (add-hook 'kill-emacs-hook 'org-mobile-push)
+            ;; mobile org
+            (setq org-mobile-inbox-for-pull (format "%s/%s" xtof/org-directory "inbox.org"))
+            (setq org-mobile-directory xtof/org-mobile-directory)
 
 
-      ;; refile
-      (setq org-reverse-note-order t)
-      (setq org-refile-use-outline-path nil)
-      (setq org-refile-allow-creating-parent-nodes 'confirm)
-      (setq org-refile-use-cache nil)
-      (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-      (setq org-blank-before-new-entry nil)) 
-    :config
-    (progn
-      (setq org-tag-alist '(
-                            ("@work" . ?b) 
-                            ("@home" . ?h) 
-                            ("@writing" . ?w)
-                            ("@errands" . ?e) 
-                            ("@drawing" . ?d)
-                            ("@coding" . ?c)
-                            ("@phone" . ?p)
-                            ("@reading" . ?r)
-                            ("@computer" . ?l)
-                            ;;        ("quantified" . ?q)
-                            ("lowenergy" . ?0)
-                            ("highenergy" . ?1)))) 
-    :bind
-    (("C-c l" . org-store-link)
-     ("C-c L" . org-insert-link-global)
-     ("C-c O" . org-open-at-point-global)
-     ;;("<f9> <f9>" . org-agenda-list)
-     ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
-     ;;("C-TAB" . org-cycle org-mode-map)
-     ;;("C-c v" . org-show-todo-tree org-mode-map)
-     ;;("C-c C-r" . org-refile org-mode-map)
-     ;;("C-c R" . org-reveal org-mode-map)
-     )
-    )
+            ;; refile
+            (setq org-reverse-note-order t)
+            (setq org-refile-use-outline-path nil)
+            (setq org-refile-allow-creating-parent-nodes 'confirm)
+            (setq org-refile-use-cache nil)
+            (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
+            (setq org-blank-before-new-entry nil)
+
+            ;; tags
+            (setq org-tag-alist '(("@work" . ?b) 
+                                  ("@home" . ?h) 
+                                  ("@writing" . ?w)
+                                  ("@errands" . ?e) 
+                                  ("@drawing" . ?d)
+                                  ("@coding" . ?c)
+                                  ("@phone" . ?p)
+                                  ("@reading" . ?r)
+                                  ("@computer" . ?l)
+                                  ;;        ("quantified" . ?q)
+                                  ("lowenergy" . ?0)
+                                  ("highenergy" . ?1))))
+    :config (progn
+              ;; mbile org
+              (add-hook 'after-init-hook 'org-mobile-pull)
+              (add-hook 'kill-emacs-hook 'org-mobile-push))
+    :bind(("C-c l" . org-store-link)
+          ("C-c L" . org-insert-link-global)
+          ("C-c O" . org-open-at-point-global)
+          ;;("<f9> <f9>" . org-agenda-list)
+          ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
+          ;;("C-TAB" . org-cycle org-mode-map)
+          ;;("C-c v" . org-show-todo-tree org-mode-map)
+          ;;("C-c C-r" . org-refile org-mode-map)
+          ;;("C-c R" . org-reveal org-mode-map)
+          ))
 #+end_src
 
-=append-next-kill= is more useful to me than =org-table-copy-region=.
-
-#+begin_src emacs-lisp
-;;  (eval-after-load 'org
-;;    '(progn
-;;       (bind-key "C-M-w" 'append-next-kill org-mode-map)))
-#+end_src
-
-# **** Estimating WPM
-I'm curious about how fast I type some things.
-#+begin_src emacs-lisp
-;;(require 'org-clock)
-;;(defun sacha/org-entry-wpm ()
-;;  (interactive)
-;;  (save-restriction
-;;    (save-excursion
-;;      (org-narrow-to-subtree)
-;;      (goto-char (point-min))
-;;      (let* ((words (count-words-region (point-min) (point-max)))
-;;	     (minutes (org-clock-sum-current-item))
-;;	     (wpm (/ words minutes)))
-;;	(message "WPM: %d (words: %d, minutes: %d)" wpm words minutes)
-;;	(kill-new (number-to-string wpm))))))
-#+end_src
-
-**** Modules
+*** Modules
 
 Org has a whole bunch of optional modules. These are the ones I'm
 currently experimenting with.
@@ -256,7 +519,7 @@ currently experimenting with.
      (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel))
 #+end_src
 
-**** Track TODO state
+*** Track TODO state
 
 The parentheses indicate keyboard shortcuts that I can use to set the task state. @ and ! toggle logging.
 
@@ -314,7 +577,7 @@ The parentheses indicate keyboard shortcuts that I can use to set the task state
 #                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
 #                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 # #+end_src
-**** Projects
+*** Projects
 
 Projects are headings with the =:project:= tag, so we generally don't
 want that tag inherited, except when we display unscheduled tasks that
@@ -350,7 +613,7 @@ This code makes it easy for me to focus on one project and its tasks.
 
 There's probably a proper way to do this, maybe with =<=. Oh, that would work nicely. =< C-c a t= too.
 
-**** Enable filtering by effort estimates
+*** Enable filtering by effort estimates
 
 That way, it's easy to see short tasks that I can finish.
 
@@ -359,7 +622,7 @@ That way, it's easy to see short tasks that I can finish.
 ;;        '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
 #+end_src
 
-**** Enable filtering by project theme
+*** Enable filtering by project theme
 
 That way, it's easy to see the overview.
 
@@ -368,7 +631,7 @@ That way, it's easy to see the overview.
 ;;        '("Theme_ALL". "Health Money Bitches"))
 #+end_src
 
-**** Track time
+*** Track time
 #+begin_src emacs-lisp
   (setq org-clock-idle-time nil)
   (setq org-log-done 'time)
@@ -403,7 +666,7 @@ Too many clock entries clutter up a heading.
   (setq org-log-into-drawer "LOGBOOK")
   (setq org-clock-into-drawer 1)
 #+end_src
-**** Habits
+*** Habits
 
      I like using org-habits to track consistency. My task names tend
      to be a bit long, though, so I've configured the graph column to
@@ -417,7 +680,7 @@ Too many clock entries clutter up a heading.
 
 If you want to use habits, be sure to schedule your tasks and add a STYLE property with the value of =habit= to the tasks you want displayed.
 
-**** Estimating tasks
+*** Estimating tasks
     
 From "Add an effort estimate on the fly when clocking in" on the
 [[http://orgmode.org/worg/org-hacks.html][Org Hacks]] page:
@@ -436,7 +699,7 @@ From "Add an effort estimate on the fly when clocking in" on the
   (add-hook 'org-clock-in-prepare-hook 'xtof/org-mode-ask-effort)
 #+end_src
 
-**** Flexible scheduling of tasks
+*** Flexible scheduling of tasks
 
 I (theoretically) want to be able to schedule tasks for dates like the first Saturday
 of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-mode-how-to-schedule-repeating-tasks-for-the-first-saturday-of-every-month][someone else has figured that out!]]
@@ -446,7 +709,7 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
 ;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
 #+end_src
 
-**** org-capture
+*** org-capture
 
 #+begin_src emacs-lisp
   (defvar xtof/org-basic-task-template
@@ -495,8 +758,8 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
     :bind (("C-c c" . org-capture)))
 #+end_src
 
-**** Org-Agenda
-***** pre-configure
+*** Org-Agenda
+**** pre-configure
 
 Org agenda custom commands
 
@@ -652,11 +915,10 @@ Capture something based on the agenda
 ;;;; New key assignment
 ;;(define-key org-agenda-mode-map "N" 'sacha/org-agenda-new)
 #+end_src
-***** helper fns
-#+begin_src emacs-lisp
 
-  ;;
-  ;;
+**** helper fns
+
+#+begin_src emacs-lisp
   (defun bh/find-project-task ()
     "Move point to the parent (project) task if any"
     (save-restriction
@@ -669,7 +931,6 @@ Capture something based on the agenda
         parent-task)))
   ;;
   ;;
-
 
   (defun bh/is-project-p ()
     "Any task with a todo keyword subtask"
@@ -913,7 +1174,9 @@ Capture something based on the agenda
           nil
         next-headline)))
 #+end_src
-***** xtof/org-agenda-init
+
+**** xtof/org-agenda-init
+
 #+begin_src emacs-lisp
   (defvar xtof/org-agenda-contexts
     '((tags-todo "+@phone")
@@ -985,356 +1248,88 @@ Capture something based on the agenda
             )
       ))
 
-  (defun xtof/org-after-todo-state-change-hook ()
-    "ultimateley do some things on specific todo(habit) close events"
-   (interactive)
-(let ((todo-state (org-entry-get (point) "TODO"))
-       (style (org-entry-get (point) "STYLE"))
-       (title (nth 4 (org-heading-components))))
-(cond ((string-equal todo-state "DONE")
-       (progn 
-           (print todo-state)
-           (print title)
-           (print style))
-        (t nil)))))
-  (add-hook 'org-after-todo-state-change-hook 'xtof/org-after-todo-state-change-hook)
-
 #+end_src
-***** xtof/org-agenda-config
-***** finialize
+**** xtof/org-agenda-config
+**** finialize
+
 #+begin_src emacs-lisp
   (use-package org-agenda
-    ;;:ensure org-agenda
+    :ensure org
     :config (xtof/org-agenda-init)
     :bind
       (("C-c a" . org-agenda))
   )
 #+end_src
-**** Org-ac
+
+*** Org-ac							   :DISABLED:
+
 #+begin_src emacs-lisp
   (use-package org-ac
     :ensure org-ac
+    :disabled t
     :config (progn
       (org-ac/config-default)))
 #+end_src
-**** Org2Blog
+
+*** Org2Blog
+
 #+begin_src emacs-lisp
   (use-package org2blog-autoloads
     :ensure org2blog
-    :init
-    (progn
-      (setq org2blog/wp-blog-alist
-      '(("wordpress"
-         :url "http://username.wordpress.com/xmlrpc.php"
-         :username "username"
-         :default-title "Hello World"
-         :default-categories ("org2blog" "emacs")
-         :tags-as-categories nil)
-        ("my-blog"
-         :url "http://www.marcchristophe.com/xmlrpc.php"
-         :username "mc")))))
+    :defer t
+    :init (progn
+            (setq org2blog/wp-blog-alist
+                  '(("wordpress"
+                     :url "http://username.wordpress.com/xmlrpc.php"
+                     :username "username"
+                     :default-title "Hello World"
+                     :default-categories ("org2blog" "emacs")
+                     :tags-as-categories nil)
+                    ("my-blog"
+                     :url "http://www.marcchristophe.com/xmlrpc.php"
+                     :username "mc")))))
 #+end_src
-**** Ledger Mode
+
+** Ledger Mode
+
 #+begin_src emacs-lisp
-(use-package ledger-mode
-  :init
-  (progn
-    (setq ledger-binary-path "/opt/local/bin/ledger")
-    (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
+  (use-package ledger-mode
+    :ensure ledger-mode
+    :defer t
+    :init (progn
+            (setq ledger-binary-path "/opt/local/bin/ledger")
+            (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
 #+end_src
-*** Clojure Mode (lispy shit)
-#+begin_src emacs-lisp
-;;  (use-package clojure-mode-extra-font-locking
-;;    :init
-;;    (progn
-;;      (clojure-mode-extra-font-locking)))
-#+end_src
-**** Smartparens
-#+begin_src emacs-lisp
-  (use-package smartparens
-    :ensure smartparens
-    :config (progn
-            (require 'smartparens-config)
-            (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
-            (add-hook 'emacs-lisp-mode-hook 'smartparens-strict-mode)
-            (show-smartparens-global-mode 1)))
-#+end_src
-**** rainbow-delimiters
-#+begin_src emacs-lisp
-  (use-package rainbow-delimiters
-    :ensure rainbow-delimiters
-    :config (progn
-              (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-              (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
-              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
-#+end_src
-**** rainbow-blocks
-#+begin_src emacs-lisp
-  (use-package rainbow-blocks
-    :ensure rainbow-blocks
-    :config (progn
-              (add-hook 'html-mode-hook 'rainbow-blocks-mode)))
-#+end_src
-**** 4Clojure
-#+begin_src emacs-lisp
-  (use-package 4clojure)
-#+end_src 
-*** Projectile
+
+** Projectile
 
 #+begin_src emacs-lisp
   (use-package projectile
-    :init
-    (progn
+    :ensure projectile
+    :defer t
+    :init (progn
         (projectile-global-mode)))
 #+end_src
 
-*** Aggressive-Indent
+** gnus
 
-#+begin_src emacs-lisp
-  (use-package aggressive-indent
-    :init
-    (progn
-        (global-aggressive-indent-mode 1)
-        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
-#+end_src
+#+BEGIN_SRC emacs-lisp
+  (setq gnus-select-method
+        '(nnimap "xtof.net"
+                 (nnimap-address "mail.xtof.net")
+                 (nnimap-server-port 993)
+                 (nnimap-stream ssl)))
 
-*** Pretty Mode
+  (setq starttls-use-gnutls t
+        starttls-gnutls-program "gnutls-cli"
+        starttls-extra-arguments '("--insecure"))
 
-#+begin_src emacs-lisp
-  (use-package pretty-mode
-    :init
-    (progn
-        (global-pretty-mode t)))
-#+end_src
-
-*** ac-helmm
-
-#+begin_src emacs-lisp
-  (use-package ac-helm
-    :init
-    (progn
-      (global-set-key (kbd "C-:") 'ac-complete-with-helm)
-      (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)))
-#+end_src
-
-*** cider
-
-#+begin_src emacs-lisp
-  (use-package cider
-    :init
-    (progn
-      (add-hook 'clojure-mode-hook 'cider-mode)
-;;(defadvice 4clojure-open-question (around 4clojure-open-question-around)
-;;  "Start a cider/nREPL connection if one hasn't already been started when
-;;opening 4clojure questions"
-;;  ad-do-it
-;;  (unless cider-current-clojure-buffer
-;;    (cider-jack-in)))
-))
-#+end_src
-
-*** ac-cider
-
-#+begin_src emacs-lisp
-  (use-package ac-cider
-    :ensure ac-cider
-    :init (progn
-      (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
-      (add-hook 'cider-mode-hook 'ac-cider-setup)
-      (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-      (eval-after-load "auto-complete"
-        '(add-to-list 'ac-modes 'cider-mode))
-
-      (defun set-auto-complete-as-completion-at-point-function ()
-        (setq completion-at-point-functions '(auto-complete)))
-
-      (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
-      (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)))
-#+end_src
-
-*** fci-mode
-#+begin_src emacs-lisp
-  (use-package fill-column-indicator
-    :ensure fill-column-indicator
-    :config 
-    (progn
-      (defadvice previous-line (around avoid-jumpy-fci activate)
-        (if (symbol-value 'fci-mode)
-          (progn (fci-mode -1) ad-do-it (fci-mode 1))
-            ad-do-it))
-      (setq fci-rule-width 1)
-      (setq fci-rule-use-dashes t)
-      (setq fci-rule-column 80)
-      (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-      (global-fci-mode 1)))
-#+end_src
-*** workgroups2
-#+begin_src emacs-lisp
-  (use-package workgroups2
-    :ensure workgroups2
-    :config (progn
-              (workgroups-mode 1)))
-#+end_src
-*** indent-guide :DISABLED:
-#+begin_src emacs-lisp
-;;  (use-package indent-guide
-;;    :ensure
-;;    :config
-;;    (progn
-;;      (setq indent-guide-char "|")
-;;      (indent-guide-global-mode)))
-#+end_src
-*** exec-path-from-shell
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :init
-    (progn
-      (when (memq window-system '(mac ns))
-            (exec-path-from-shell-initialize))))
-#+end_src
-*** WEB
-**** web-mode
-#+begin_src emacs-lisp
-;;  (use-package web-mode
-;;    :init 
-;;    (progn
-;;      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))))
-#+end_src
-**** web-beautify
-#+begin_src emacs-lisp
-  (use-package web-beautify
-    :init 
-    (progn
-
-(eval-after-load 'js2-mode
-  '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
-
-(eval-after-load 'json-mode
-  '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
-
-(eval-after-load 'sgml-mode
-  '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
-
-(eval-after-load 'css-mode
-  '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
-
-(eval-after-load 'js2-mode
-  '(add-hook 'js2-mode-hook
-             (lambda ()
-               (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
-
-(eval-after-load 'json-mode
-  '(add-hook 'json-mode-hook
-             (lambda ()
-               (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
-
-(eval-after-load 'sgml-mode
-  '(add-hook 'html-mode-hook
-             (lambda ()
-               (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
-
-(eval-after-load 'css-mode
-  '(add-hook 'css-mode-hook
-             (lambda ()
-               (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
-#+end_src
-**** js2-mode
-#+begin_src emacs-lisp
-  (use-package js2-mode
-    :init
-    (progn
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-
-    ;;You may also want to hook it in for shell scripts running via node.js:
-    ;;(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-
-    ))
-#+end_src
-**** skewer-mode
-#+begin_src emacs-lisp
-  (use-package skewer-mode
-    :init
-    (progn
-      (add-hook 'js2-mode-hook 'skewer-mode)
-      (add-hook 'css-mode-hook 'skewer-css-mode)
-      (add-hook 'html-mode-hook 'skewer-html-mode)))
-#+end_src
-**** ac-html
-;;#+begin_src emacs-lisp
-;;  (use-package ac-html
-;;    :init
-;;    (progn
-;;      (add-hook 'html-mode-hook 'ac-html-enable)
- ;;     (add-to-list 'ac-sources 'ac-source-html-attribute-value)
- ;;     (add-to-list 'ac-sources 'ac-source-html-tag)
- ;;     (add-to-list 'ac-sources 'ac-source-html-attribute)
-;;If you are using web-mode:
-;;Additionally you need to add these lines:
-;;(add-to-list 'web-mode-ac-sources-alist
-;;             '("html" . (ac-source-html-attribute-value
-;;                         ac-source-html-tag
-;;                         ac-source-html-attribute)))
-;;If you are using haml-mode:
-;;use `ac-source-haml-tag' and `ac-source-haml-attribute'
-;;))
-;;#+end_src
-#+begin_src emacs-lisp
-(use-package web-mode auto-complete
-  :ensure web-mode
-  :init (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  :config
-  (progn
-    (setq web-mode-enable-current-element-highlight t)
-    (setq web-mode-ac-sources-alist
-          '(("css" . (ac-source-css-property))
-            ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
-          )))
-#+end_src
-**** ace-jump-mode
-#+begin_src emacs-lisp
-  (use-package ace-jump-mode
-    :ensure ace-jump-mode
-    :bind ("M-SPC" . ace-jump-mode))
-  (bind-key "M-S-SPC" 'just-one-space)
- #+end_src
-**** auto-complete
-#+begin_src emacs-lisp
-  (use-package auto-complete
-    :ensure auto-complete
-    :config (ac-config-default))
-#+end_src
-**** volatile-highlights
-#+begin_src emacs-lisp
-  (use-package volatile-highlights
-    :ensure volatile-highlights
-    :config (volatile-highlights-mode t))
-#+end_src
-*** GIT
-**** magit
-#+begin_src emacs-lisp
-  (use-package magit
-    :ensure magit)
-#+end_src
-**** git-commit-mode
-#+begin_src emacs-lisp
-  (use-package git-commit-mode
-    :ensure git-commit-mode)
-#+end_src
-**** gitconfig-mode
-#+begin_src emacs-lisp
-  (use-package gitconfig-mode
-    :ensure gitconfig-mode)
-#+end_src
-**** gitconfig-mode
-#+begin_src emacs-lisp
-  (use-package gitignore-mode
-    :ensure gitignore-mode)
-#+end_src
-**** gitattributes-mode
-#+begin_src emacs-lisp
-  (use-package gitattributes-mode
-    :ensure gitattributes-mode)
-#+end_src
-
+  (setq message-send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "mail.xtof.net"
+        smtpmail-default-smtp-server "mail.xtof.net"
+        smtpmail-smtp-service 587
+        smtpmail-starttls-credentials '(("mail.xtof.net" 587 nil nil))
+        smtpmail-auth-credentials '(("mail.xtof.net" 587 "m@xtof.net" nil))
+        smtpmail-local-domain "xtof.net")
+#+END_SRC
 

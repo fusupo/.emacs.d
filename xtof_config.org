@@ -1,20 +1,19 @@
 #+TITLE: xtof_config
 
-* CONFIG
-** Personal Info
+* Personal Info
 
 #+begin_src emacs-lisp
   (setq user-full-name "Marc-P. Christophe"
         user-mail-address "m@xtof.net")
 #+end_src
 
-** Backups
+* Backups
 
 #+begin_src emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+end_src
 
-** History
+* History
 
 From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 #+begin_src emacs-lisp
@@ -29,9 +28,9 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
           regexp-search-ring))
 #+end_src
 
-** Packages
-*** Initialize Package System
+* Packages
 
+Initialize Package System
 #+begin_src emacs-lisp
   (require 'package)
 
@@ -44,59 +43,30 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
         (package-refresh-contents))
 #+end_src
 
-*** Additional Package load Paths
-
+Additional Package load Paths
 #+begin_src emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/elisp")
 #+end_src
 
-*** List Packages
-
+List Packages
 #+begin_src emacs-lisp
-  (defvar xtof/my-packages '(use-package
-                              helm
-                              helm-swoop
-                              guide-key
-                              org
-                              solarized-theme
-                              zenburn-theme
-                              clojure-mode
-                              smartparens
-                              cider
-                              magit
-                              rainbow-delimiters
-                              ledger-mode
-                              projectile
-                              aggressive-indent
-                              pretty-mode
-                              rainbow-blocks
-                              org-ac
-                              ac-helm
-                              ac-cider
-                              fill-column-indicator
-                              workgroups2
-                              indent-guide
-                              exec-path-from-shell
-                              web-mode
-                              web-beautify
-                              js2-mode
-                              skewer-mode
-                              helm-projectile
-                              4clojure
-                              org2blog
-                              ac-html))
-
+  (defvar xtof/my-packages '(use-package))
 #+end_src
-    
-** Visual Config
-*** Font
+
+Init use-package
+#+begin_src emacs-lisp
+  (require 'use-package)
+#+end_src
+
+* Look & Feel
+** Font
 
 #+begin_src emacs-lisp
   ;;(set-face-attribute 'default nil :font "Terminus (TTF)" :height 110)
   (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
 #+end_src
 
-*** Windows
+** Windows
 
 #+begin_src emacs-lisp
   (when window-system
@@ -111,23 +81,18 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
   (setq initial-frame-alist '((top . 1) (left . 1) (width . 100) (height . 60)))
   (setq inhibit-startup-screen t)
 #+end_src
-** Misc Config
+
+** Quiet Alerts
 
 #+begin_src emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)   
-  ;;(setq-default fill-column 80)
+  (setq visible-bell 1)
+;;  (setq visible-bell nil)
+;;  (setq ring-bell-function `(lambda ()
+;;    (set-face-background 'default "DodgerBlue")
+;;    (set-face-background 'default "black")))
 #+end_src
 
-UTF-8
-From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
-
-#+begin_src emacs-lisp
-  (prefer-coding-system 'utf-8)
-  (when (display-graphic-p)
-    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+end_src
-
-** Frequently-accessed files
+* Frequently-accessed files
 
 #+begin_src emacs-lisp :results silent
   (mapcar
@@ -146,39 +111,17 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
   ))
 #+end_src
 
-** Zone
+* Misc Config
+
 #+begin_src emacs-lisp
-
-  (require 'zone)
-
-(defun zone-choose (pgm)
-    "Choose a PGM to run for `zone'."
-    (interactive
-     (list
-      (completing-read
-       "Program: "
-       (mapcar 'symbol-name zone-programs))))
-    (let ((zone-programs (list (intern pgm))))
-      (zone)))
-
-
-;;(setq zone-programs [zone-pgm-paragraph-spaz])
+  (fset 'yes-or-no-p 'y-or-n-p)   
+  ;;(setq-default fill-column 80)
 #+end_src
 
-** Shut The Fuck Up
-
+UTF-8
+From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 #+begin_src emacs-lisp
-  (setq visible-bell 1)
-;;  (setq visible-bell nil)
-;;  (setq ring-bell-function `(lambda ()
-;;    (set-face-background 'default "DodgerBlue")
-;;    (set-face-background 'default "black")))
-#+end_src
-
-** SCHEME
-
-#+begin_src emacs-lisp
-(setenv "MITSCHEME_LIBRARY_PATH"
-    "/Applications/Scheme.app/Contents/Resources/")
-
+  (prefer-coding-system 'utf-8)
+  (when (display-graphic-p)
+    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src

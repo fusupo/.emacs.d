@@ -75,17 +75,17 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
             (global-pretty-mode t)))
 #+end_src
 
-*** fci-mode							   :DISABLED:
+*** fci-mode
+							  
 #+begin_src emacs-lisp
   (use-package fill-column-indicator
     :ensure fill-column-indicator
-    :disabled t
     :config 
     (progn
-      (defadvice previous-line (around avoid-jumpy-fci activate)
-        (if (symbol-value 'fci-mode)
-          (progn (fci-mode -1) ad-do-it (fci-mode 1))
-            ad-do-it))
+;;      (defadvice previous-line (around avoid-jumpy-fci activate)
+;;        (if (symbol-value 'fci-mode)
+;;          (progn (fci-mode -1) ad-do-it (fci-mode 1))
+;;            ad-do-it))
       (setq fci-rule-width 1)
       (setq fci-rule-use-dashes t)
       (setq fci-rule-column 80)
@@ -94,6 +94,7 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
       (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
       (global-fci-mode 1)))
 #+end_src
+
 *** indent-guide						   :DISABLED:
 
 #+begin_src emacs-lisp
@@ -130,9 +131,11 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
 #+begin_src emacs-lisp
   (use-package auto-complete
     :ensure auto-complete
-    :config (progn 
-               (ac-config-default)
-               (setq popup-use-optimized-column-computation nil)))
+   ;; :config (progn 
+              ;; (ac-config-default)
+               ;;(setq popup-use-optimized-column-computation nil)
+;;)
+)
 #+end_src
 
 *** Helm

@@ -18,5 +18,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-babel-load-languages (quote ((emacs-lisp . t) (scheme . t))))
- '(org-stuck-projects (quote ("+LEVEL=2/-DONE" ("NEXT") nil ""))))
+ '(org-babel-load-languages (quote ((emacs-lisp . t) (scheme . t)))))

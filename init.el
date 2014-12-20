@@ -18,4 +18,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-agenda-window-setup (quote current-window))
  '(org-babel-load-languages (quote ((emacs-lisp . t) (scheme . t)))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-habit-alert-future-face ((t (:background "#edb443"))))
+ '(org-habit-clear-future-face ((t (:background "#195466"))))
+ '(org-habit-overdue-future-face ((t (:background "#c23127"))))
+ '(org-habit-ready-future-face ((t (:background "#2aa889")))))

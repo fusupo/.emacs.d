@@ -1,6 +1,6 @@
 #+TITLE xtof_org
 
-* Init
+* ////////////////////////////////////////////////////////////////////////  INIT
 
 #+begin_src emacs-lisp
   (use-package org
@@ -22,7 +22,7 @@
             (setq org-refile-allow-creating-parent-nodes 'confirm)
             (setq org-refile-use-cache nil)
             (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
-            (setq org-blank-before-new-entry nil)
+            ;;(setq org-blank-before-new-entry nil)
 
             ;; tags
             (setq org-tag-alist '(("@work" . ?b) 
@@ -34,61 +34,44 @@
                                   ("@phone" . ?p)
                                   ("@reading" . ?r)
                                   ("@computer" . ?l)
-                                  ;;        ("quantified" . ?q)
+                                  (:startgroup . nil)
                                   ("lowenergy" . ?0)
-                                  ("highenergy" . ?1)))
+                                  ("highenergy" . ?9)
+                                  (:endgroup . nil)
+                                  ("#HEALTH_BEAUTY" . ?B)
+                                  ("#HOME_FAMILY" . ?F)
+                                  ("#ART_PHILOSOPHY" . ?P)
+                                  ("#RESEARCH_EDUCATION" . ?E)
+                                  ("#WORK_MONEY" . ?M)
+                                  ("#ORGANIZATION_REGIMENT" . ?R)
+                                  ))
 
             ;; look & feel
-            (setq org-level-color-stars-only t)
-            (setq org-src-fontify-natively t))
+            ;;(setq org-level-color-stars-only t)
+            (setq org-src-fontify-natively t)
+            (setq org-tags-column -136)
+            (setq org-agenda-dim-blocked-tasks nil))
     :config (progn
-              ;; mbile org
+              ;; mobile org
               (add-hook 'after-init-hook 'org-mobile-pull)
               (add-hook 'kill-emacs-hook 'org-mobile-push))
     :bind(("C-c l" . org-store-link)
           ("C-c L" . org-insert-link-global)
-          ("C-c O" . org-open-at-point-global)
-          ;;("<f9> <f9>" . org-agenda-list)
-          ;;("<f9> <f8>" . (lambda () (interactive) (org-capture nil "r")))
-          ;;("C-TAB" . org-cycle org-mode-map)
-          ;;("C-c v" . org-show-todo-tree org-mode-map)
-          ;;("C-c C-r" . org-refile org-mode-map)
-          ;;("C-c R" . org-reveal org-mode-map)
-          ))
+          ("C-c O" . org-open-at-point-global)))
 #+end_src
 
-* Modules
+* /////////////////////////////////////////////////////////////////////  MODULES
 
-Org has a whole bunch of optional modules. These are the ones I'm
-currently experimenting with.
 #+begin_src emacs-lisp
-  (setq org-modules '(
-;;                      org-bbdb 
-;;                      org-gnus
-;;                      org-drill
-;;                      org-info
-;;                      org-jsinfo
-                      org-habit
-;;                      org-irc
-                      org-mouse
-;;                      org-annotate-file
-;;                      org-eval
-;;                      org-expiry
-;;                      org-interactive-query
-;;                      org-man
-                      org-panel
-;;                      org-screen
-;;                      org-toc
-                     ))
+  (setq org-modules '(org-habit
+;;                      org-mouse
+                      org-panel))
 (org-load-modules-maybe t)
-(setq org-expiry-inactive-timestamps t)
 (eval-after-load 'org-mode
      (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel))
 #+end_src
 
-* Track TODO state
-
-The parentheses indicate keyboard shortcuts that I can use to set the task state. @ and ! toggle logging.
+* ////////////////////////////////////////////////////////////  TRACK TODO STATE
 
 #+begin_src emacs-lisp
   (setq org-use-fast-todo-selection t) ;; actually seems to be true by default
@@ -144,14 +127,14 @@ The parentheses indicate keyboard shortcuts that I can use to set the task state
 #                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 # #+end_src
 
-* Projects
+* ////////////////////////////////////////////////////////////////////  PROJECTS
 
 Projects are headings with the =:project:= tag, so we generally don't
 want that tag inherited, except when we display unscheduled tasks that
 don't belong to any projects.
 
 #+begin_src emacs-lisp
-  (setq org-tags-exclude-from-inheritance '("project"))
+  (setq org-tags-exclude-from-inheritance '("PROJ"))
 #+end_src
 
 This code makes it easy for me to focus on one project and its tasks.
@@ -180,32 +163,24 @@ This code makes it easy for me to focus on one project and its tasks.
 
 There's probably a proper way to do this, maybe with =<=. Oh, that would work nicely. =< C-c a t= too.
 
-* Enable filtering by effort estimates
+* ///////////////////////////////////////  ENABLED FILTERING BY EFFORT ESTIMATES
 
-That way, it's easy to see short tasks that I can finish.
-
+per https://www.gnu.org/software/emacs/manual/html_node/org/Filtering_002flimiting-agenda-items.html
 #+begin_src emacs-lisp
-;;  (add-to-list 'org-global-properties
-;;        '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
+  (add-to-list 'org-global-properties
+        '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
 #+end_src
 
-* Enable filtering by project theme
+* //////////////////////////////////////////////////////////////////  TRACK TIME
 
-That way, it's easy to see the overview.
-
-#+begin_src emacs-lisp
-;;  (add-to-list 'org-global-properties
-;;        '("Theme_ALL". "Health Money Bitches"))
-#+end_src
-
-* Track time
+from sach chua
 #+begin_src emacs-lisp
   (setq org-clock-idle-time nil)
   (setq org-log-done 'time)
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate)
   (setq org-clock-report-include-clocking-task t)
-  (defadvice org-clock-in (after sacha activate)
+  (defadvice org-clock-in (after xtof activate)
     "Mark STARTED when clocked in."
     (save-excursion
       (catch 'exit
@@ -233,7 +208,8 @@ Too many clock entries clutter up a heading.
   (setq org-log-into-drawer "LOGBOOK")
   (setq org-clock-into-drawer 1)
 #+end_src
-* Habits
+
+* //////////////////////////////////////////////////////////////////////  HABITS
   
 #+begin_src emacs-lisp
   (setq org-habit-graph-column 80)
@@ -241,7 +217,7 @@ Too many clock entries clutter up a heading.
   (setq org-habit-show-all-today t)
 #+end_src
 
-* Estimating tasks
+* ////////////////////////////////////////////////////////////  ESTIMATING TASKS
     
 From "Add an effort estimate on the fly when clocking in" on the
 [[http://orgmode.org/worg/org-hacks.html][Org Hacks]] page:
@@ -260,7 +236,7 @@ From "Add an effort estimate on the fly when clocking in" on the
   (add-hook 'org-clock-in-prepare-hook 'xtof/org-mode-ask-effort)
 #+end_src
 
-* Flexible scheduling of tasks
+* ////////////////////////////////////////////////  FLEXIBLE SCHEDULING OF TASKS
 
 I (theoretically) want to be able to schedule tasks for dates like the first Saturday
 of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-mode-how-to-schedule-repeating-tasks-for-the-first-saturday-of-every-month][someone else has figured that out!]]
@@ -270,20 +246,57 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
 ;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
 #+end_src
 
-* org-capture
+* /////////////////////////////////////////////////////////////////  ORG-CAPTURE
 
 #+begin_src emacs-lisp
-  (defvar xtof/org-basic-task-template
+  (defvar xtof/org-capture-project-template 
+    "* TODO %^{Project} %^G:PROJ:
+    %?")
+  (defvar xtof/org-capture-task-template
     "* TODO %^{Task} %^G
-    %?
     :PROPERTIES:
-    :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
-    :END:")
-  (defvar xtof/org-basic-project-template 
-    "* %^{Project} %^Gproject:
-    %?
+    :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|3:00|4:00}
+    :END:
+    %?")
+  (defvar xtof/org-capture-habit-template
+    "* TODO %^{Habit} %^G
+    SCHEDULED: %^{schedule}T
+    OPENED: %U
     :PROPERTIES:
-    :END:")
+    :STYLE: habit
+    :Effort: %^{effort|1:00|0:05|0:15|0:30|2:00|3:00|4:00}
+    :END:
+    %?
+    %i")
+  (defvar xtof/org-capture-memo-template
+    "* %^{Subject} %^G
+    :PROPERTIES:
+    :TO: %^{to|Self}
+    :DATE: %U
+    :END:
+    %?")
+  (defvar xtof/org-capture-note-template
+    "* %^{Description} %^G
+    :PROPERTIES: 
+    :DATE: %U
+    :END:
+    %?")
+  (defvar xtof/org-capture-activity-log-template
+    "* %^{Title} %^G
+    :PROPERTIES:
+    :DATE: %U
+    :END:
+    %?")
+  (defvar xtof/org-capture-dream-log-template
+    "* %^{Title} %^G
+    %?")
+  (defvar xtof/org-capture-meditation-log-template
+    "* %^{Title}
+    :PROPERTIES:
+    :STARTTIME: %^{start time}U
+    :DURATION: %^{duration|0:30}
+    :END:
+    %?")
 #+end_src
 
 #+begin_src emacs-lisp
@@ -292,35 +305,44 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
     :defer t
     :config (progn
               (setq org-capture-templates 
-                    `(("t"
+                    `(("p" 
+                       "Project" 
+                       entry (file+headline "~/Documents/org/projects.org" "Projects") 
+                       ,xtof/org-capture-project-template)
+                      ("t"
                        "Task"
                        entry (file+headline "~/Documents/org/inbox.org" "Tasks")
-                       ,xtof/org-basic-task-template)
+                       ,xtof/org-capture-task-template)
+                      ("h"
+                       "Habit"
+                       entry (file+headline "~/Documents/org/inbox.org" "Tasks")
+                       ,xtof/org-capture-habit-template)
                       ("m"
                        "Memo" 
                        entry (file+datetree "~/Documents/org/memos.org") 
-                       "* To:%^{To|Self} Date:%U Subject:%^{Subject} %^G %?") 
-                      ("l" 
-                       "Log" 
-                       entry (file+datetree "~/Documents/org/log.org") 
-                       "* %U %^{Description} %?" 
-                       :immediate-finish t)
-                      ("p" 
-                       "Project" 
-                       entry (file+headline "~/Documents/org/projects.org" "Projects") 
-                       ,xtof/org-basic-project-template)
-                      ("h"
-                       "Habit"
-                       entry (file "~/Documents/org/inbox.org")
-                       "* TODO %?\n  SCHEDULED: %t\n  OPENED: %U\n  :PROPERTIES:\n  :STYLE: habit\n  :END:\n  %i")
+                       ,xtof/org-capture-memo-template)
                       ("n"
                        "Note"
                        entry (file+headline "~/Documents/org/notes.org" "Notes")
-                       "* %^{Title}\n%?"))))
-    :bind (("C-c c" . org-capture)))
+                       ,xtof/org-capture-note-template)
+                      ;;
+                      ("l" "logs")
+                      ("la" 
+                       "Activity Log Entry" 
+                       entry (file+datetree "~/Documents/org/activity_log.org") 
+                       ,xtof/org-capture-activity-log-template)
+                      ("ld" 
+                       "Dream Log Entry" 
+                       entry (file+datetree "~/Documents/org/dream_log.org") 
+                       ,xtof/org-capture-dream-log-template)
+                      ("lm" 
+                       "Meditation Log Entry" 
+                       entry (file+datetree "~/Documents/org/meditation_log.org") 
+                       ,xtof/org-capture-meditation-log-template))))
+              :bind (("C-c c" . org-capture)))
 #+end_src
 
-* Org-Agenda
+* //////////////////////////////////////////////////////////////////  ORG-AGENDA
 ** pre-configure
 
 Org agenda custom commands
@@ -487,7 +509,7 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
     (save-restriction
       (widen)
       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (not (equal nil (search-forward ":project:" subtree-end t nil))))))
+        (not (equal nil (search-forward ":PROJ:" subtree-end t nil))))))
 
   (defun xtof/skip-non-stuck-projects ()
     "Skip trees that are not stuck projects"
@@ -507,43 +529,45 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
           next-headline ))))
 #+end_src
 
-** xtof/org-agenda-init
+** xtof/org-agenda-config
 
 #+begin_src emacs-lisp
-  (defvar xtof/org-agenda-contexts
-    '((tags-todo "+@phone")
-      (tags-todo "+@work")
-      (tags-todo "+@drawing")
-      (tags-todo "+@coding")
-      (tags-todo "+@writing")
-      (tags-todo "+@computer")
-      (tags-todo "+@home")
-      (tags-todo "+@errands"))
-    "Usual list of contexts.")
+;;  (defvar xtof/org-agenda-contexts
+;;    '((tags-todo "+@phone")
+;;      (tags-todo "+@work")
+;;      (tags-todo "+@drawing")
+;;      (tags-todo "+@coding")
+;;      (tags-todo "+@writing")
+;;      (tags-todo "+@computer")
+;;      (tags-todo "+@home")
+;;      (tags-todo "+@errands"))
+;;    "Usual list of contexts.")
 
-  (defun xtof/org-agenda-init ()
+  (defun xtof/org-agenda-config ()
     "init org agenda"
     (progn
       (setq org-agenda-tags-column -136)
       (setq org-agenda-use-tag-inheritance nil)
       (setq org-agenda-files (quote ("~/Documents/org/inbox.org"
-                                     "~/Documents/org/log.org"
+                                     "~/Documents/org/activity_log.org"
+                                     "~/Documents/org/meditation_log.org"
+                                     "~/Documents/org/dream_log.org"
                                      "~/Documents/org/memos.org"
                                      "~/Documents/org/flagged.org"
                                      "~/Documents/org/projects.org"
                                      "~/Documents/org/notes.org"
                                      "/Users/fusupo/Documents/org/.org2blog.org"
-                                     "/Users/fusupo/Documents/org/cooking.org"
-                                     "/Users/fusupo/Documents/org/meditationlog.org")))
+                                     "/Users/fusupo/Documents/org/cooking.org")))
        (setq org-agenda-time-grid
            '((daily today require-timed)
            "----------------"
            (600 900 1200 1300 1800 2400)))
-      (setq org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS")
+      
       (setq org-agenda-span 2)
       (setq org-agenda-sticky nil)
       (setq org-agenda-show-log t)
-      
+      (add-hook 'org-agenda-mode-hook (lambda () (hl-line-mode 1)))
+
       (setq org-agenda-custom-commands
             '(
               ("o" "Agenda and Office-related tasks"
@@ -554,8 +578,9 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
               
               (" " "Agenda"
                ((agenda "" nil)
-                (todo "NEXT")
-                (tags "project"
+                (todo "NEXT"
+                      ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")))
+                (tags-todo "PROJ"
                       ((org-agenda-overriding-header "Stuck Projects")
                        (org-agenda-skip-function 'xtof/skip-non-stuck-projects)))
                 (todo "WAITING"
@@ -564,19 +589,18 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
       ))
 #+end_src
 
-** xtof/org-agenda-config
 ** finialize
 
 #+begin_src emacs-lisp
   (use-package org-agenda
     :ensure org
-    :config (xtof/org-agenda-init)
+    :config (xtof/org-agenda-config)
     :bind
       (("C-c a" . org-agenda))
   )
 #+end_src
 
-* Org-ac
+* //////////////////////////////////////////////////////////////////////  ORG-AC
 
 #+begin_src emacs-lisp
   (use-package org-ac
@@ -584,8 +608,8 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
     :init (progn
       (org-ac/config-default)))
 #+end_src
-x
-* Org2Blog
+
+* ////////////////////////////////////////////////////////////////////  ORG2BLOG
 
 #+begin_src emacs-lisp
   (use-package org2blog-autoloads

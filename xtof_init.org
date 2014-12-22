@@ -1,492 +1,209 @@
 #+TITLE: xtof_init
 
-* Utilities
-** exec-path-from-shell
+* //////////////////////////////////////-------------------------  PERSONAL INFO
 
 #+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :ensure exec-path-from-shell
-    :config (progn
-            (when (memq window-system '(mac ns))
-              (exec-path-from-shell-initialize))))
+  (setq user-full-name "Marc-P. Christophe"
+        user-mail-address "m@xtof.net"
+        user-homepage "http://www.marcchristophe.com")
 #+end_src
 
-** Guide-key
+* //////////////////////////////////////-------------------------------  BACKUPS
 
-It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
 #+begin_src emacs-lisp
-  (use-package guide-key
-    :ensure guide-key
-    :init (progn  (setq guide-key/guide-key-sequence '("C-x"
-                                                       "C-c"
-                                                       "C-c p"
-                                                       "C-c C-x")))
-    :config (guide-key-mode 1)) ; Enable guide-key-mode
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+end_src
 
-* Look & Feel
-** Look
-*** Color Theme (gotham-theme)
+* //////////////////////////////////////-------------------------------  HISTORY
 
+From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 #+begin_src emacs-lisp
-  (use-package gotham-theme
-    :ensure gotham-theme
-    :config (load-theme 'gotham t))
+  (setq savehist-file "~/.emacs.d/savehist")
+  (savehist-mode 1)
+  (setq history-length t)
+  (setq history-delete-duplicates t)
+  (setq savehist-save-minibuffer-history 1)
+  (setq savehist-additional-variables
+        '(kill-ring
+          search-ring
+          regexp-search-ring))
 #+end_src
 
-*** Smartparens
+* //////////////////////////////////////------------------------------  PACKAGES
 
+Initialize Package System
 #+begin_src emacs-lisp
-  (use-package smartparens
-    :ensure smartparens
-    :config (progn
-            (require 'smartparens-config)
-            (add-hook 'emacs-lisp-mode-hook 'smartparens-strict-mode)
-            (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
-            (show-smartparens-global-mode 1)))
+  (require 'package)
+
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+
+  (package-initialize)
+
+  (when (not package-archive-contents)
+        (package-refresh-contents))
 #+end_src
 
-*** rainbow-delimiters
-
+Additional Package load Paths
 #+begin_src emacs-lisp
-  (use-package rainbow-delimiters
-    :ensure rainbow-delimiters
-    :config (progn
-              (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
-              (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
+  (add-to-list 'load-path "~/.emacs.d/elisp")
 #+end_src
 
-*** volatile-highlights						   :DISABLED:
-
+List Packages
 #+begin_src emacs-lisp
-  (use-package volatile-highlights
-    :ensure volatile-highlights
-    :disabled t
-    :config (volatile-highlights-mode t))
+  (defvar xtof/my-packages '(use-package))
 #+end_src
 
-*** Pretty Mode
-
+Init use-package
 #+begin_src emacs-lisp
-  (use-package pretty-mode
-    :ensure pretty-mode
-    :init (progn
-            (global-pretty-mode t)))
+  (require 'use-package)
 #+end_src
 
-*** fci-mode
-							  
+* //////////////////////////////////////---------------------------  LOOK & FEEL
+** Font
+
 #+begin_src emacs-lisp
-  (use-package fill-column-indicator
-    :ensure fill-column-indicator
-    :config 
-    (progn
-;;      (defadvice previous-line (around avoid-jumpy-fci activate)
-;;        (if (symbol-value 'fci-mode)
-;;          (progn (fci-mode -1) ad-do-it (fci-mode 1))
-;;            ad-do-it))
-      (setq fci-rule-width 1)
-      (setq fci-rule-use-dashes t)
-      (setq fci-rule-column 80)
-      (setq fci-dash-pattern 0.25)
-      (setq fci-rule-color "DeepSkyBlue4")
-      (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-      (global-fci-mode 1)))
+  ;;(set-face-attribute 'default nil :font "Terminus (TTF)" :height 110)
+  (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
 #+end_src
 
-*** indent-guide						   :DISABLED:
+** Windows
 
 #+begin_src emacs-lisp
-  (use-package indent-guide
-    :ensure indent-guide
-    :disabled t
-    :config (progn
-              (setq indent-guide-char "|")
-              (indent-guide-global-mode)))
+  (when window-system
+    (tooltip-mode -1)
+    (tool-bar-mode -1)
+    (menu-bar-mode -1)
+    (scroll-bar-mode -1)
+    (blink-cursor-mode -1)
+    (fringe-mode nil))
+
+  ;; mode line settings
+  (global-linum-mode t)
+  (line-number-mode t)
+  (column-number-mode t)
+  (size-indication-mode t)
+
+  ;;(setq initial-frame-alist '((top . 1) (left . 1) (width . 100) (height . 60)))
+  (setq inhibit-startup-screen t)
+  (tooltip-mode nil)
+
+  ;; nice scrolling
+  (setq scroll-margin 0
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-default 'indent-tabs-mode nil)
+(set-default 'indicate-empty-lines t)
+
+(setq frame-title-format
+      '((:eval (if (buffer-file-name) (abbreviate-file-name (buffer-file-name)) "%b"))))
 #+end_src
 
-*** Zone
+** Quiet Alerts
+
 #+begin_src emacs-lisp
-
-  (require 'zone)
-
-(defun zone-choose (pgm)
-    "Choose a PGM to run for `zone'."
-    (interactive
-     (list
-      (completing-read
-       "Program: "
-       (mapcar 'symbol-name zone-programs))))
-    (let ((zone-programs (list (intern pgm))))
-      (zone)))
-
-
-;;(setq zone-programs [zone-pgm-paragraph-spaz])
+  (setq ring-bell-function 'ignore)
+  (setq visible-bell nil)
+;;  (setq ring-bell-function `(lambda ()
+;;    (set-face-background 'default "DodgerBlue")
+;;    (set-face-background 'default "black")))
 #+end_src
 
-** Feel
-*** auto-complete
+** Yes/No
 
 #+begin_src emacs-lisp
-  (use-package auto-complete
-    :ensure auto-complete
-   ;; :config (progn 
-              ;; (ac-config-default)
-               ;;(setq popup-use-optimized-column-computation nil)
-;;)
-)
+  (fset 'yes-or-no-p 'y-or-n-p)   
+  ;;(setq-default fill-column 80)
 #+end_src
 
-*** Helm
-
-#+begin_src emacs-lisp
-  (use-package helm
-    :ensure helm
-    :init (progn 
-            (require 'helm-config) 
-            (setq helm-candidate-number-limit 100)
-            ;; From https://gist.github.com/antifuchs/9238468
-            (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-                  helm-input-idle-delay 0.01  ; this actually updates things
-                                          ; reeeelatively quickly.
-                  helm-quick-update t
-                  helm-M-x-requires-pattern nil
-                  helm-ff-skip-boring-files t)
-            (helm-mode))
-    :config (progn
-              ;; I don't like the way switch-to-buffer uses history, since
-              ;; that confuses me when it comes to buffers I've already
-              ;; killed. Let's use ido instead.
-              ;; (add-to-list 'helm-completing-read-handlers-alist 
-              ;;           '(switch-to-buffer . ido))
-              ;; Unicode
-              (add-to-list 'helm-completing-read-handlers-alist 
-                           '(insert-char . ido)))
-    :bind (("C-c h" . helm-mini) 
-           ("M-x" . helm-M-x)))
-  (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
-#+end_src
-
-**** Helm-swoop
-
-#+begin_src emacs-lisp
-  (use-package helm-swoop
-    :ensure helm-swoop
-    :bind (("C-S-s" . helm-swoop)))
-#+end_src
-
-**** helm-projectile
-
-#+begin_src emacs-lisp
-  (use-package helm-projectile
-    :ensure helm-projectile
-    :init (helm-projectile-on))
-#+end_src
-
-*** Aggressive-Indent						   :DISABLED:
-
-#+begin_src emacs-lisp
-;;  (use-package aggressive-indent
-;;    :init
-;;    (progn
-;;        (global-aggressive-indent-mode 1)
-;;        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-;;        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
-#+end_src
-
-*** workgroups2
-
-#+begin_src emacs-lisp
-  (use-package workgroups2
-    :ensure workgroups2
-    :config (progn
-              (workgroups-mode 1)))
-#+end_src
-* Navigation
-** ace-jump-mode
-
-#+begin_src emacs-lisp
-  (use-package ace-jump-mode
-    :ensure ace-jump-mode
-    :bind ("M-SPC" . ace-jump-mode))
-  (bind-key "M-S-SPC" 'just-one-space)
- #+end_src
-
-* Version Control
-** GIT
-*** magit
-
-#+begin_src emacs-lisp
-  (use-package magit
-    :ensure magit
-    :defer t)
-#+end_src
-
-*** git-commit-mode
-
-#+begin_src emacs-lisp
-  (use-package git-commit-mode
-    :ensure git-commit-mode
-    :defer t)
-#+end_src
-
-*** gitconfig-mode
-
-#+begin_src emacs-lisp
-  (use-package gitconfig-mode
-    :ensure gitconfig-mode
-    :defer t)
-#+end_src
-
-*** gitignore-mode
-
-#+begin_src emacs-lisp
-  (use-package gitignore-mode
-    :ensure gitignore-mode
-    :defer t)
-#+end_src
-
-*** gitattributes-mode
-
-#+begin_src emacs-lisp
-  (use-package gitattributes-mode
-    :ensure gitattributes-mode
-    :defer t)
-#+end_src
-
-* Language Support
-** WEB
-*** web-mode
-
-#+begin_src emacs-lisp
-;;  (use-package web-mode
-;;    :init 
-;;    (progn
-;;      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))))
-#+end_src
-
-*** web-beautify
-
-#+begin_src emacs-lisp
-  (use-package web-beautify
-    :ensure web-beautify
-    :defer t
-    :config (progn
-            
-            (eval-after-load 'js2-mode
-              '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
-
-            (eval-after-load 'json-mode
-              '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
-
-            (eval-after-load 'sgml-mode
-              '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
-
-            (eval-after-load 'css-mode
-              '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
-
-            (eval-after-load 'js2-mode
-              '(add-hook 'js2-mode-hook
-                         (lambda ()
-                           (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
-
-            (eval-after-load 'json-mode
-              '(add-hook 'json-mode-hook
-                         (lambda ()
-                           (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
-
-            (eval-after-load 'sgml-mode
-              '(add-hook 'html-mode-hook
-                         (lambda ()
-                           (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
-
-            (eval-after-load 'css-mode
-              '(add-hook 'css-mode-hook
-                         (lambda ()
-                           (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
-#+end_src
-
-*** js2-mode
-
-#+begin_src emacs-lisp
-  (use-package js2-mode
-    :ensure js2-mode
-    :mode "\\.js\\'"
-    :interpreter "node")
-#+end_src
-
-*** skewer-mode
-
-#+begin_src emacs-lisp
-  (use-package skewer-mode
-    :ensure skewer-mode
-    :defer t
-    :config (progn
-              (add-hook 'js2-mode-hook 'skewer-mode)
-              (add-hook 'css-mode-hook 'skewer-css-mode)
-              (add-hook 'html-mode-hook 'skewer-html-mode)))
-#+end_src
-
-*** ac-html
-# ;;#+begin_src emacs-lisp
-# ;;  (use-package ac-html
-# ;;    :init
-# ;;    (progn
-# ;;      (add-hook 'html-mode-hook 'ac-html-enable)
-#  ;;     (add-to-list 'ac-sources 'ac-source-html-attribute-value)
-#  ;;     (add-to-list 'ac-sources 'ac-source-html-tag)
-#  ;;     (add-to-list 'ac-sources 'ac-source-html-attribute)
-# ;;If you are using web-mode:
-# ;;Additionally you need to add these lines:
-# ;;(add-to-list 'web-mode-ac-sources-alist
-# ;;             '("html" . (ac-source-html-attribute-value
-# ;;                         ac-source-html-tag
-# ;;                         ac-source-html-attribute)))
-# ;;If you are using haml-mode:
-# ;;use `ac-source-haml-tag' and `ac-source-haml-attribute'
-# ;;))
-# ;;#+end_src
-# ;;#+begin_src emacs-lisp
-# (use-package web-mode auto-complete
-#   :ensure web-mode
-#   :init (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-#   :config
-#   (progn
-#     (setq web-mode-enable-current-element-highlight t)
-#     (setq web-mode-ac-sources-alist
-#           '(("css" . (ac-source-css-property))
-#             ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
-#           )))
-# #+end_src
-** Lisp
-*** Clojure
-
-#+begin_src emacs-lisp
-  (use-package clojure-mode
-    :ensure clojure-mode
-    :defer t)
-#+end_src
-
-**** cider
-
-#+begin_src emacs-lisp
-  (use-package cider
-    :ensure cider
-    :defer t
-    :config (progn
-      (add-hook 'clojure-mode-hook 'cider-mode)
-      ;; Enable eldoc in Clojure buffers:
-      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
-      ;; Log communication with the nREPL server (extremely useful for debugging CIDER problems):
-      ;; (The log will go to the buffer *nrepl-messages*.)
-      (setq nrepl-log-messages t)
-      ;; You can hide the *nrepl-connection* and *nrepl-server* buffers from appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
-      ;; When using switch-to-buffer, pressing SPC after the command will make the hidden buffers visible. They'll always be visible in list-buffers (C-x C-b).
-      (setq nrepl-hide-special-buffers t)
-      ;;Error messages may be wrapped for readability. If this value is nil, messages will not be wrapped; if it is truthy but non-numeric, the default fill-column will be used.
-      (setq cider-stacktrace-fill-column 80)
-      ;; The REPL buffer name can also display the port on which the nREPL server is running. Buffer name will look like cider-repl project-name:port.
-      (setq nrepl-buffer-name-show-port t)
-
-      (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
-      (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
-
-      ;;(defadvice 4clojure-open-question (around 4clojure-open-question-around)
-      ;;  "Start a cider/nREPL connection if one hasn't already been started when
-      ;;opening 4clojure questions"
-      ;;  ad-do-it
-      ;;  (unless cider-current-clojure-buffer
-      ;;    (cider-jack-in)))
-))
-#+end_src
-
-**** ac-cider							   :DISABLED:
-
-#+begin_src emacs-lisp
-  (use-package ac-cider
-    :ensure ac-cider
-    :defer t
-    :disabled t
-    :config (progn
-      (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
-      (add-hook 'cider-mode-hook 'ac-cider-setup)
-      (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
-      (eval-after-load "auto-complete"
-        '(add-to-list 'ac-modes 'cider-mode))
-
-      (defun set-auto-complete-as-completion-at-point-function ()
-        (setq completion-at-point-functions '(auto-complete)))
-
-      (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
-      (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)))
-#+end_src
-
-**** 4Clojure
-
-#+begin_src emacs-lisp
-  (use-package 4clojure
-    :ensure 4clojure
-    :defer t)
-#+end_src
-
-*** eLisp
-
-#+begin_src emacs-lisp
-;;  (use-package clojure-mode-extra-font-locking
-;;    :init
-;;    (progn
-;;      (clojure-mode-extra-font-locking)))
-#+end_src
-
-*** SCHEME (mit-scheme)
-
-#+begin_src emacs-lisp
-  (setenv "MITSCHEME_LIBRARY_PATH"
-          xtof/mitschem-library-path)
-#+end_src
-
-* Productivity
-** Ledger Mode
-
-#+begin_src emacs-lisp
-  (use-package ledger-mode
-    :ensure ledger-mode
-    :defer t
-    :init (progn
-            (setq ledger-binary-path xof/ledger-path)
-            (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
-#+end_src
-
-** Projectile
-
-#+begin_src emacs-lisp
-  (use-package projectile
-    :ensure projectile
-    :defer t
-    :init (progn
-        (projectile-global-mode)))
-#+end_src
-
-** gnus
+** Keys
 
 #+BEGIN_SRC emacs-lisp
-  (setq gnus-select-method
-        `(nnimap "xtof.net"
-                 (nnimap-address ,xtof/gnus-nnimap-address)
-                 (nnimap-server-port 993)
-                 (nnimap-stream ssl)))
 
-  (setq starttls-use-gnutls t
-        starttls-gnutls-program "gnutls-cli"
-        starttls-extra-arguments '("--insecure"))
+;; general emacs stuff
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
-  (setq message-send-mail-function 'smtpmail-send-it
-        smtpmail-smtp-server xtof/gnus-nnimap-address
-        smtpmail-default-smtp-server xtof/gnus-nnimap-address
-        smtpmail-smtp-service 587
-        smtpmail-starttls-credentials `((,xtof/gnus-nnimap-address 587 nil nil))
-        smtpmail-auth-credentials `((,xtof/gnus-nnimap-address 587 ,xtof/gnus-auth-user nil))
-        smtpmail-local-domain xtof/gnus-local-domain)
+;; general development
+;;(global-set-key (kbd "M-r") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-c w") 'whitespace-toggle-options)
+
+;; clojure stuff
+;;(global-set-key (kbd "C-c C-j") 'cider-jack-in)
+
+;; Start eshell or switch to it if it's active.
+(global-set-key (kbd "C-x t") 'eshell)
+
+;; Start a new eshell even if one is active.
+(global-set-key (kbd "C-x T") (lambda () (interactive) (eshell t)))
+
+;; Completion that uses many different methods to find options.
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+;; Font size
+(define-key global-map (kbd "C-+") 'text-scale-increase)
+(define-key global-map (kbd "C--") 'text-scale-decrease)
+
+;;List Packages 
+(global-set-key (kbd "C-c m") 'package-list-packages)
+
 #+END_SRC
 
+** Misc
+
+#+BEGIN_SRC emacs-lisp
+; save cursor position within files
+;;(require 'saveplace)
+;;(setq save-place-file (expand-file-name "saveplace" xtof/savefile-directory))
+;;(setq-default save-place t)
+
+; save minibuffer history across sessions
+;;(setq savehist-file (expand-file-name "savehist" xtof/savefile-directory))
+;;(savehist-mode 1)
+
+; pick up changes to files on disk automatically (ie, after git pull)
+;;(global-auto-revert-mode 1)
+
+; wrap lines in a tasteful way
+;;(global-visual-line-mode 1)
+
+
+;;(ido-mode nil) ;; Turn off ido mode in case I enabled it accidentally...in favor of Helm
+
+#+END_SRC
+
+* //////////////////////////////////////-------------  FREQUENTLY_ACCESSED FILES
+
+#+begin_src emacs-lisp :results silent
+  (mapcar
+   (lambda (r)
+     (set-register (car r) (cons 'file (cdr r))))
+   '((?c . "~/.emacs.d/xtof_config.org")
+     (?i . "~/.emacs.d/xtof_init.org")
+     (?o . "~/.emacs.d/xtof_org.org")
+     (?s . "~/.emacs.d/xtof_startup.org")
+     (?p . "~/Documents/org/projects.org")
+     (?l . "~/Documents/org/log.org")
+     (?f . "~/Documents/org/flagged.org")
+     (?m . "~/Documents/org/memos.org")
+     (?v . "~/Documents/org/inbox.org")
+     (?x . "~/.emacs.d/init.el")
+     (?b . "~/Documents/ledger/budget.ledger")
+  ))
+#+end_src
+
+* //////////////////////////////////////---------------------------  MISC CONFIG
+
+UTF-8
+From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+#+begin_src emacs-lisp
+  ;; sane defaults
+  (prefer-coding-system 'utf-8)
+  (set-language-environment 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (when (display-graphic-p)
+    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+end_src

@@ -1,80 +1,28 @@
 #+TITLE xtof_org
 
-* ////////////////////////////////////////////////////////////////////////  INIT
+* //////////////////////////////////////-------------------------------  MODULES
+
+#+BEGIN_SRC emacs-lisp
+  (defun xtof/org-modules-setup ()
+    ;; init modules
+    (setq org-modules '(org-habit
+                        ;;org-mouse
+                        org-panel)))
+#+END_SRC
+
+* //////////////////////////////////////---------------------------  DIRECTORIES
+
+#+BEGIN_SRC emacs-lisp
+  (defun xtof/org-directories-setup ()
+    ;; init directories
+    (setq org-directory xtof/org-directory)
+    (setq org-default-notes-file  (format "%s/%s" xtof/org-directory "inbox.org"))
+    (setq org-mobile-files '(org-agenda-files xtof/org-directory)))
+#+END_SRC
+* //////////////////////////////////////----------------------  TRACK TODO STATE
 
 #+begin_src emacs-lisp
-  (use-package org
-    :ensure org
-    :defer t
-    :init (progn
-            (setq org-directory xtof/org-directory)
-            (setq org-default-notes-file  (format "%s/%s" xtof/org-directory "inbox.org"))
-            (setq org-mobile-files '(org-agenda-files xtof/org-directory))
-
-            ;; mobile org
-            (setq org-mobile-inbox-for-pull (format "%s/%s" xtof/org-directory "inbox.org"))
-            (setq org-mobile-directory xtof/org-mobile-directory)
-
-
-            ;; refile
-            (setq org-reverse-note-order t)
-            (setq org-refile-use-outline-path nil)
-            (setq org-refile-allow-creating-parent-nodes 'confirm)
-            (setq org-refile-use-cache nil)
-            (setq org-refile-targets '((org-agenda-files . (:maxlevel . 1))))
-            ;;(setq org-blank-before-new-entry nil)
-
-            ;; tags
-            (setq org-tag-alist '(("@work" . ?b) 
-                                  ("@home" . ?h) 
-                                  ("@writing" . ?w)
-                                  ("@errands" . ?e) 
-                                  ("@drawing" . ?d)
-                                  ("@coding" . ?c)
-                                  ("@phone" . ?p)
-                                  ("@reading" . ?r)
-                                  ("@computer" . ?l)
-                                  (:startgroup . nil)
-                                  ("lowenergy" . ?0)
-                                  ("highenergy" . ?9)
-                                  (:endgroup . nil)
-                                  ("#HEALTH_BEAUTY" . ?B)
-                                  ("#HOME_FAMILY" . ?F)
-                                  ("#ART_PHILOSOPHY" . ?P)
-                                  ("#RESEARCH_EDUCATION" . ?E)
-                                  ("#WORK_MONEY" . ?M)
-                                  ("#ORGANIZATION_REGIMENT" . ?R)
-                                  ))
-
-            ;; look & feel
-            ;;(setq org-level-color-stars-only t)
-            (setq org-src-fontify-natively t)
-            (setq org-tags-column -136)
-            (setq org-agenda-dim-blocked-tasks nil)
-            (setq org-use-speed-commands t))
-    :config (progn
-              ;; mobile org
-              (add-hook 'after-init-hook 'org-mobile-pull)
-              (add-hook 'kill-emacs-hook 'org-mobile-push))
-    :bind(("C-c l" . org-store-link)
-          ("C-c L" . org-insert-link-global)
-          ("C-c O" . org-open-at-point-global)))
-#+end_src
-
-* /////////////////////////////////////////////////////////////////////  MODULES
-
-#+begin_src emacs-lisp
-  (setq org-modules '(org-habit
-                      ;;org-mouse
-                      org-panel))
-  (org-load-modules-maybe t)
-  (eval-after-load 'org-mode
-    (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel))
-#+end_src
-
-* ////////////////////////////////////////////////////////////  TRACK TODO STATE
-
-#+begin_src emacs-lisp
+(defun xtof/org-setup-todos ()
   (setq org-use-fast-todo-selection t) ;; actually seems to be true by default
   (setq org-treat-S-cursor-todo-selection-as-state-change nil)
 
@@ -92,9 +40,7 @@
            "TODELEGATE(-)"
            "DELEGATED(d)"
            "COMPLETE(x)")))
-#+end_src
 
-#+begin_src emacs-lisp
   (setq org-todo-keyword-faces
         '(("TODO" :foreground "firebrick" :weight bold)
           ("NEXT" :foreground "red" :weight bold)
@@ -106,50 +52,42 @@
           ("TODELEGATE" :foreground "firebrick" :weight bold)
           ("DELEGATED" :foreground "chocolate" :weight bold)
           ("COMPLETE" :foreground "olive drab" :weight bold)))
-#+end_src
 
-#+begin_src emacs-lisp
   ;; Parent can't be marked as done unless all children are done
   (setq org-enforce-todo-dependencies t)
   (defun org-summary-todo (n-done n-not-done)
     "Switch entry to DONE when all subentries are done, to TODO otherwise."
     (let (org-log-done org-log-states)   ; turn off logging
       (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+;   (setq org-todo-state-tags-triggers
+;         (quote (("CANCELLED" ("CANCELLED" . t))
+;                 ("WAITING" ("WAITING" . t))
+;                 ("HOLD" ("WAITING") ("HOLD" . t))
+;                 (done ("WAITING") ("HOLD"))
+;                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+;                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+;                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+)
 #+end_src
 
-# #+begin_src emacs-lisp
-#   (setq org-todo-state-tags-triggers
-#         (quote (("CANCELLED" ("CANCELLED" . t))
-#                 ("WAITING" ("WAITING" . t))
-#                 ("HOLD" ("WAITING") ("HOLD" . t))
-#                 (done ("WAITING") ("HOLD"))
-#                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-#                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-#                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-# #+end_src
-
-* ////////////////////////////////////////////////////////////////////  PROJECTS
+* //////////////////////////////////////------------------------------  PROJECTS
 
 Projects are headings with the =:project:= tag, so we generally don't
 want that tag inherited, except when we display unscheduled tasks that
 don't belong to any projects.
 
 #+begin_src emacs-lisp
+(defun xtof/org-setup-projects ()
   (setq org-tags-exclude-from-inheritance '("PROJ"))
+)
 #+end_src
 
-* ///////////////////////////////////////  ENABLED FILTERING BY EFFORT ESTIMATES
-
-per https://www.gnu.org/software/emacs/manual/html_node/org/Filtering_002flimiting-agenda-items.html
-#+begin_src emacs-lisp
-  (add-to-list 'org-global-properties
-        '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
-#+end_src
-
-* //////////////////////////////////////////////////////////////////  TRACK TIME
+* //////////////////////////////////////----------------------------  TRACK TIME
 
 from sach chua
 #+begin_src emacs-lisp
+(defun xtof/org-setup-time-tracking () 
   (setq org-clock-idle-time nil)
   (setq org-log-done 'time)
   (setq org-clock-persist t)
@@ -175,7 +113,7 @@ from sach chua
                 (if (org-get-todo-state)
                     (org-todo "STARTED"))))))
          (t (if (org-get-todo-state)
-                (org-todo "STARTED")))))))
+                (org-todo "STARTED"))))))))
 #+end_src
 
 Too many clock entries clutter up a heading.
@@ -184,49 +122,10 @@ Too many clock entries clutter up a heading.
   (setq org-clock-into-drawer 1)
 #+end_src
 
-* //////////////////////////////////////////////////////////////////////  HABITS
-  
-#+begin_src emacs-lisp
-  (setq org-habit-graph-column 80)
-  (setq org-habit-show-habits-only-for-today t)
-  (setq org-habit-show-all-today t)
-  (setq org-habit-completed-glyph 8226)
-  (setq org-habit-today-glyph 124)
-  (setq org-habit-following-days 14)
-#+end_src
-
-* ////////////////////////////////////////////////////////////  ESTIMATING TASKS
-    
-From "Add an effort estimate on the fly when clocking in" on the
-[[http://orgmode.org/worg/org-hacks.html][Org Hacks]] page:
+* //////////////////////////////////////---------------------------  ORG-CAPTURE
 
 #+begin_src emacs-lisp
-  (defun xtof/org-mode-ask-effort ()
-    "Ask for an effort estimate when clocking in."
-    (unless (org-entry-get (point) "Effort")
-      (let ((effort
-             (completing-read
-              "Effort: "
-              (org-entry-get-multivalued-property (point) "Effort"))))
-        (unless (equal effort "")
-          (org-set-property "Effort" effort)))))
-
-  (add-hook 'org-clock-in-prepare-hook 'xtof/org-mode-ask-effort)
-#+end_src
-
-* ////////////////////////////////////////////////  FLEXIBLE SCHEDULING OF TASKS
-
-I (theoretically) want to be able to schedule tasks for dates like the first Saturday
-of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-mode-how-to-schedule-repeating-tasks-for-the-first-saturday-of-every-month][someone else has figured that out!]]
-
-#+begin_src emacs-lisp
-;; Get this from https://raw.github.com/chenfengyuan/elisp/master/next-spec-day.el
-;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
-#+end_src
-
-* /////////////////////////////////////////////////////////////////  ORG-CAPTURE
-
-#+begin_src emacs-lisp
+(defun xtof/org-capture-setup ()
   (defvar xtof/org-capture-project-template 
     "* TODO %^{Project} %^G:PROJ:
     %?")
@@ -275,9 +174,7 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
     :DURATION: %^{duration|0:30}
     :END:
     %?")
-#+end_src
 
-#+begin_src emacs-lisp
   (use-package org-capture
     :ensure org
     :defer t
@@ -317,10 +214,149 @@ of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-m
                        "Meditation Log Entry" 
                        entry (file+datetree "~/Documents/org/meditation_log.org") 
                        ,xtof/org-capture-meditation-log-template))))
-              :bind (("C-c c" . org-capture)))
+              :bind (("C-c c" . org-capture))))
 #+end_src
 
-* //////////////////////////////////////////////////////////////////  ORG-AGENDA
+* //////////////////////////////////////--------------------------------  HABITS
+  
+#+begin_src emacs-lisp
+(defun xtof/org-habit-setup ()
+  (setq org-habit-graph-column 80)
+  (setq org-habit-show-habits-only-for-today t)
+  (setq org-habit-show-all-today t)
+  (setq org-habit-completed-glyph 8226)
+  (setq org-habit-today-glyph 124)
+  (setq org-habit-following-days 14))
+#+end_src
+
+* //////////////////////////////////////----------------------------------  INIT
+
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure org
+    :defer t
+    :init (progn
+
+            (xtof/org-modules-setup)
+            (xtof/org-directories-setup)
+            
+            ;; mobile org
+            (setq org-mobile-inbox-for-pull (format "%s/%s" xtof/org-directory "inbox.org"))
+            (setq org-mobile-directory xtof/org-mobile-directory)
+
+            ;; refile
+            (setq org-reverse-note-order t)
+            (setq org-refile-use-outline-path nil)
+            (setq org-refile-allow-creating-parent-nodes 'confirm)
+            (setq org-refile-use-cache nil)
+            (setq org-refile-targets '((org-agenda-files . (:maxlevel . 1))))
+            ;;(setq org-blank-before-new-entry nil)
+
+            ;; MAYBE ITEMS
+            ;;(setq org-startup-indented t)
+            ;;org-hide-leading-stars t
+            ;;       org-use-fast-todo-selection t
+            ;;      org-cycle-separator-lines 0)
+            
+            ;; tags
+            (setq org-tag-alist '(("@work" . ?b) 
+                                  ("@home" . ?h) 
+                                  ("@writing" . ?w)
+                                  ("@errands" . ?e) 
+                                  ("@drawing" . ?d)
+                                  ("@coding" . ?c)
+                                  ("@phone" . ?p)
+                                  ("@reading" . ?r)
+                                  ("@computer" . ?l)
+                                  (:startgroup . nil)
+                                  ("lowenergy" . ?0)
+                                  ("highenergy" . ?9)
+                                  (:endgroup . nil)
+                                  ("#HEALTH_BEAUTY" . ?B)
+                                  ("#HOME_FAMILY" . ?F)
+                                  ("#ART_PHILOSOPHY" . ?P)
+                                  ("#RESEARCH_EDUCATION" . ?E)
+                                  ("#WORK_MONEY" . ?M)
+                                  ("#ORGANIZATION_REGIMENT" . ?R)
+                                  ))
+
+            ;; look & feel
+            ;;(setq org-level-color-stars-only t)
+            (setq org-src-fontify-natively t)
+            ;;(setq org-tags-column -136)
+            (setq org-tags-column 80)
+            (setq org-agenda-dim-blocked-tasks nil)
+            (setq org-use-speed-commands t))
+    :config (progn
+              ;; load modules
+              (org-load-modules-maybe t)
+              ;; Org Panel
+              (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel)
+              ;; mobile org
+              (add-hook 'after-init-hook 'org-mobile-pull)
+              (add-hook 'kill-emacs-hook 'org-mobile-push)
+              
+              (xtof/org-setup-todos)
+              (xtof/org-setup-projects)
+
+              ;;per https://www.gnu.org/software/emacs/manual/html_node/org/Filtering_002flimiting-agenda-items.html
+              (add-to-list 'org-global-properties
+                           '("Effort_ALL". "0:05 0:15 0:30 1:00 2:00 3:00 4:00"))
+
+              (xtof/org-setup-time-tracking)
+              (xtof/org-habit-setup)
+              (xtof/org-capture-setup)
+              ;;
+              (use-package org-ac
+                :ensure org-ac
+                :init (progn
+                        (org-ac/config-default)))
+
+              (use-package org2blog-autoloads
+                :ensure org2blog
+                :defer t
+                :init (progn
+                        (setq org2blog/wp-blog-alist
+                              '(("marcchristophe.com"
+                                 :url xtof/wp-blog-alist-url
+                                 :username xtof/wp-blog-alist-username)))))
+
+              )
+    :bind(("C-c l" . org-store-link)
+          ("C-c L" . org-insert-link-global)
+          ("C-c O" . org-open-at-point-global)))
+#+end_src
+
+* //////////////////////////////////////----------------------  ESTIMATING TASKS
+    
+From "Add an effort estimate on the fly when clocking in" on the
+[[http://orgmode.org/worg/org-hacks.html][Org Hacks]] page:
+
+#+begin_src emacs-lisp
+  (defun xtof/org-mode-ask-effort ()
+    "Ask for an effort estimate when clocking in."
+    (unless (org-entry-get (point) "Effort")
+      (let ((effort
+             (completing-read
+              "Effort: "
+              (org-entry-get-multivalued-property (point) "Effort"))))
+        (unless (equal effort "")
+          (org-set-property "Effort" effort)))))
+
+  (add-hook 'org-clock-in-prepare-hook 'xtof/org-mode-ask-effort)
+#+end_src
+
+* //////////////////////////////////////----------  FLEXIBLE SCHEDULING OF TASKS
+
+I (theoretically) want to be able to schedule tasks for dates like the first Saturday
+of every month. Fortunately, [[http://stackoverflow.com/questions/13555385/org-mode-how-to-schedule-repeating-tasks-for-the-first-saturday-of-every-month][someone else has figured that out!]]
+
+#+begin_src emacs-lisp
+;; Get this from https://raw.github.com/chenfengyuan/elisp/master/next-spec-day.el
+;; (load "~/.emacs.d/elisp/next-spec-day.el" t)
+#+end_src
+
+* //////////////////////////////////////----------------------------  ORG-AGENDA
 ** helper fns
 
 These too are Sacha's
@@ -594,6 +630,154 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
           (setq buffer-read-only t)))))
 #+end_src
 
+** custom commands
+#+BEGIN_SRC emacs-lisp
+
+  (defun xtof/org-agenda-setup-custom-commands ()
+    (setq org-agenda-custom-commands
+          `(
+
+            ("T" tags-todo "TODO=\"TODO\"-goal-routine-SCHEDULED={.+}")
+            ("b" todo "" ((org-agenda-files '("~/Documents/org/projects.org"))))
+            ("n" todo ""
+             (
+              ;;(org-agenda-prefix-format "")
+              (org-agenda-cmp-user-defined 'xtof/org-sort-agenda-items-todo)
+              (org-agenda-view-columns-initially t)))
+
+            ;; Weekly review
+            ("w" "Weekly review" agenda ""
+             ((org-agenda-span 7)
+              (org-agenda-log-mode 1)))
+            ("W" "Weekly review sans routines" agenda "" 
+             ((org-agenda-span 7) 
+              (org-agenda-log-mode 1)
+              (org-agenda-tag-filter-preset '("-routine"))))
+            ("2" "Bi-weekly review" agenda "" ((org-agenda-span 14) (org-agenda-log-mode 1)))
+
+            ;; by contexts...todo: sort these by STARTED NEXT TODO WAITING
+            ("cp" "Coding" tags-todo "@phone" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("cw" "Coding" tags-todo "@work" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("cd" "Coding" tags-todo "@drawing" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("co" "Coding" tags-todo "@coding" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("cw" "Coding" tags-todo "@writing" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("cc" "Coding" tags-todo "@computer" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("ch" "Coding" tags-todo "@home" 
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+            ("ce" "Writing" tags-todo "@errands"
+             ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+              (org-agenda-view-columns-initially t)))
+
+            ;;
+            ;; TODO: All NEXT by context
+            ("0" "Top 3 by context"
+             ,xtof/org-agenda-contexts
+             ((org-agenda-sorting-strategy '(priority-up effort-down))
+              (org-agenda-show-inherited-tags nil)
+              (org-tags-exclude-from-inheritance '("PROJ"))
+              ;;also skip habits
+              (xtof/org-agenda-limit-items 3)))
+            (")" "All by context"
+             ,xtof/org-agenda-contexts
+             ((org-agenda-sorting-strategy '(priority-down effort-down))
+              (org-agenda-show-inherited-tags nil)
+              (org-tags-exclude-from-inheritance '("PROJ"))
+              ;; skip habits
+              (xtof/org-agenda-limit-items nil)))
+
+            ("9" "Unscheduled top 3 by context"
+             ,xtof/org-agenda-contexts
+             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+              (org-agenda-sorting-strategy '(priority-down effort-down))
+              (xtof/org-agenda-limit-items 3)))
+            ("(" "All unscheduled by context"
+             ,xtof/org-agenda-contexts
+             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+              (org-agenda-sorting-strategy '(priority-down effort-down))))
+
+            ("d" "Timeline for today" ((agenda "" ))
+             ((org-agenda-ndays 1)
+              (org-agenda-show-log t)
+              (org-agenda-log-mode-items '(clock closed))
+              (org-agenda-clockreport-mode t)
+              (org-agenda-entry-types '())))
+
+            ("." "Waiting for" todo "WAITING")
+
+
+            ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING\"-PROJ"
+             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+              (org-agenda-view-columns-initially t)
+              (org-tags-exclude-from-inheritance '("PROJ"))
+              (org-agenda-overriding-header "Unscheduled TODO entries: ")
+              (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
+              (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
+
+            ;; THIS ONE USEFUL FOR INBOX PROCESSING
+            ("U" "Unscheduled tasks outside projects" tags-todo "-PROJ"
+             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+              (org-tags-exclude-from-inheritance '("PROJ"))
+              (org-agenda-view-columns-initially t)
+              (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
+              (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
+
+            ;; todo: -PROJ
+            ("P" "By priority"
+             ((tags-todo "+PRIORITY=\"A\"")
+              (tags-todo "+PRIORITY=\"B\"")
+              (tags-todo "+PRIORITY=\"\"")
+              (tags-todo "+PRIORITY=\"C\""))
+             ((org-agenda-prefix-format "%-10c %-10T %e ")
+              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+
+            ;; active projects
+            ("pp" tags "+PROJ-someday-TODO=\"DONE\"-TODO=\"SOMEDAY\""
+             ((org-tags-exclude-from-inheritance '("PROJ"))
+              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+            ;; all uncompleted projects
+            ("p." tags "+PROJ-TODO=\"DONE\""
+             ((org-tags-exclude-from-inheritance '("PROJ"))
+              (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
+
+            ;; started tasks
+            ;; prolly want to display clocktime
+            ("S" tags-todo "TODO=\"STARTED\"")
+
+            ;; projects with tasks // BROKEN //
+            ("3" "List projects with tasks [BROKEN]" xtof/org-agenda-projects-and-tasks
+             "+PROJ"
+             ((xtof/org-agenda-limit-items 3)))
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ("o" "Agenda and Office-related tasks"
+             ((agenda ""
+                      ((org-agenda-use-tag-inheritance nil)))
+              (tags-todo "work")
+              (tags "@work")))
+
+            (" " "Agenda"
+             ((agenda "" nil)
+              (todo "NEXT"
+                    ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")))
+              (tags-todo "PROJ"
+                         ((org-agenda-overriding-header "Stuck Projects")
+                          (org-agenda-skip-function 'xtof/skip-non-stuck-projects)))
+              (todo "WAITING"
+                    ((org-agenda-overriding-header "Waiting")))))
+            )))
+#+END_SRC
 ** xtof/org-agenda-config
 
 #+begin_src emacs-lisp
@@ -633,150 +817,12 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
       (setq org-agenda-show-log t)
       (setq org-agenda-window-setup (quote current-window))
       (add-hook 'org-agenda-mode-hook (lambda () (hl-line-mode 1)))
+      (setq
+                  ;;org-agenda-include-diary t
+                  ;;org-agenda-start-on-weekday nil
+                  org-agenda-log-mode-items (quote (closed clock state)))
 
-      (setq org-agenda-custom-commands
-            `(
-
-              ("T" tags-todo "TODO=\"TODO\"-goal-routine-SCHEDULED={.+}")
-              ("b" todo "" ((org-agenda-files '("~/Documents/org/projects.org"))))
-              ("n" todo ""
-               (
-;;(org-agenda-prefix-format "")
-                (org-agenda-cmp-user-defined 'xtof/org-sort-agenda-items-todo)
-                (org-agenda-view-columns-initially t)))
-
-              ;; Weekly review
-              ("w" "Weekly review" agenda ""
-               ((org-agenda-span 7)
-                (org-agenda-log-mode 1)))
-              ("W" "Weekly review sans routines" agenda "" 
-               ((org-agenda-span 7) 
-                (org-agenda-log-mode 1)
-                (org-agenda-tag-filter-preset '("-routine"))))
-              ("2" "Bi-weekly review" agenda "" ((org-agenda-span 14) (org-agenda-log-mode 1)))
-
-;; by contexts...todo: sort these by STARTED NEXT TODO WAITING
-              ("cp" "Coding" tags-todo "@phone" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("cw" "Coding" tags-todo "@work" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("cd" "Coding" tags-todo "@drawing" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("co" "Coding" tags-todo "@coding" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("cw" "Coding" tags-todo "@writing" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("cc" "Coding" tags-todo "@computer" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("ch" "Coding" tags-todo "@home" 
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-              ("ce" "Writing" tags-todo "@errands"
-               ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
-                (org-agenda-view-columns-initially t)))
-
-              ;;
-              ;; TODO: All NEXT by context
-              ("0" "Top 3 by context"
-               ,xtof/org-agenda-contexts
-               ((org-agenda-sorting-strategy '(priority-up effort-down))
-                (org-agenda-show-inherited-tags nil)
-                (org-tags-exclude-from-inheritance '("PROJ"))
-                ;;also skip habits
-                (xtof/org-agenda-limit-items 3)))
-              (")" "All by context"
-               ,xtof/org-agenda-contexts
-               ((org-agenda-sorting-strategy '(priority-down effort-down))
-                (org-agenda-show-inherited-tags nil)
-                (org-tags-exclude-from-inheritance '("PROJ"))
-                ;; skip habits
-                (xtof/org-agenda-limit-items nil)))
-
-              ("9" "Unscheduled top 3 by context"
-               ,xtof/org-agenda-contexts
-               ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-                (org-agenda-sorting-strategy '(priority-down effort-down))
-                (xtof/org-agenda-limit-items 3)))
-              ("(" "All unscheduled by context"
-               ,xtof/org-agenda-contexts
-               ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-                (org-agenda-sorting-strategy '(priority-down effort-down))))
-
-              ("d" "Timeline for today" ((agenda "" ))
-               ((org-agenda-ndays 1)
-                (org-agenda-show-log t)
-                (org-agenda-log-mode-items '(clock closed))
-                (org-agenda-clockreport-mode t)
-                (org-agenda-entry-types '())))
-
-              ("." "Waiting for" todo "WAITING")
-
-
-              ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING\"-PROJ"
-               ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-                (org-agenda-view-columns-initially t)
-                (org-tags-exclude-from-inheritance '("PROJ"))
-                (org-agenda-overriding-header "Unscheduled TODO entries: ")
-                (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
-                (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
-
-              ;; THIS ONE USEFUL FOR INBOX PROCESSING
-              ("U" "Unscheduled tasks outside projects" tags-todo "-PROJ"
-               ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-                (org-tags-exclude-from-inheritance '("PROJ"))
-                (org-agenda-view-columns-initially t)
-                (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
-                (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
-
-              ;; todo: -PROJ
-              ("P" "By priority"
-               ((tags-todo "+PRIORITY=\"A\"")
-                (tags-todo "+PRIORITY=\"B\"")
-                (tags-todo "+PRIORITY=\"\"")
-                (tags-todo "+PRIORITY=\"C\""))
-               ((org-agenda-prefix-format "%-10c %-10T %e ")
-                (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
-
-              ;; active projects
-              ("pp" tags "+PROJ-someday-TODO=\"DONE\"-TODO=\"SOMEDAY\""
-               ((org-tags-exclude-from-inheritance '("PROJ"))
-                (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
-              ;; all uncompleted projects
-              ("p." tags "+PROJ-TODO=\"DONE\""
-               ((org-tags-exclude-from-inheritance '("PROJ"))
-                (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
-
-              ;; started tasks
-              ;; prolly want to display clocktime
-              ("S" tags-todo "TODO=\"STARTED\"")
-
-              ;; projects with tasks // BROKEN //
-              ("3" "List projects with tasks [BROKEN]" xtof/org-agenda-projects-and-tasks
-               "+PROJ"
-               ((xtof/org-agenda-limit-items 3)))
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-              ("o" "Agenda and Office-related tasks"
-               ((agenda ""
-                        ((org-agenda-use-tag-inheritance nil)))
-                (tags-todo "work")
-                (tags "@work")))
-
-              (" " "Agenda"
-               ((agenda "" nil)
-                (todo "NEXT"
-                      ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")))
-                (tags-todo "PROJ"
-                           ((org-agenda-overriding-header "Stuck Projects")
-                            (org-agenda-skip-function 'xtof/skip-non-stuck-projects)))
-                (todo "WAITING"
-                      ((org-agenda-overriding-header "Waiting")))))
-              ))
+      (xtof/org-agenda-setup-custom-commands)
       ))
 #+end_src
 
@@ -791,24 +837,4 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
   )
 #+end_src
 
-* //////////////////////////////////////////////////////////////////////  ORG-AC
-
-#+begin_src emacs-lisp
-  (use-package org-ac
-    :ensure org-ac
-    :init (progn
-      (org-ac/config-default)))
-#+end_src
-
-* ////////////////////////////////////////////////////////////////////  ORG2BLOG
-
-#+begin_src emacs-lisp
-  (use-package org2blog-autoloads
-    :ensure org2blog
-    :defer t
-    :init (progn
-            (setq org2blog/wp-blog-alist
-                  '(("marcchristophe.com"
-                     :url xtof/wp-blog-alist-url
-                     :username xtof/wp-blog-alist-username)))))
-#+end_src
+*

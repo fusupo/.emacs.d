@@ -1,128 +1,811 @@
 #+TITLE: xtof_config
 
-* Personal Info
+* //////////////////////////////////////-----------------------------  UTILITIES
+** exec-path-from-shell
 
 #+begin_src emacs-lisp
-  (setq user-full-name "Marc-P. Christophe"
-        user-mail-address "m@xtof.net")
+  (use-package exec-path-from-shell
+    :ensure exec-path-from-shell
+    :config (progn
+            (when (memq window-system '(mac ns))
+              (exec-path-from-shell-initialize))))
 #+end_src
 
-* Backups
+** Guide-key
+
+It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
+#+begin_src emacs-lisp
+  (use-package guide-key
+    :ensure guide-key
+    :init (progn  (setq guide-key/guide-key-sequence '("C-x"
+                                                       "C-c"
+                                                       "C-c p"
+                                                       "C-c C-x")))
+    :config (guide-key-mode 1)) ; Enable guide-key-mode
+#+end_src
+
+* //////////////////////////////////////---------------------------  LOOK & FEEL
+** Look
+*** Color Theme (gotham-theme)
 
 #+begin_src emacs-lisp
-  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+  (use-package gotham-theme
+    :ensure gotham-theme
+    :config (load-theme 'gotham t))
 #+end_src
 
-* History
+*** Smartparens
 
-From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+begin_src emacs-lisp
-  (setq savehist-file "~/.emacs.d/savehist")
-  (savehist-mode 1)
-  (setq history-length t)
-  (setq history-delete-duplicates t)
-  (setq savehist-save-minibuffer-history 1)
-  (setq savehist-additional-variables
-        '(kill-ring
-          search-ring
-          regexp-search-ring))
+  (use-package smartparens
+    :ensure smartparens
+    :config (progn
+             ;;;;;;;;;
+             ;; global
+             (require 'smartparens-config)
+             (smartparens-global-mode t)
+
+             ;; highlights matching pairs
+             (show-smartparens-global-mode t)
+
+             ;;;;;;;;;;;;;;;;;;;;;;;;
+             ;; keybinding management
+
+             (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+             (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+
+             (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
+             (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
+             (define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+             (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
+
+             (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+             (define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
+             (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
+             (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
+
+             (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+             (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+
+             (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+             (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+
+             (define-key sp-keymap (kbd "M-<delete>") 'sp-unwrap-sexp)
+             (define-key sp-keymap (kbd "M-<backspace>") 'sp-backward-unwrap-sexp)
+
+             (define-key sp-keymap (kbd "C-<right>") 'sp-forward-slurp-sexp)
+             (define-key sp-keymap (kbd "C-<left>") 'sp-forward-barf-sexp)
+             (define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
+             (define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
+
+             (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+             (define-key sp-keymap (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)
+             (define-key sp-keymap (kbd "C-M-<backspace>") 'sp-splice-sexp-killing-backward)
+             (define-key sp-keymap (kbd "C-S-<backspace>") 'sp-splice-sexp-killing-around)
+
+             (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+             (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+             (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
+
+             (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+             (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+
+             (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
+             (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
+             (define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
+             (define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
+             (define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
+             (define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
+             (define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
+             (define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
+             (define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
+
+             ;;;;;;;;;;;;;;;;;;
+             ;; pair management
+
+             (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+
+             ;;; markdown-mode
+             ;; (sp-with-modes '(markdown-mode gfm-mode rst-mode)
+             ;;   (sp-local-pair "*" "*" :bind "C-*")
+             ;;   (sp-local-tag "2" "**" "**")
+             ;;   (sp-local-tag "s" "```scheme" "```")
+             ;;   (sp-local-tag "<"  "<_>" "</_>" :transform 'sp-match-sgml-tags))
+
+             ;;; tex-mode latex-mode
+             ;; (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
+             ;;   (sp-local-tag "i" "\"<" "\">"))
+
+             ;;; html-mode
+             (sp-with-modes '(html-mode sgml-mode)
+               (sp-local-pair "<" ">"))
+
+             ;;; lisp modes
+             (sp-with-modes sp--lisp-modes
+               (sp-local-pair "(" nil :bind "C-("))))
 #+end_src
 
-* Packages
-
-Initialize Package System
-#+begin_src emacs-lisp
-  (require 'package)
-
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-
-  (package-initialize)
-
-  (when (not package-archive-contents)
-        (package-refresh-contents))
-#+end_src
-
-Additional Package load Paths
-#+begin_src emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/elisp")
-#+end_src
-
-List Packages
-#+begin_src emacs-lisp
-  (defvar xtof/my-packages '(use-package))
-#+end_src
-
-Init use-package
-#+begin_src emacs-lisp
-  (require 'use-package)
-#+end_src
-
-* Look & Feel
-** Font
-
-#+begin_src emacs-lisp
-  ;;(set-face-attribute 'default nil :font "Terminus (TTF)" :height 110)
-  (set-face-attribute 'default nil :font "Source Code Pro" :height 100)
-#+end_src
-
-** Windows
-
-#+begin_src emacs-lisp
-  (when window-system
-        (tooltip-mode -1)
-        (tool-bar-mode -1)
-        (menu-bar-mode -1)
-        (scroll-bar-mode -1))
-#+end_src
-
-#+begin_src emacs-lisp
-  (global-linum-mode 1)
-  (setq initial-frame-alist '((top . 1) (left . 1) (width . 100) (height . 60)))
-  (setq inhibit-startup-screen t)
-#+end_src
-
-** Quiet Alerts
-
-#+begin_src emacs-lisp
-  (setq visible-bell 1)
-;;  (setq visible-bell nil)
-;;  (setq ring-bell-function `(lambda ()
-;;    (set-face-background 'default "DodgerBlue")
-;;    (set-face-background 'default "black")))
-#+end_src
-
-* Frequently-accessed files
-
-#+begin_src emacs-lisp :results silent
-  (mapcar
-   (lambda (r)
-     (set-register (car r) (cons 'file (cdr r))))
-   '((?c . "~/.emacs.d/xtof_config.org")
-     (?i . "~/.emacs.d/xtof_init.org")
-     (?o . "~/.emacs.d/xtof_org.org")
-     (?s . "~/.emacs.d/xtof_startup.org")
-     (?p . "~/Documents/org/projects.org")
-     (?l . "~/Documents/org/log.org")
-     (?f . "~/Documents/org/flagged.org")
-     (?m . "~/Documents/org/memos.org")
-     (?v . "~/Documents/org/inbox.org")
-     (?x . "~/.emacs.d/init.el")
-     (?b . "~/Documents/ledger/budget.ledger")
-  ))
-#+end_src
-
-* Misc Config
+*** rainbow-delimiters
 
 #+begin_src emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)   
-  ;;(setq-default fill-column 80)
+  (use-package rainbow-delimiters
+    :ensure rainbow-delimiters
+    :config (progn
+              (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
 #+end_src
 
-UTF-8
-From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+*** volatile-highlights						   :DISABLED:
+
 #+begin_src emacs-lisp
-  (prefer-coding-system 'utf-8)
-  (when (display-graphic-p)
-    (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+  (use-package volatile-highlights
+    :ensure volatile-highlights
+    :disabled t
+    :config (volatile-highlights-mode t))
 #+end_src
+
+*** Pretty Mode
+
+#+begin_src emacs-lisp
+  (use-package pretty-mode
+    :ensure pretty-mode
+    :init (progn
+            (global-pretty-mode t)))
+#+end_src
+
+*** fci-mode
+							  
+#+begin_src emacs-lisp
+  (use-package fill-column-indicator
+    :ensure fill-column-indicator
+    :config 
+    (progn
+;;      (defadvice previous-line (around avoid-jumpy-fci activate)
+;;        (if (symbol-value 'fci-mode)
+;;          (progn (fci-mode -1) ad-do-it (fci-mode 1))
+;;            ad-do-it))
+      (setq fci-rule-width 1)
+      (setq fci-rule-use-dashes t)
+      (setq fci-rule-column 80)
+      (setq fci-dash-pattern 0.25)
+      (setq fci-rule-color "DeepSkyBlue4")
+      (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+      (global-fci-mode 1)))
+#+end_src
+
+*** indent-guide						   :DISABLED:
+
+#+begin_src emacs-lisp
+  (use-package indent-guide
+    :ensure indent-guide
+    :disabled t
+    :config (progn
+              (setq indent-guide-char "|")
+              (indent-guide-global-mode)))
+#+end_src
+
+*** Zone
+
+#+begin_src emacs-lisp
+  (require 'zone)
+
+  ;; (defun zone-choose (pgm)
+  ;;   "Choose a PGM to run for `zone'."
+  ;;   (interactive
+  ;;    (list
+  ;;     (completing-read
+  ;;      "Program: "
+  ;;      (mapcar 'symbol-name zone-programs))))
+  ;;   (let ((zone-programs (list (intern pgm))))
+  ;;     (zone)))
+
+  (setq zone-programs [zone-pgm-paragraph-spaz])
+#+end_src
+
+*** Eldoc
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+  (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+  ;;(add-hook 'clojure-mode-hook 'turn-on-eldoc-mode)
+#+END_SRC
+
+** Feel
+*** Auto-complete
+
+#+begin_src emacs-lisp
+  (use-package auto-complete
+    :ensure auto-complete
+:disabled t
+    :config (progn 
+              (ac-config-default)
+              (ac-flyspell-workaround)
+              (setq ac-comphist-file (concat xtof/savefile-directory "/" "ac-comphist.dat"))
+
+              (global-auto-complete-mode t)
+              (setq ac-auto-show-menu t)
+              (setq ac-dwim t)
+              (setq ac-use-menu-map t)
+              (setq ac-quick-help-delay 1)
+              (setq ac-quick-help-height 60)
+              (setq ac-disable-inline t)
+              (setq ac-show-menu-immediately-on-auto-complete t)
+              (setq ac-auto-start 2)
+              (setq ac-candidate-menu-min 0)
+
+              (set-default 'ac-sources
+                           '(ac-source-dictionary
+                             ac-source-words-in-buffer
+                             ac-source-words-in-same-mode-buffers
+                             ac-source-semantic
+                             ac-source-yasnippet))
+
+              ;; Exclude very large buffers from dabbrev
+              (defun xtof/dabbrev-friend-buffer (other-buffer)
+                (< (buffer-size other-buffer) (* 1 1024 1024)))
+
+              (setq dabbrev-friend-buffer-function 'xtof/dabbrev-friend-buffer)
+
+              (dolist
+                  (mode '(lisp-mode
+                          sh-mode
+                          org-mode))
+                (add-to-list 'ac-modes mode))
+
+              ;;;;Key triggers
+              (define-key ac-completing-map (kbd "C-M-n") 'ac-next)
+              (define-key ac-completing-map (kbd "C-M-p") 'ac-previous)
+              (define-key ac-completing-map "\t" 'ac-complete)
+              (define-key ac-completing-map (kbd "M-RET") 'ac-help)
+              (define-key ac-completing-map "\r" 'nil)
+              ))
+#+end_src
+
+*** Helm
+
+#+begin_src emacs-lisp
+  (use-package helm
+    :ensure helm
+:disabled t
+    :init (progn  
+            (setq helm-candidate-number-limit 100)
+            ;; From https://gist.github.com/antifuchs/9238468
+            (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+                  helm-input-idle-delay 0.01  ; this actually updates things
+                                              ; reeeelatively quickly.
+                  helm-quick-update t
+                  helm-M-x-requires-pattern nil
+                  helm-ff-skip-boring-files t))
+    :config (progn
+              (require 'helm-config)
+              (helm-mode)
+              ;; helm projectile
+              (use-package helm-projectile
+                :ensure helm-projectile
+                :init (helm-projectile-on))
+              ;; helm swoop
+              (use-package helm-swoop
+                :ensure helm-swoop
+                :bind (("C-S-s" . helm-swoop)))
+              ;; I don't like the way switch-to-buffer uses history, since
+              ;; that confuses me when it comes to buffers I've already
+              ;; killed. Let's use ido instead.
+              ;; (add-to-list 'helm-completing-read-handlers-alist 
+              ;;           '(switch-to-buffer . ido))
+              ;; Unicode
+              (add-to-list 'helm-completing-read-handlers-alist 
+                           '(insert-char . ido)))
+    :bind (("C-c h" . helm-mini) 
+           ("M-x" . helm-M-x)))
+#+end_src
+
+*** Aggressive-Indent						   :DISABLED:
+
+#+begin_src emacs-lisp
+;;  (use-package aggressive-indent
+;;    :init
+;;    (progn
+;;        (global-aggressive-indent-mode 1)
+;;        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+;;        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
+#+end_src
+
+*** Workgroups2
+
+#+begin_src emacs-lisp
+  (use-package workgroups2
+    :ensure workgroups2
+    :config (progn
+              (workgroups-mode 1)))
+#+end_src
+
+*** IBuffer
+
+#+BEGIN_SRC emacs-lisp
+  ;; (autoload 'ibuffer "ibuffer" "List buffers." t)
+  ;; (setq ibuffer-saved-filter-groups
+  ;;       (quote (("default"
+  ;;                ("dired" (mode . dired-mode))
+  ;;                ("perl" (mode . cperl-mode))
+  ;;                ("php" (mode . web-mode))
+  ;;                ("python" (mode . python-mode))
+  ;;                ("clojure" (mode . clojure-mode))
+  ;;                ("ruby" (mode . ruby-mode))
+  ;;                ("org" (mode . org-mode))
+  ;;                ("irc" (mode . rcirc-mode))
+  ;;                ("magit" (name . "\*magit"))
+  ;;                ("emacs" (or
+  ;;                          (mode . emacs-lisp-mode)
+  ;;                          (name . "\*eshell")
+  ;;                          (name . "^\\*scratch\\*$")
+  ;;                          (name . "^\\*Messages\\*$")))))))
+
+  ;; (add-hook 'ibuffer-mode-hook
+  ;;           '(lambda ()
+  ;;              (ibuffer-auto-mode 1)
+  ;;              (ibuffer-switch-to-saved-filter-groups "default")))
+
+  ;; (setq ibuffer-show-empty-filter-groups nil)
+#+END_SRC
+
+*** EShell
+
+#+BEGIN_SRC emacs-lisp
+  ;; (require 'em-smart)
+
+  ;; ;; smart display
+  ;; (setq eshell-where-to-jump 'begin)
+  ;; (setq eshell-review-quick-commands nil)
+  ;; (setq eshell-smart-space-goes-to-end t)
+
+  ;; ;;(exec-path-from-shell-initialize)
+
+  ;; (setq eshell-directory-name (expand-file-name "./" (expand-file-name "eshell" xtof/savefile-directory)))
+
+  ;; (setq eshell-last-dir-ring-file-name
+  ;;       (concat eshell-directory-name "lastdir"))
+  ;; (setq eshell-ask-to-save-last-dir 'always)
+
+  ;; (setq eshell-history-file-name
+  ;;       (concat eshell-directory-name "history"))
+
+  ;; ;;(setq eshell-aliases-file (expand-file-name "eshell.alias" jp:personal-dir ))
+
+  ;; (require 'cl)
+  ;; (defun xtof/shorten-dir (dir)
+  ;;   "Shorten a directory, (almost) like fish does it."
+  ;;   (let ((scount (1- (count ?/ dir))))
+  ;;     (dotimes (i scount)
+  ;;       (string-match "\\(/\\.?.\\)[^/]+" dir)
+  ;;       (setq dir (replace-match "\\1" nil nil dir))))
+  ;;   dir)
+
+  ;; (setq eshell-prompt-function
+  ;;       (lambda ()
+  ;;         (concat
+  ;;          (xtof/shorten-dir (eshell/pwd))
+  ;;          " > ")))
+
+  ;; (setq eshell-cmpl-cycle-completions nil
+  ;;       eshell-save-history-on-exit t
+  ;;       eshell-buffer-shorthand t
+  ;;       eshell-cmpl-dir-ignore "\\`\\(\\.\\.?\\|CVS\\|\\.svn\\|\\.git\\)/\\'")
+
+  ;; (eval-after-load 'esh-opt
+  ;;   '(progn
+  ;;      (require 'em-prompt)
+  ;;      (require 'em-term)
+  ;;      (require 'em-cmpl)
+  ;;      (electric-pair-mode -1)
+  ;;      (setenv "LANG" "en_US.UTF-8")
+  ;;      (setenv "PAGER" "cat")
+  ;;      (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
+  ;;                '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+  ;;      (setq eshell-cmpl-cycle-completions nil)
+
+  ;;      ;; TODO: submit these via M-x report-emacs-bug
+  ;;      (add-to-list 'eshell-visual-commands "ssh")
+  ;;      (add-to-list 'eshell-visual-commands "tail")
+  ;;      (add-to-list 'eshell-command-completions-alist
+  ;;                   '("gunzip" "gz\\'"))
+  ;;      (add-to-list 'eshell-command-completions-alist
+  ;;                   '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))))
+
+  ;; ;;;###autoload
+  ;; (defun eshell/cds ()
+  ;;   "Change directory to the project's root."
+  ;;   (eshell/cd (locate-dominating-file default-directory "src")))
+
+  ;; ;;;###autoload
+  ;; (defun eshell/cds ()
+  ;;   "Change directory to the project's root."
+  ;;   (eshell/cd (locate-dominating-file default-directory "src")))
+
+  ;; ;;;###autoload
+  ;; (defun eshell/cdl ()
+  ;;   "Change directory to the project's root."
+  ;;   (eshell/cd (locate-dominating-file default-directory "lib")))
+
+  ;; ;;;###autoload
+  ;; (defun eshell/cdg ()
+  ;;   "Change directory to the project's root."
+  ;;   (eshell/cd (locate-dominating-file default-directory ".git")))
+
+  ;; ;; these two haven't made it upstream yet
+  ;; ;;;###autoload
+  ;; (when (not (functionp 'eshell/find))
+  ;;   (defun eshell/find (dir &rest opts)
+  ;;     (find-dired dir (mapconcat (lambda (arg)
+  ;;                                  (if (get-text-property 0 'escaped arg)
+  ;;                                      (concat "\"" arg "\"")
+  ;;                                    arg))
+  ;;                                opts " "))))
+
+  ;; ;;;###autoload
+  ;; (when (not (functionp 'eshell/rgrep))
+  ;;   (defun eshell/rgrep (&rest args)
+  ;;     "Use Emacs grep facility instead of calling external grep."
+  ;;     (eshell-grep "rgrep" args t)))
+
+  ;; ;;;###autoload
+  ;; (defun eshell/extract (file)
+  ;;   (let ((command (some (lambda (x)
+  ;;                          (if (string-match-p (car x) file)
+  ;;                              (cadr x)))
+  ;;                        '((".*\.tar.bz2" "tar xjf")
+  ;;                          (".*\.tar.gz" "tar xzf")
+  ;;                          (".*\.bz2" "bunzip2")
+  ;;                          (".*\.rar" "unrar x")
+  ;;                          (".*\.gz" "gunzip")
+  ;;                          (".*\.tar" "tar xf")
+  ;;                          (".*\.tbz2" "tar xjf")
+  ;;                          (".*\.tgz" "tar xzf")
+  ;;                          (".*\.zip" "unzip")
+  ;;                          (".*\.Z" "uncompress")
+  ;;                          (".*" "echo 'Could not extract the file:'")))))
+  ;;     (eshell-command-result (concat command " " file))))
+
+  ;; (defface xtof/eshell-error-prompt-face
+  ;;   '((((class color) (background dark)) (:foreground "red" :bold t))
+  ;;     (((class color) (background light)) (:foreground "red" :bold t)))
+  ;;   "Face for nonzero prompt results"
+  ;;   :group 'eshell-prompt)
+
+  ;; (add-hook 'eshell-after-prompt-hook
+  ;;           (defun xtof/eshell-exit-code-prompt-face ()
+  ;;             (when (and eshell-last-command-status
+  ;;                        (not (zerop eshell-last-command-status)))
+  ;;               (let ((inhibit-read-only t))
+  ;;                 (add-text-properties
+  ;;                  (save-excursion (beginning-of-line) (point)) (point-max)
+  ;;                  '(face xtof/eshell-error-prompt-face))))))
+
+  ;; ;; (defun xtof/eshell-in-dir (&optional prompt)
+  ;; ;;   "Change the directory of an existing eshell to the directory of the file in
+  ;; ;;   the current buffer or launch a new eshell if one isn't running.  If the
+  ;; ;;   current buffer does not have a file (e.g., a *scratch* buffer) launch or raise
+  ;; ;;   eshell, as appropriate.  Given a prefix arg, prompt for the destination
+  ;; ;;   directory."
+  ;; ;;   (interactive "P")
+  ;; ;;   (let* ((name (buffer-file-name))
+  ;; ;;          (dir (cond (prompt (read-directory-name "Directory: " nil nil t))
+  ;; ;;                     (name (file-name-directory name))
+  ;; ;;                     (t nil)))
+  ;; ;;          (buffers (delq nil (mapcar (lambda (buf)
+  ;; ;;                                     (with-current-buffer buf
+  ;; ;;                                       (when (eq 'eshell-mode major-mode)
+  ;; ;;                                         (buffer-name))))
+  ;; ;;                                   (buffer-list))))
+  ;; ;;          (buffer (cond ((eq 1 (length buffers)) (first buffers))
+  ;; ;;                        ((< 1 (length buffers)) (ido-completing-read
+  ;; ;;                                                 "Eshell buffer: " buffers nil t
+  ;; ;;                                                 nil nil (first buffers)))
+  ;; ;;                        (t (eshell)))))
+  ;; ;;     (with-current-buffer buffer
+  ;; ;;       (when dir
+  ;; ;;         (eshell/cd (list dir))
+  ;; ;;         (eshell-send-input))
+  ;; ;;       (end-of-buffer)
+  ;; ;;       (pop-to-buffer buffer))))
+#+END_SRC
+
+* //////////////////////////////////////----------------------------  NAVIGATION
+** ace-jump-mode
+
+#+begin_src emacs-lisp
+  (use-package ace-jump-mode
+    :ensure ace-jump-mode
+    :bind ("M-SPC" . ace-jump-mode)
+          ("M-S-SPC" . just-one-space))
+ #+end_src
+
+* //////////////////////////////////////-----------------------  VERSION CONTROL
+** magit
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure magit
+    :defer t
+    :config (progn
+              (use-package git-commit-mode
+                :ensure git-commit-mode
+                :defer t)
+
+              (use-package gitconfig-mode
+                :ensure gitconfig-mode
+                :defer t)
+
+              (use-package gitignore-mode
+                :ensure gitignore-mode
+                :defer t)
+
+              (use-package gitattributes-mode
+                :ensure gitattributes-mode
+                :defer t))
+    :bind ("C-x g" . magit-status))
+#+end_src
+
+* //////////////////////////////////////----------------------  LANGUAGE SUPPORT
+** WEB
+*** web-mode
+
+#+begin_src emacs-lisp
+;;  (use-package web-mode
+;;    :init 
+;;    (progn
+;;      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))))
+#+end_src
+
+*** web-beautify
+
+#+begin_src emacs-lisp
+  (use-package web-beautify
+    :ensure web-beautify
+    :defer t
+    :config (progn
+            
+            (eval-after-load 'js2-mode
+              '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
+
+            (eval-after-load 'json-mode
+              '(define-key json-mode-map (kbd "C-c b") 'web-beautify-js))
+
+            (eval-after-load 'sgml-mode
+              '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
+
+            (eval-after-load 'css-mode
+              '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
+
+            (eval-after-load 'js2-mode
+              '(add-hook 'js2-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+
+            (eval-after-load 'json-mode
+              '(add-hook 'json-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+
+            (eval-after-load 'sgml-mode
+              '(add-hook 'html-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-html-buffer t t))))
+
+            (eval-after-load 'css-mode
+              '(add-hook 'css-mode-hook
+                         (lambda ()
+                           (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
+#+end_src
+
+*** js2-mode
+
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :ensure js2-mode
+    :mode "\\.js\\'"
+    :interpreter "node")
+#+end_src
+
+*** skewer-mode
+
+#+begin_src emacs-lisp
+  (use-package skewer-mode
+    :ensure skewer-mode
+    :defer t
+    :config (progn
+              (add-hook 'js2-mode-hook 'skewer-mode)
+              (add-hook 'css-mode-hook 'skewer-css-mode)
+              (add-hook 'html-mode-hook 'skewer-html-mode)))
+#+end_src
+
+*** ac-html
+# ;;#+begin_src emacs-lisp
+# ;;  (use-package ac-html
+# ;;    :init
+# ;;    (progn
+# ;;      (add-hook 'html-mode-hook 'ac-html-enable)
+#  ;;     (add-to-list 'ac-sources 'ac-source-html-attribute-value)
+#  ;;     (add-to-list 'ac-sources 'ac-source-html-tag)
+#  ;;     (add-to-list 'ac-sources 'ac-source-html-attribute)
+# ;;If you are using web-mode:
+# ;;Additionally you need to add these lines:
+# ;;(add-to-list 'web-mode-ac-sources-alist
+# ;;             '("html" . (ac-source-html-attribute-value
+# ;;                         ac-source-html-tag
+# ;;                         ac-source-html-attribute)))
+# ;;If you are using haml-mode:
+# ;;use `ac-source-haml-tag' and `ac-source-haml-attribute'
+# ;;))
+# ;;#+end_src
+# ;;#+begin_src emacs-lisp
+# (use-package web-mode auto-complete
+#   :ensure web-mode
+#   :init (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+#   :config
+#   (progn
+#     (setq web-mode-enable-current-element-highlight t)
+#     (setq web-mode-ac-sources-alist
+#           '(("css" . (ac-source-css-property))
+#             ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
+#           )))
+# #+end_src
+** Lisp
+*** Clojure
+
+#+begin_src emacs-lisp
+  (use-package clojure-mode
+    :ensure clojure-mode
+    :defer t)
+#+end_src
+
+**** cider
+
+#+begin_src emacs-lisp
+  (use-package cider
+    :ensure cider
+    :defer t
+    :config (progn
+      (add-hook 'clojure-mode-hook 'cider-mode)
+      ;; Enable eldoc in Clojure buffers:
+      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+      ;; Log communication with the nREPL server (extremely useful for debugging CIDER problems):
+      ;; (The log will go to the buffer *nrepl-messages*.)
+      (setq nrepl-log-messages t)
+      ;; You can hide the *nrepl-connection* and *nrepl-server* buffers from appearing in some buffer switching commands like switch-to-buffer(C-x b) like this:
+      ;; When using switch-to-buffer, pressing SPC after the command will make the hidden buffers visible. They'll always be visible in list-buffers (C-x C-b).
+      (setq nrepl-hide-special-buffers t)
+      ;;Error messages may be wrapped for readability. If this value is nil, messages will not be wrapped; if it is truthy but non-numeric, the default fill-column will be used.
+      (setq cider-stacktrace-fill-column 80)
+      ;; The REPL buffer name can also display the port on which the nREPL server is running. Buffer name will look like cider-repl project-name:port.
+      (setq nrepl-buffer-name-show-port t)
+
+      (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
+      (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+
+      ;;(defadvice 4clojure-open-question (around 4clojure-open-question-around)
+      ;;  "Start a cider/nREPL connection if one hasn't already been started when
+      ;;opening 4clojure questions"
+      ;;  ad-do-it
+      ;;  (unless cider-current-clojure-buffer
+      ;;    (cider-jack-in)))
+))
+#+end_src
+
+**** ac-cider							   :DISABLED:
+
+#+begin_src emacs-lisp
+  (use-package ac-cider
+    :ensure ac-cider
+    :defer t
+    :disabled t
+    :config (progn
+      (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
+      (add-hook 'cider-mode-hook 'ac-cider-setup)
+      (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
+      (eval-after-load "auto-complete"
+        '(add-to-list 'ac-modes 'cider-mode))
+
+      (defun set-auto-complete-as-completion-at-point-function ()
+        (setq completion-at-point-functions '(auto-complete)))
+
+      (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+      (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)))
+#+end_src
+
+**** 4Clojure
+
+#+begin_src emacs-lisp
+  (use-package 4clojure
+    :ensure 4clojure
+    :defer t)
+#+end_src
+
+*** eLisp
+
+#+begin_src emacs-lisp
+;;  (use-package clojure-mode-extra-font-locking
+;;    :init
+;;    (progn
+;;      (clojure-mode-extra-font-locking)))
+#+end_src
+
+*** SCHEME (mit-scheme)
+
+#+begin_src emacs-lisp
+  (setenv "MITSCHEME_LIBRARY_PATH"
+          xtof/mitschem-library-path)
+#+end_src
+
+* //////////////////////////////////////--------------------------  PRODUCTIVITY
+** Ledger Mode
+
+#+begin_src emacs-lisp
+  (use-package ledger-mode
+    :ensure ledger-mode
+    :defer t
+    :init (progn
+            (setq ledger-binary-path xof/ledger-path)
+            (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
+#+end_src
+
+** Projectile
+
+#+begin_src emacs-lisp
+
+    ;; (defun xtof/helm-project ()
+    ;;   "Preconfigured `helm'."
+    ;;   (interactive)
+    ;;   (condition-case nil
+    ;;       (if (projectile-project-root)
+    ;;           ;; add project files and buffers when in project
+    ;;           (helm-other-buffer '(helm-c-source-projectile-files-list
+    ;;                                helm-c-source-projectile-buffers-list
+    ;;                                helm-c-source-buffers-list
+    ;;                                helm-c-source-recentf
+    ;;                                helm-c-source-buffer-not-found)
+    ;;                              "*helm prelude*")
+    ;;         ;; otherwise fallback to helm-mini
+    ;;         (helm-mini))
+    ;;     ;; fall back to helm mini if an error occurs (usually in projectile-project-root)
+    ;;     (error (helm-mini))))
+
+    (use-package projectile
+      :ensure projectile
+      :defer t
+      :init (progn 
+              (setq projectile-cache-file (expand-file-name  "projectile.cache" xtof/savefile-directory)))
+      :config (progn
+                (projectile-global-mode t))
+      ;;:bind ("C-c H" . xtof/helm-project)
+  )
+#+end_src
+
+** gnus
+
+#+BEGIN_SRC emacs-lisp
+  (setq gnus-select-method
+        `(nnimap "xtof.net"
+                 (nnimap-address ,xtof/gnus-nnimap-address)
+                 (nnimap-server-port 993)
+                 (nnimap-stream ssl)))
+
+  (setq starttls-use-gnutls t
+        starttls-gnutls-program "gnutls-cli"
+        starttls-extra-arguments '("--insecure"))
+
+  (setq message-send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server xtof/gnus-nnimap-address
+        smtpmail-default-smtp-server xtof/gnus-nnimap-address
+        smtpmail-smtp-service 587
+        smtpmail-starttls-credentials `((,xtof/gnus-nnimap-address 587 nil nil))
+        smtpmail-auth-credentials `((,xtof/gnus-nnimap-address 587 ,xtof/gnus-auth-user nil))
+        smtpmail-local-domain xtof/gnus-local-domain)
+#+END_SRC
+
+
+
+ 
+

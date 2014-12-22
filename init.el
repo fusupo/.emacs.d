@@ -5,8 +5,8 @@
 
 ;; load up all literate org-mode files in this directory
 (defvar config-files '("/Users/fusupo/.emacs.d/xtof_secrets.org"
-		       "/Users/fusupo/.emacs.d/xtof_config.org"
 		       "/Users/fusupo/.emacs.d/xtof_init.org"
+		       "/Users/fusupo/.emacs.d/xtof_config.org"
 		       "/Users/fusupo/.emacs.d/xtof_org.org"
 		       "/Users/fusupo/.emacs.d/xtof_startup.org"))
 (defun load-config (filename)

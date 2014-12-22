@@ -1,6 +1,6 @@
 #+TITLE: xtof_init
 
-* //////////////////////////////////////-------------------------  PERSONAL INFO
+* ///////////////////////  PERSONAL INFO
 
 #+begin_src emacs-lisp
   (setq user-full-name "Marc-P. Christophe"
@@ -8,13 +8,13 @@
         user-homepage "http://www.marcchristophe.com")
 #+end_src
 
-* //////////////////////////////////////-------------------------------  BACKUPS
+* /////////////////////////////  BACKUPS
 
 #+begin_src emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+end_src
 
-* //////////////////////////////////////-------------------------------  HISTORY
+* /////////////////////////////  HISTORY
 
 From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 #+begin_src emacs-lisp
@@ -29,7 +29,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
           regexp-search-ring))
 #+end_src
 
-* //////////////////////////////////////------------------------------  PACKAGES
+* ////////////////////////////  PACKAGES
 
 Initialize Package System
 #+begin_src emacs-lisp
@@ -59,7 +59,7 @@ Init use-package
   (require 'use-package)
 #+end_src
 
-* //////////////////////////////////////---------------------------  LOOK & FEEL
+* /////////////////////////  LOOK & FEEL
 ** Font
 
 #+begin_src emacs-lisp
@@ -173,7 +173,7 @@ Init use-package
 
 #+END_SRC
 
-* //////////////////////////////////////-------------  FREQUENTLY_ACCESSED FILES
+* ///////////  FREQUENTLY_ACCESSED FILES
 
 #+begin_src emacs-lisp :results silent
   (mapcar
@@ -193,7 +193,7 @@ Init use-package
   ))
 #+end_src
 
-* //////////////////////////////////////---------------------------  MISC CONFIG
+* /////////////////////////  MISC CONFIG
 
 UTF-8
 From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html

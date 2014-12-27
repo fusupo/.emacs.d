@@ -134,7 +134,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :config (progn
               (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
               (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)))
+              (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)))
 #+end_src
 
 *** volatile-highlights						   :DISABLED:
@@ -209,7 +210,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+BEGIN_SRC emacs-lisp
   (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
   (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-  (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+  ;;(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+  (add-hook 'lisp-mode-hook 'turn-on-eldoc-mode)
   ;;(add-hook 'clojure-mode-hook 'turn-on-eldoc-mode)
 #+END_SRC
 
@@ -219,7 +221,6 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+begin_src emacs-lisp
   (use-package auto-complete
     :ensure auto-complete
-:disabled t
     :config (progn 
               (ac-config-default)
               (ac-flyspell-workaround)
@@ -240,18 +241,20 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                            '(ac-source-dictionary
                              ac-source-words-in-buffer
                              ac-source-words-in-same-mode-buffers
-                             ac-source-semantic
-                             ac-source-yasnippet))
+;                             ac-source-semantic
+;                             ac-source-yasnippet
+))
 
               ;; Exclude very large buffers from dabbrev
-              (defun xtof/dabbrev-friend-buffer (other-buffer)
-                (< (buffer-size other-buffer) (* 1 1024 1024)))
+;;              (defun xtof/dabbrev-friend-buffer (other-buffer)
+;;                (< (buffer-size other-buffer) (* 1 1024 1024)))
 
-              (setq dabbrev-friend-buffer-function 'xtof/dabbrev-friend-buffer)
+ ;;             (setq dabbrev-friend-buffer-function 'xtof/dabbrev-friend-buffer)
 
               (dolist
                   (mode '(lisp-mode
                           sh-mode
+html-mode
                           org-mode))
                 (add-to-list 'ac-modes mode))
 
@@ -269,19 +272,18 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+begin_src emacs-lisp
   (use-package helm
     :ensure helm
-:disabled t
     :init (progn  
             (setq helm-candidate-number-limit 100)
             ;; From https://gist.github.com/antifuchs/9238468
             (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
                   helm-input-idle-delay 0.01  ; this actually updates things
-                                              ; reeeelatively quickly.
+                                          ; reeeelatively quickly.
                   helm-quick-update t
                   helm-M-x-requires-pattern nil
-                  helm-ff-skip-boring-files t))
+                  helm-ff-skip-boring-files t)
+            (helm-mode))
     :config (progn
               (require 'helm-config)
-              (helm-mode)
               ;; helm projectile
               (use-package helm-projectile
                 :ensure helm-projectile
@@ -298,6 +300,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               ;; Unicode
               (add-to-list 'helm-completing-read-handlers-alist 
                            '(insert-char . ido)))
+    (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally...in favor of Helm
     :bind (("C-c h" . helm-mini) 
            ("M-x" . helm-M-x)))
 #+end_src
@@ -547,7 +550,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 :defer t))
     :bind ("C-x g" . magit-status))
 #+end_src
-
+   
 * //////////////////////////////////////----------------------  LANGUAGE SUPPORT
 ** WEB
 *** web-mode
@@ -732,6 +735,16 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 ;;      (clojure-mode-extra-font-locking)))
 #+end_src
 
+*** Common Lisp
+
+#+BEGIN_SRC emacs-lisp
+  (use-package slime
+    :ensure slime
+    :init (progn  ;; Set your lisp system and, optionally, some contribs
+                    (setq inferior-lisp-program "/usr/local/bin/sbcl")
+                    (setq slime-contribs '(slime-fancy))))
+
+#+END_SRC
 *** SCHEME (mit-scheme)
 
 #+begin_src emacs-lisp
@@ -774,7 +787,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
     (use-package projectile
       :ensure projectile
-      :defer t
+      ;;:defer t
       :init (progn 
               (setq projectile-cache-file (expand-file-name  "projectile.cache" xtof/savefile-directory)))
       :config (progn

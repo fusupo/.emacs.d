@@ -253,10 +253,10 @@ Too many clock entries clutter up a heading.
             ;;(setq org-blank-before-new-entry nil)
 
             ;; MAYBE ITEMS
-            ;;(setq org-startup-indented t)
-            ;;org-hide-leading-stars t
-            ;;       org-use-fast-todo-selection t
-            ;;      org-cycle-separator-lines 0)
+            ;;(setq org-startup-indented nil)
+                 ;; org-hide-leading-stars t
+                 ;; org-use-fast-todo-selection t
+                 ;; org-cycle-separator-lines 0)
             
             ;; tags
             (setq org-tag-alist '(("@work" . ?b) 

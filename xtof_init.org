@@ -154,22 +154,19 @@ Init use-package
 
 #+BEGIN_SRC emacs-lisp
 ; save cursor position within files
-;;(require 'saveplace)
-;;(setq save-place-file (expand-file-name "saveplace" xtof/savefile-directory))
-;;(setq-default save-place t)
+(require 'saveplace)
+(setq save-place-file (expand-file-name "saveplace" xtof/savefile-directory))
+(setq-default save-place t)
 
 ; save minibuffer history across sessions
-;;(setq savehist-file (expand-file-name "savehist" xtof/savefile-directory))
-;;(savehist-mode 1)
+(setq savehist-file (expand-file-name "savehist" xtof/savefile-directory))
+(savehist-mode 1)
 
 ; pick up changes to files on disk automatically (ie, after git pull)
-;;(global-auto-revert-mode 1)
+(global-auto-revert-mode 1)
 
 ; wrap lines in a tasteful way
-;;(global-visual-line-mode 1)
-
-
-;;(ido-mode nil) ;; Turn off ido mode in case I enabled it accidentally...in favor of Helm
+;;(global-visual-line-mode nil)
 
 #+END_SRC
 

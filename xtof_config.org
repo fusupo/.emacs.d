@@ -548,7 +548,8 @@ html-mode
               (use-package gitattributes-mode
                 :ensure gitattributes-mode
                 :defer t))
-    :bind ("C-x g" . magit-status))
+    :bind ("C-x g" . magit-status)
+          ("C-x C-g p" . magit-push))
 #+end_src
    
 * //////////////////////////////////////----------------------  LANGUAGE SUPPORT

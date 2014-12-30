@@ -135,7 +135,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
               (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
               (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
-              (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)))
+              (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'slime-mode-hook 'rainbow-delimiters-mode)))
 #+end_src
 
 *** volatile-highlights						   :DISABLED:
@@ -656,6 +657,17 @@ html-mode
 #             ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
 #           )))
 # #+end_src
+*** php-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package php-mode
+    :ensure php-mode
+    :defer t
+    :init (progn
+      (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+      (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))))
+#+END_SRC
+
 ** Lisp
 *** Clojure
 

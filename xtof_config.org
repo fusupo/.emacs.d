@@ -329,30 +329,30 @@ html-mode
 *** IBuffer
 
 #+BEGIN_SRC emacs-lisp
-  ;; (autoload 'ibuffer "ibuffer" "List buffers." t)
-  ;; (setq ibuffer-saved-filter-groups
-  ;;       (quote (("default"
-  ;;                ("dired" (mode . dired-mode))
-  ;;                ("perl" (mode . cperl-mode))
-  ;;                ("php" (mode . web-mode))
-  ;;                ("python" (mode . python-mode))
-  ;;                ("clojure" (mode . clojure-mode))
-  ;;                ("ruby" (mode . ruby-mode))
-  ;;                ("org" (mode . org-mode))
-  ;;                ("irc" (mode . rcirc-mode))
-  ;;                ("magit" (name . "\*magit"))
-  ;;                ("emacs" (or
-  ;;                          (mode . emacs-lisp-mode)
-  ;;                          (name . "\*eshell")
-  ;;                          (name . "^\\*scratch\\*$")
-  ;;                          (name . "^\\*Messages\\*$")))))))
+  (autoload 'ibuffer "ibuffer" "List buffers." t)
+  (setq ibuffer-saved-filter-groups
+        (quote (("default"
+                 ("dired" (mode . dired-mode))
+                 ("perl" (mode . cperl-mode))
+                 ("php" (mode . web-mode))
+                 ("python" (mode . python-mode))
+                 ("clojure" (mode . clojure-mode))
+                 ("ruby" (mode . ruby-mode))
+                 ("org" (mode . org-mode))
+                 ("irc" (mode . rcirc-mode))
+                 ("magit" (name . "\*magit"))
+                 ("emacs" (or
+                           (mode . emacs-lisp-mode)
+                           (name . "\*eshell")
+                           (name . "^\\*scratch\\*$")
+                           (name . "^\\*Messages\\*$")))))))
 
-  ;; (add-hook 'ibuffer-mode-hook
-  ;;           '(lambda ()
-  ;;              (ibuffer-auto-mode 1)
-  ;;              (ibuffer-switch-to-saved-filter-groups "default")))
+  (add-hook 'ibuffer-mode-hook
+            '(lambda ()
+               (ibuffer-auto-mode 1)
+               (ibuffer-switch-to-saved-filter-groups "default")))
 
-  ;; (setq ibuffer-show-empty-filter-groups nil)
+  (setq ibuffer-show-empty-filter-groups nil)
 #+END_SRC
 
 *** EShell

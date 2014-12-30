@@ -335,6 +335,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                  ("php" (mode . web-mode))
                  ("python" (mode . python-mode))
                  ("clojure" (mode . clojure-mode))
+("lisp" (mode . lisp-mode))
+("sass" (mode . scss-mode))
                  ("ruby" (mode . ruby-mode))
                  ("org" (mode . org-mode))
                  ("irc" (mode . rcirc-mode))

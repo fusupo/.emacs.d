@@ -365,8 +365,6 @@ html-mode
   ;; (setq eshell-review-quick-commands nil)
   ;; (setq eshell-smart-space-goes-to-end t)
 
-  ;; ;;(exec-path-from-shell-initialize)
-
   ;; (setq eshell-directory-name (expand-file-name "./" (expand-file-name "eshell" xtof/savefile-directory)))
 
   ;; (setq eshell-last-dir-ring-file-name
@@ -666,6 +664,16 @@ html-mode
     :init (progn
       (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
       (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))))
+#+END_SRC
+
+*** scss-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package scss-mode
+    :ensure scss-mode
+    :init (progn
+            ;;(setq exec-path (cons (expand-file-name "~/.gem/ruby/1.8/bin") exec-path))
+            (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))))
 #+END_SRC
 
 ** Lisp

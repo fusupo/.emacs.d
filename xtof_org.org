@@ -249,7 +249,7 @@ Too many clock entries clutter up a heading.
             (setq org-refile-use-outline-path nil)
             (setq org-refile-allow-creating-parent-nodes 'confirm)
             (setq org-refile-use-cache nil)
-            (setq org-refile-targets '((org-agenda-files . (:maxlevel . 1))))
+            (setq org-refile-targets '(("~/Documents/org/projects.org" . (:maxlevel . 1))))
             ;;(setq org-blank-before-new-entry nil)
 
             ;; MAYBE ITEMS

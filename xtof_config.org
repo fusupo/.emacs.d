@@ -191,7 +191,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** Zone
 
 #+begin_src emacs-lisp
-  (require 'zone)
+  ;;(require 'zone)
 
   ;; (defun zone-choose (pgm)
   ;;   "Choose a PGM to run for `zone'."
@@ -203,7 +203,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   ;;   (let ((zone-programs (list (intern pgm))))
   ;;     (zone)))
 
-  (setq zone-programs [zone-pgm-paragraph-spaz])
+  ;;(setq zone-programs [zone-pgm-paragraph-spaz])
 #+end_src
 
 *** Eldoc

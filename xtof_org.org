@@ -315,13 +315,10 @@ Too many clock entries clutter up a heading.
               (use-package org2blog-autoloads
                 :ensure org2blog
                 :defer t
-                :init (progn
-                        (setq org2blog/wp-blog-alist
-                              '(("marcchristophe.com"
-                                 :url xtof/wp-blog-alist-url
-                                 :username xtof/wp-blog-alist-username)))))
-
-              )
+                :init (setq org2blog/wp-blog-alist
+                              `(("marcchristophe.com"
+                                 :url ,xtof/wp-blog-alist-url
+                                 :username ,xtof/wp-blog-alist-username)))))
     :bind(("C-c l" . org-store-link)
           ("C-c L" . org-insert-link-global)
           ("C-c O" . org-open-at-point-global)))

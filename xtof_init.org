@@ -166,7 +166,7 @@ Init use-package
 (global-auto-revert-mode 1)
 
 ; wrap lines in a tasteful way
-;;(global-visual-line-mode nil)
+(global-visual-line-mode t)
 
 #+END_SRC
 

@@ -34,6 +34,18 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
     :config (load-theme 'gotham t))
 #+end_src
 
+*** smart-mode-line
+
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+:ensure smart-mode-line
+:config (progn
+(sml/setup
+(use-package smart-mode-line-powerline-theme
+:ensure smart-mode-line-powerline-theme
+:config (sml/apply-theme 'powerline)))))
+#+END_SRC
+
 *** Smartparens
 
 https://github.com/Fuco1/smartparens/wiki/Example-configuration
@@ -298,8 +310,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               ;;           '(switch-to-buffer . ido))
               ;; Unicode
               (add-to-list 'helm-completing-read-handlers-alist 
-                           '(insert-char . ido)))
-    (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally...in favor of Helm
+                           '(insert-char . ido))
+    (ido-mode -1)) ;; Turn off ido mode in case I enabled it accidentally...in favor of Helm
     :bind (("C-c h" . helm-mini) 
            ("M-x" . helm-M-x)))
 #+end_src

@@ -79,7 +79,8 @@ don't belong to any projects.
 
 #+begin_src emacs-lisp
 (defun xtof/org-setup-projects ()
-  (setq org-tags-exclude-from-inheritance '("PROJ"))
+  ;;(setq org-tags-exclude-from-inheritance '("PROJ"))
+
 )
 #+end_src
 
@@ -253,13 +254,15 @@ Too many clock entries clutter up a heading.
             ;;(setq org-blank-before-new-entry nil)
 
             ;; MAYBE ITEMS
-            ;;(setq org-startup-indented nil)
-                 ;; org-hide-leading-stars t
-                 ;; org-use-fast-todo-selection t
-                 ;; org-cycle-separator-lines 0)
+            ;; (setq org-startup-indented nil)
+            ;; org-hide-leading-stars t
+            ;; org-use-fast-todo-selection t
+            ;; org-cycle-separator-lines 0
             
             ;; tags
-            (setq org-tag-alist '(("@work" . ?b) 
+            (setq org-tag-alist '(
+                                  (:startgroup . nil)
+                                  ("@work" . ?b) 
                                   ("@home" . ?h) 
                                   ("@writing" . ?w)
                                   ("@errands" . ?e) 
@@ -268,6 +271,7 @@ Too many clock entries clutter up a heading.
                                   ("@phone" . ?p)
                                   ("@reading" . ?r)
                                   ("@computer" . ?l)
+                                  (:endgroup . nil)
                                   (:startgroup . nil)
                                   ("lowenergy" . ?0)
                                   ("highenergy" . ?9)
@@ -316,9 +320,9 @@ Too many clock entries clutter up a heading.
                 :ensure org2blog
                 :defer t
                 :init (setq org2blog/wp-blog-alist
-                              `(("marcchristophe.com"
-                                 :url ,xtof/wp-blog-alist-url
-                                 :username ,xtof/wp-blog-alist-username)))))
+                            `(("marcchristophe.com"
+                               :url ,xtof/wp-blog-alist-url
+                               :username ,xtof/wp-blog-alist-username)))))
     :bind(("C-c l" . org-store-link)
           ("C-c L" . org-insert-link-global)
           ("C-c O" . org-open-at-point-global)))
@@ -384,17 +388,17 @@ These too are Sacha's
   ;; Capture something based on the agenda
   (defun xtof/org-agenda-new ()
     "Create a new note or task at under current agenda item. Best with projects."
-    
       (interactive)
       (org-agenda-switch-to)
       (org-capture 0)
-      (org-backward-heading-same-level 1)
+      ;;(org-backward-heading-same-level 1)
       (org-move-subtree-down 1)
       (org-metaright)
-(switch-to-prev-buffer)
-(agenda-redo))
+      (switch-to-prev-buffer)
+      (agenda-redo))
   ;; New key assignment
   (define-key org-agenda-mode-map "N" 'xtof/org-agenda-new)
+
 #+end_src
 
 
@@ -775,7 +779,9 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
             ("3" "List projects with tasks [BROKEN]" xtof/org-agenda-projects-and-tasks
              "+PROJ"
              ((xtof/org-agenda-limit-items 3)))
-      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            
             ("o" "Agenda and Office-related tasks"
              ((agenda ""
                       ((org-agenda-use-tag-inheritance nil)))
@@ -783,17 +789,21 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
               (tags "@work")))
 
             (" " "Agenda"
-             ((agenda "" nil)
+             ((agenda "" nil ((org-agenda-use-tag-inheritance nil)))
               (todo "NEXT"
                     ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")))
               (tags-todo "PROJ"
                          ((org-agenda-overriding-header "Stuck Projects")
+                          (org-tags-exclude-from-inheritance '("PROJ"))
                           (org-agenda-skip-function 'xtof/skip-non-stuck-projects)))
-              (tags-todo "PROJ"
-                         ((org-agenda-overriding-header "Empty Projects")
-                          (org-agenda-skip-function 'xtof/skip-non-empty-projects)))
-              (todo "WAITING"
-                    ((org-agenda-overriding-header "Waiting")))))
+              (tags "+PROJ-TODO=\"SOMEDAY\""
+                    ((org-agenda-overriding-header "Empty Projects")
+                     (org-tags-exclude-from-inheritance '("PROJ"))
+                     (org-agenda-skip-function 'xtof/skip-non-empty-projects)))
+              (todo "WAITING-SOMEDAY"
+                    ((org-agenda-overriding-header "Waiting")))
+              (todo "SOMEDAY"
+                    ((org-agenda-overriding-header "Someday")))))
             )))
 #+END_SRC
 ** xtof/org-agenda-config
@@ -853,6 +863,11 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
     :bind
       (("C-c a" . org-agenda))
   )
-#+end_src
 
-*
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
+#+end_src

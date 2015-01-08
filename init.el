@@ -28,4 +28,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
+ '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t)
+ '(sml/folder ((t (:inherit sml/global :background "#091f2e" :foreground "gray40" :weight normal))))
+ '(sml/modes ((t (:inherit sml/global :background "#0a3749" :foreground "gray65"))))
+ '(sml/position-percentage ((t (:inherit sml/prefix :background "#0a3749" :foreground "gray100" :weight normal))))
+ '(sml/vc ((t (:inherit sml/git :background "#0a3749" :foreground "SlateBlue2"))))
+ '(sml/vc-edited ((t (:inherit sml/prefix :background "#0a3749" :foreground "OrangeRed1")))))

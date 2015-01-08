@@ -37,13 +37,13 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
 *** smart-mode-line
 
 #+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
-:ensure smart-mode-line
-:config (progn
-(sml/setup
-(use-package smart-mode-line-powerline-theme
-:ensure smart-mode-line-powerline-theme
-:config (sml/apply-theme 'powerline)))))
+  (use-package smart-mode-line
+    :ensure smart-mode-line
+    :init (use-package smart-mode-line-powerline-theme
+                :ensure smart-mode-line-powerline-theme)
+    :config (progn
+              (sml/setup)
+              (sml/apply-theme 'powerline)))
 #+END_SRC
 
 *** Smartparens

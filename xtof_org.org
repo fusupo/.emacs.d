@@ -871,3 +871,42 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
   ;; If there is more than one, they won't work right.
  '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
 #+end_src
+* //////////////////////////////////////-----------------------------  ORG BABEL
+#+begin_src emacs-lisp
+(use-package gnuplot-mode
+:ensure gnuplot-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package gnuplot
+:ensure gnuplot)
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-with-inline-images t)
+  (use-package org
+   :config
+   (progn
+     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+     (setq org-confirm-babel-evaluate nil)
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((R . t)
+        (ditaa . t)
+        (dot . t)
+        (emacs-lisp . t)
+        (gnuplot . t)
+        (haskell . nil)
+        (latex . t)
+        (ledger . t)         ;this is the important one for this tutorial
+        (ocaml . nil)
+        (octave . t)
+        (python . t)
+        (ruby . t)
+        (scheme . t)
+        (screen . nil)
+        (sh . t)
+        (sql . nil)
+        (sqlite . t))))
+     (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
+#+END_SRC

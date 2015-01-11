@@ -40,10 +40,15 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
   (use-package smart-mode-line
     :ensure smart-mode-line
     :init (use-package smart-mode-line-powerline-theme
-                :ensure smart-mode-line-powerline-theme)
+            :ensure smart-mode-line-powerline-theme)
     :config (progn
-              (sml/setup)
-              (sml/apply-theme 'powerline)))
+              (setq sml/theme 'powerline)
+              (setq sml/folder '(:inherit sml/global :background "#091f2e" :foreground "gray40" :weight normal))
+              (setq sml/modes '(:inherit sml/global :background "#0a3749" :foreground "gray65"))
+              (setq sml/position-percentage '(:inherit sml/prefix :background "#0a3749" :foreground "gray100" :weight normal))
+              (setq sml/vc '(:inherit sml/git :background "#0a3749" :foreground "#2aa889"))
+              (setq sml/vc-edited '(:inherit sml/prefix :background "#0a3749" :foreground "OrangeRed1"))
+              (sml/setup)))
 #+END_SRC
 
 *** Smartparens
@@ -353,6 +358,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                  ("org" (mode . org-mode))
                  ("irc" (mode . rcirc-mode))
                  ("magit" (name . "\*magit"))
+                 ("ledger" (mode . ledger-mode))
                  ("emacs" (or
                            (mode . emacs-lisp-mode)
                            (name . "\*eshell")
@@ -525,7 +531,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   ;; ;;       (end-of-buffer)
   ;; ;;       (pop-to-buffer buffer))))
 #+END_SRC
-
+    
 * //////////////////////////////////////----------------------------  NAVIGATION
 ** ace-jump-mode
 
@@ -796,6 +802,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :defer t
     :init (progn
             (setq ledger-binary-path xof/ledger-path)
+            (setq ledger-reconcile-insert-effective-date t)
             (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
 #+end_src
 

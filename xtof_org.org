@@ -399,6 +399,7 @@ These too are Sacha's
   ;; New key assignment
   (define-key org-agenda-mode-map "N" 'xtof/org-agenda-new)
 
+
 #+end_src
 
 
@@ -804,6 +805,7 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
                     ((org-agenda-overriding-header "Waiting")))
               (todo "SOMEDAY"
                     ((org-agenda-overriding-header "Someday")))))
+
             )))
 #+END_SRC
 ** xtof/org-agenda-config

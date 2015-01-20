@@ -564,6 +564,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   ;; ;;       (pop-to-buffer buffer))))
 #+END_SRC
     
+*** Midnight Mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package midnight
+    :ensure midnight
+    :config (progn
+              (setq clean-buffer-list-delay-general 1)))
+#+END_SRC
 * //////////////////////////////////////----------------------------  NAVIGATION
 ** ace-jump-mode
 

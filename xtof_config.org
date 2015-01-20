@@ -42,13 +42,35 @@ It's hard to remember keyboard shortcuts. The =guide-key= package pops up help a
     :init (use-package smart-mode-line-powerline-theme
             :ensure smart-mode-line-powerline-theme)
     :config (progn
+              (sml/setup)
               (setq sml/theme 'powerline)
-              (setq sml/folder '(:inherit sml/global :background "#091f2e" :foreground "gray40" :weight normal))
-              (setq sml/modes '(:inherit sml/global :background "#0a3749" :foreground "gray65"))
-              (setq sml/position-percentage '(:inherit sml/prefix :background "#0a3749" :foreground "gray100" :weight normal))
-              (setq sml/vc '(:inherit sml/git :background "#0a3749" :foreground "#2aa889"))
-              (setq sml/vc-edited '(:inherit sml/prefix :background "#0a3749" :foreground "OrangeRed1"))
-              (sml/setup)))
+              (set-face-attribute 'sml/folder
+                                  nil
+                                  :inherit 'sml/global
+                                  :background "#091f2e"
+                                  :foreground "gray40"
+                                  :weight 'normal)
+              (set-face-attribute 'sml/modes
+                                  nil 
+                                  :inherit 'sml/global
+                                  :background "#0a3749"
+                                  :foreground "gray65")
+              (set-face-attribute 'sml/position-percentage
+                                  nil 
+                                  :inherit 'sml/prefix
+                                  :background "#0a3749"
+                                  :foreground "gray100"
+                                  :weight 'normal)
+              (set-face-attribute 'sml/vc
+                                  nil 
+                                  :inherit 'sml/git
+                                  :background "#0a3749"
+                                  :foreground "#2aa889")
+              (set-face-attribute 'sml/vc-edited
+                                  nil
+                                  :inherit 'sml/prefix
+                                  :background "#0a3749"
+                                  :foreground "OrangeRed1")))
 #+END_SRC
 
 *** Smartparens
@@ -246,10 +268,10 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 (global-auto-complete-mode t)
                 (setq ac-auto-show-menu t)
                 (setq ac-dwim t)
-                (setq ac-use-menu-map t)
+ ;;               (setq ac-use-menu-map t)
                 (setq ac-quick-help-delay 1)
-                (setq ac-quick-help-height 60)
-                (setq ac-disable-inline t)
+ ;;               (setq ac-quick-help-height 60)
+ ;;               (setq ac-disable-inline t)
                 (setq ac-show-menu-immediately-on-auto-complete t)
                 (setq ac-auto-start 2)
                 (setq ac-candidate-menu-min 0)
@@ -257,7 +279,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 (set-default 'ac-sources
                              '(ac-source-dictionary
                                ac-source-words-in-buffer
-                               ac-source-words-in-same-mode-buffers
+  ;                             ac-source-words-in-same-mode-buffers
   ;                             ac-source-semantic
   ;                             ac-source-yasnippet
                                ))
@@ -283,6 +305,13 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 (define-key ac-completing-map "\r" 'nil)))
 #+end_src
 
+#+BEGIN_SRC emacs-lisp
+;;(use-package ac-js2
+;;:ensure ac-js2
+;;:config (progn 
+;;(add-hook 'js2-mode-hook 'ac-js2)
+;;))
+#+END_SRC
 *** Helm
 
 #+begin_src emacs-lisp
@@ -324,12 +353,12 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** Aggressive-Indent						   :DISABLED:
 
 #+begin_src emacs-lisp
-;;  (use-package aggressive-indent
-;;    :init
-;;    (progn
-;;        (global-aggressive-indent-mode 1)
-;;        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-;;        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
+  (use-package aggressive-indent
+    :init
+    (progn
+        (global-aggressive-indent-mode 1)
+        (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+        (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
 #+end_src
 
 *** Workgroups2
@@ -357,6 +386,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                  ("ruby" (mode . ruby-mode))
                  ("org" (mode . org-mode))
                  ("irc" (mode . rcirc-mode))
+                 ("js" (mode . js2-mode))
+                 ("css" (mode . css-mode))
+                 ("html" (mode . html-mode))
                  ("magit" (name . "\*magit"))
                  ("ledger" (mode . ledger-mode))
                  ("emacs" (or
@@ -624,10 +656,17 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** js2-mode
 
 #+begin_src emacs-lisp
-  (use-package js2-mode
-    :ensure js2-mode
-    :mode "\\.js\\'"
-    :interpreter "node")
+    (use-package js2-mode
+      :ensure js2-mode
+      :mode ("\\.js\\'" . js2-mode)
+      :interpreter ("node" . js2mode)
+      :config (progn
+                (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+                (setq js-indent-level 2)
+                (setq js2-indent-level 2)
+                (setq js2-basic-offset 2)
+                (add-hook 'js2-mode-hook '(lambda ()
+                              (local-set-key (kbd "RET") 'newline-and-indent)))))
 #+end_src
 
 *** skewer-mode

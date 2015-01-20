@@ -22,53 +22,56 @@
 * //////////////////////////////////////----------------------  TRACK TODO STATE
 
 #+begin_src emacs-lisp
-(defun xtof/org-setup-todos ()
-  (setq org-use-fast-todo-selection t) ;; actually seems to be true by default
-  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+  (defun xtof/org-setup-todos ()
+    (setq org-use-fast-todo-selection t) ;; actually seems to be true by default
+    (setq org-treat-S-cursor-todo-selection-as-state-change nil)
 
-  (setq org-todo-keywords
-        '((sequence
-           "TODO(t)"
-           "NEXT(n!/!)"
-           "STARTED(s)"
-           "WAITING(w@/!)"
-           "SOMEDAY(.)"
-           "|"
-           "DONE(x!)"
-           "CANCELLED(c@)")
-          (sequence
-           "TODELEGATE(-)"
-           "DELEGATED(d)"
-           "COMPLETE(x)")))
+    (setq org-todo-keywords
+          '((sequence 
+             "PROJ")
+            (sequence
+             "TODO(t)"
+             "NEXT(n!/!)"
+             "STARTED(s)"
+             "WAITING(w@/!)"
+             "SOMEDAY(.)"
+             "|"
+             "DONE(x!)"
+             "CANCELLED(c@)")
+            (sequence
+             "TODELEGATE(-)"
+             "DELEGATED(d)"
+             "COMPLETE(x)")))
 
-  (setq org-todo-keyword-faces
-        '(("TODO" :foreground "firebrick" :weight bold)
-          ("NEXT" :foreground "red" :weight bold)
-          ("STARTED" :foreground "gold" :weight bold)
-          ("WAITING" :foreground "chocolate" :weight bold)
-          ("SOMEDAY" :foreground "light steel blue" :weight bold)
-          ("DONE" :foreground "olive drab" :weight bold)
-          ("CANCELLED" :foreground "dim gray" :weight bold)
-          ("TODELEGATE" :foreground "firebrick" :weight bold)
-          ("DELEGATED" :foreground "chocolate" :weight bold)
-          ("COMPLETE" :foreground "olive drab" :weight bold)))
+    (setq org-todo-keyword-faces
+          '(("PROJ" :foreground "firebrick" :weight bold)
+             ("TODO" :foreground "firebrick" :weight bold)
+            ("NEXT" :foreground "red" :weight bold)
+            ("STARTED" :foreground "gold" :weight bold)
+            ("WAITING" :foreground "chocolate" :weight bold)
+            ("SOMEDAY" :foreground "light steel blue" :weight bold)
+            ("DONE" :foreground "olive drab" :weight bold)
+            ("CANCELLED" :foreground "dim gray" :weight bold)
+            ("TODELEGATE" :foreground "firebrick" :weight bold)
+            ("DELEGATED" :foreground "chocolate" :weight bold)
+            ("COMPLETE" :foreground "olive drab" :weight bold)))
 
-  ;; Parent can't be marked as done unless all children are done
-  (setq org-enforce-todo-dependencies t)
-  (defun org-summary-todo (n-done n-not-done)
-    "Switch entry to DONE when all subentries are done, to TODO otherwise."
-    (let (org-log-done org-log-states)   ; turn off logging
-      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+    ;; Parent can't be marked as done unless all children are done
+    (setq org-enforce-todo-dependencies t)
+    (defun org-summary-todo (n-done n-not-done)
+      "Switch entry to DONE when all subentries are done, to TODO otherwise."
+      (let (org-log-done org-log-states)   ; turn off logging
+        (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-;   (setq org-todo-state-tags-triggers
-;         (quote (("CANCELLED" ("CANCELLED" . t))
-;                 ("WAITING" ("WAITING" . t))
-;                 ("HOLD" ("WAITING") ("HOLD" . t))
-;                 (done ("WAITING") ("HOLD"))
-;                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-;                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-;                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-)
+  ;   (setq org-todo-state-tags-triggers
+  ;         (quote (("CANCELLED" ("CANCELLED" . t))
+  ;                 ("WAITING" ("WAITING" . t))
+  ;                 ("HOLD" ("WAITING") ("HOLD" . t))
+  ;                 (done ("WAITING") ("HOLD"))
+  ;                 ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+  ;                 ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+  ;                 ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+  )
 #+end_src
 
 * //////////////////////////////////////------------------------------  PROJECTS
@@ -260,8 +263,7 @@ Too many clock entries clutter up a heading.
             ;; org-cycle-separator-lines 0
             
             ;; tags
-            (setq org-tag-alist '(
-                                  (:startgroup . nil)
+            (setq org-tag-alist '((:startgroup . nil)
                                   ("@work" . ?b) 
                                   ("@home" . ?h) 
                                   ("@writing" . ?w)
@@ -405,12 +407,12 @@ These too are Sacha's
 
 inspired by http://doc.norang.ca/org-mode.html#GTD
 #+begin_src emacs-lisp
-  (defun xtof/is-project-p ()
-    "headlines with tag 'PROJ'"
-    (save-restriction
-      (widen)
-      (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-        (save-excursion (not (equal nil (search-forward ":PROJ:" subtree-end t nil)))))))
+  ;; (defun xtof/is-project-p ()
+  ;;   "headlines with tag 'PROJ'"
+  ;;   (save-restriction
+  ;;     (widen)
+  ;;     (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+  ;;       (save-excursion (not (equal nil (search-forward ":PROJ:" subtree-end t nil)))))))
 
   (defun xtof/is-empty-project-p ()
     (save-restriction
@@ -423,34 +425,36 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
     (save-restriction
       (widen)
       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (if (and (xtof/is-project-p) (not (xtof/is-empty-project-p)))
-            next-headline
-            nil))))
+        (if (xtof/is-empty-project-p)
+            nil
+          next-headline))))
 
   (defun xtof/skip-non-stuck-projects ()
     "Skip trees that are empty or have next axtion(s)"
     (save-restriction
       (widen)
       (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-        (if (xtof/is-project-p)
-            (if (xtof/is-empty-project-p)
+        (if (xtof/is-empty-project-p)
+            next-headline
+          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
+                 (has-next ))
+            (save-excursion
+              (forward-line 1)
+              (while (and (not has-next) (< (point) subtree-end) 
+                        (or (re-search-forward "^\\*+ WAITING" subtree-end t)
+                           (re-search-forward "^\\*+ STARTED" subtree-end t)
+                           (re-search-forward "^\\*+ NEXT" subtree-end t)))
+                (setq has-next t)))
+            (if has-next
                 next-headline
-                (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                       (has-next ))
-                  (save-excursion
-                    (forward-line 1)
-                    (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                      (setq has-next t)))
-                  (if has-next
-                      next-headline
-                    nil))) ; a stuck project, has subtasks but no next task
-          nil))))
+              nil))) ; a stuck project, has subtasks but no next task
+        )))
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (defun xtof/org-complete-cmp (a b)
     (let* ((state-a (or (get-text-property 1 'todo-state a) ""))
@@ -510,7 +514,7 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
      (org-cmp-priority a b)
      (org-cmp-effort a b)))
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (defvar xtof/org-agenda-limit-items nil "Number of items to show in agenda to-do views; nil if unlimited.")
   (eval-after-load 'org
@@ -532,12 +536,12 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
                               "\n")))
          ad-do-it)))
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (defun xtof/org-agenda-skip-scheduled ()
     (org-agenda-skip-entry-if 'scheduled 'deadline 'regexp "\n]+>"))
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (defun xtof/org-agenda-project-agenda ()
     "Return the project headline and up to `xtof/org-agenda-limit-items' tasks."
@@ -707,14 +711,14 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
              ,xtof/org-agenda-contexts
              ((org-agenda-sorting-strategy '(priority-up effort-down))
               (org-agenda-show-inherited-tags nil)
-              (org-tags-exclude-from-inheritance '("PROJ"))
+              ;; (org-tags-exclude-from-inheritance '("PROJ"))
               ;;also skip habits
               (xtof/org-agenda-limit-items 3)))
             (")" "All by context"
              ,xtof/org-agenda-contexts
              ((org-agenda-sorting-strategy '(priority-down effort-down))
               (org-agenda-show-inherited-tags nil)
-              (org-tags-exclude-from-inheritance '("PROJ"))
+              ;;(org-tags-exclude-from-inheritance '("PROJ"))
               ;; skip habits
               (xtof/org-agenda-limit-items nil)))
 
@@ -738,18 +742,18 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
             ("." "Waiting for" todo "WAITING")
 
 
-            ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING\"-PROJ"
+            ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING"
              ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
               (org-agenda-view-columns-initially t)
-              (org-tags-exclude-from-inheritance '("PROJ"))
+              ;;(org-tags-exclude-from-inheritance '("PROJ"))
               (org-agenda-overriding-header "Unscheduled TODO entries: ")
               (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
               (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
 
             ;; THIS ONE USEFUL FOR INBOX PROCESSING
-            ("U" "Unscheduled tasks outside projects" tags-todo "-PROJ"
+            ("U" "Unscheduled tasks outside projects" tags-todo
              ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-              (org-tags-exclude-from-inheritance '("PROJ"))
+              ;;(org-tags-exclude-from-inheritance '("PROJ"))
               (org-agenda-view-columns-initially t)
               (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
               (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
@@ -764,12 +768,14 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
               (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
 
             ;; active projects
-            ("pp" tags "+PROJ-someday-TODO=\"DONE\"-TODO=\"SOMEDAY\""
-             ((org-tags-exclude-from-inheritance '("PROJ"))
+            ("pp" tags "-someday-TODO=\"DONE\"-TODO=\"SOMEDAY\""
+             (
+              ;;(org-tags-exclude-from-inheritance '("PROJ"))
               (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
             ;; all uncompleted projects
-            ("p." tags "+PROJ-TODO=\"DONE\""
-             ((org-tags-exclude-from-inheritance '("PROJ"))
+            ("p." tags "-TODO=\"DONE\""
+             (
+              ;;(org-tags-exclude-from-inheritance '("PROJ"))
               (org-agenda-sorting-strategy '(priority-down tag-up category-keep effort-down))))
 
             ;; started tasks
@@ -778,10 +784,10 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
 
             ;; projects with tasks // BROKEN //
             ("3" "List projects with tasks [BROKEN]" xtof/org-agenda-projects-and-tasks
-             "+PROJ"
+             ;;"+PROJ"
              ((xtof/org-agenda-limit-items 3)))
             
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
             
             ("o" "Agenda and Office-related tasks"
              ((agenda ""
@@ -791,20 +797,22 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
 
             (" " "Agenda"
              ((agenda "" nil ((org-agenda-use-tag-inheritance nil)))
+              (todo "STARTED"
+                    ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")
+                     (org-agenda-overriding-header "Started")))
               (todo "NEXT"
                     ((org-columns-default-format "%50ITEM %12SCHEDULED %TODO %3PRIORITY %Effort{:} %TAGS %10CLOCKSUM")))
-              (tags-todo "PROJ"
-                         ((org-agenda-overriding-header "Stuck Projects")
-                          (org-tags-exclude-from-inheritance '("PROJ"))
-                          (org-agenda-skip-function 'xtof/skip-non-stuck-projects)))
-              (tags "+PROJ-TODO=\"SOMEDAY\""
+              (todo "PROJ"
+                    ((org-agenda-overriding-header "Stuck Projects")
+                     (org-agenda-skip-function 'xtof/skip-non-stuck-projects)))
+              (todo "PROJ";;"-TODO=\"SOMEDAY\""
                     ((org-agenda-overriding-header "Empty Projects")
-                     (org-tags-exclude-from-inheritance '("PROJ"))
                      (org-agenda-skip-function 'xtof/skip-non-empty-projects)))
               (todo "WAITING-SOMEDAY"
                     ((org-agenda-overriding-header "Waiting")))
               (todo "SOMEDAY"
                     ((org-agenda-overriding-header "Someday")))))
+            
 
             )))
 #+END_SRC

@@ -172,6 +172,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :ensure rainbow-delimiters
     :config (progn
               (add-hook 'html-mode-hook 'rainbow-delimiters-mode)
+              (add-hook 'js2-mode-hook 'rainbow-delimiters-mode)
               (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
               (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
               (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)
@@ -664,17 +665,21 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** js2-mode
 
 #+begin_src emacs-lisp
-    (use-package js2-mode
-      :ensure js2-mode
-      :mode ("\\.js\\'" . js2-mode)
-      :interpreter ("node" . js2mode)
-      :config (progn
-                (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
-                (setq js-indent-level 2)
-                (setq js2-indent-level 2)
-                (setq js2-basic-offset 2)
-                (add-hook 'js2-mode-hook '(lambda ()
-                              (local-set-key (kbd "RET") 'newline-and-indent)))))
+  (use-package js2-mode
+    :ensure js2-mode
+    :mode (("\\.js\\'" . js2-mode)
+           ("\\.json\\'" . js2-mode))
+    :interpreter ("node" . js2mode)
+    :config (progn
+              (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+              (setq js-indent-level 2)
+              (setq js2-indent-level 2)
+              (setq js2-basic-offset 2)
+              (setq js2-highlight-level 3)
+              (setq js2-indent-switch-body t)
+              (setq js2-mode-indent-inhibit-undo t)
+              (add-hook 'js2-mode-hook '(lambda ()
+                                          (local-set-key (kbd "RET") 'newline-and-indent)))))
 #+end_src
 
 *** skewer-mode
@@ -743,6 +748,24 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               (add-hook 'scss-mode-hook 'flymake-mode)))
 #+END_SRC
 
+*** grunt
+
+#+BEGIN_SRC emacs-lisp
+(defun grunt ()
+  "Run grunt"
+  (interactive)
+  (let* ((grunt-buffer (get-buffer-create "*grunt*"))
+         (result (call-process-shell-command grunt-cmd nil grunt-buffer t))
+         (output (with-current-buffer grunt-buffer (buffer-string))))
+    (cond ((zerop result)
+           (message "Grunt completed without errors"))
+          (t
+           (message nil)
+           (split-window-vertically)
+           (set-window-buffer (next-window) grunt-buffer)))))
+(global-set-key (kbd "C-S-p") 'grunt)
+(setq grunt-cmd "grunt --no-color --config ~/grunt.js")
+#+END_SRC
 ** Lisp
 *** Clojure
 
@@ -814,6 +837,16 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :defer t)
 #+end_src
 
+**** Arcadia
+#+BEGIN_SRC emacs-lisp
+(defcustom arcadia-repl-command "ruby repl-client.rb"
+  "Command to use for the Arcadia REPL into Unity.")
+
+(defun arcadia-repl ()
+  "Start repl"
+  (interactive)
+  (run-lisp arcadia-repl-command))
+#+END_SRC
 *** eLisp
 
 #+begin_src emacs-lisp
@@ -906,9 +939,3 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         smtpmail-auth-credentials `((,xtof/gnus-nnimap-address 587 ,xtof/gnus-auth-user nil))
         smtpmail-local-domain xtof/gnus-local-domain)
 #+END_SRC
-
-
-
- 
-
-X3

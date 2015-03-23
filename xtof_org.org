@@ -722,15 +722,15 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
               ;; skip habits
               (xtof/org-agenda-limit-items nil)))
 
-            ("9" "Unscheduled top 3 by context"
-             ,xtof/org-agenda-contexts
-             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-              (org-agenda-sorting-strategy '(priority-down effort-down))
-              (xtof/org-agenda-limit-items 3)))
-            ("(" "All unscheduled by context"
-             ,xtof/org-agenda-contexts
-             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-              (org-agenda-sorting-strategy '(priority-down effort-down))))
+            ;; ("9" "Unscheduled top 3 by context"
+            ;;  ,xtof/org-agenda-contexts
+            ;;  ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+            ;;   (org-agenda-sorting-strategy '(priority-down effort-down))
+            ;;   (xtof/org-agenda-limit-items 3)))
+            ;; ("(" "All unscheduled by context"
+            ;;  ,xtof/org-agenda-contexts
+            ;;  ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+            ;;   (org-agenda-sorting-strategy '(priority-down effort-down))))
 
             ("d" "Timeline for today" ((agenda "" ))
              ((org-agenda-ndays 1)
@@ -742,21 +742,21 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
             ("." "Waiting for" todo "WAITING")
 
 
-            ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING"
-             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-              (org-agenda-view-columns-initially t)
-              ;;(org-tags-exclude-from-inheritance '("PROJ"))
-              (org-agenda-overriding-header "Unscheduled TODO entries: ")
-              (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
-              (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
+            ;; ("u" "Unscheduled tasks" tags-todo "-someday-TODO=\"SOMEDAY\"-TODO=\"DELEGATED\"-TODO=\"WAITING"
+            ;;  ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+            ;;   (org-agenda-view-columns-initially t)
+            ;;   ;;(org-tags-exclude-from-inheritance '("PROJ"))
+            ;;   (org-agenda-overriding-header "Unscheduled TODO entries: ")
+            ;;   (org-columns-default-format "%50ITEM %TODO %3PRIORITY %Effort{:} %TAGS")
+            ;;   (org-agenda-sorting-strategy '(todo-state-up priority-down effort-up tag-up category-keep))))
 
             ;; THIS ONE USEFUL FOR INBOX PROCESSING
-            ("U" "Unscheduled tasks outside projects" tags-todo
-             ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
-              ;;(org-tags-exclude-from-inheritance '("PROJ"))
-              (org-agenda-view-columns-initially t)
-              (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
-              (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
+            ;; ("U" "Unscheduled tasks outside projects" tags-todo
+            ;;  ((org-agenda-skip-function 'xtof/org-agenda-skip-scheduled)
+            ;;   ;;(org-tags-exclude-from-inheritance '("PROJ"))
+            ;;   (org-agenda-view-columns-initially t)
+            ;;   (org-agenda-overriding-header "Unscheduled TODO entries outside projects: ")
+            ;;   (org-agenda-sorting-strategy '(todo-state-up priority-down tag-up category-keep effort-down))))
 
             ;; todo: -PROJ
             ("P" "By priority"

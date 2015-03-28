@@ -748,6 +748,13 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               (add-hook 'scss-mode-hook 'flymake-mode)))
 #+END_SRC
 
+*** COMMENT jade-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package jade-mode
+    :ensure jade-mode
+    :init (progn
+            (add-to-list 'auto-mode-alist '("\\.jade\\'" . jade-mode))))
+#+END_SRC
 *** grunt
 
 #+BEGIN_SRC emacs-lisp

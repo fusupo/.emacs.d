@@ -1,3 +1,6 @@
+#+BLOG: christophilos.com
+#+POSTID: 11
+#+DATE: [2015-03-30 Mon 10:20]
 #+TITLE xtof_org
 
 * //////////////////////////////////////-------------------------------  MODULES
@@ -321,10 +324,15 @@ Too many clock entries clutter up a heading.
               (use-package org2blog-autoloads
                 :ensure org2blog
                 :defer t
-                :init (setq org2blog/wp-blog-alist
-                            `(("marcchristophe.com"
-                               :url ,xtof/wp-blog-alist-url
-                               :username ,xtof/wp-blog-alist-username)))))
+                :init (progn 
+                        (setq org2blog/wp-keep-new-lines t)
+                        (setq org2blog/wp-blog-alist
+                              `(("marcchristophe.com"
+                                 :url ,xtof/wp-blog-marcchristophe-alist-url
+                                 :username ,xtof/wp-blog-marcchristophe-alist-username)
+                                ("christophilos.com"
+                                 :url ,xtof/wp-blog-christophilos-alist-url
+                                 :username ,xtof/wp-blog-christophilos-alist-username))))))
     :bind(("C-c l" . org-store-link)
           ("C-c L" . org-insert-link-global)
           ("C-c O" . org-open-at-point-global)))

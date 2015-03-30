@@ -28,4 +28,5 @@
  '(cursor-type (quote bar))
  '(custom-safe-themes
    (quote
-    ("e56f1b1c1daec5dbddc50abd00fcd00f6ce4079f4a7f66052cf16d96412a09a9" default))))
+    ("e56f1b1c1daec5dbddc50abd00fcd00f6ce4079f4a7f66052cf16d96412a09a9" default)))
+ '(js2-strict-inconsistent-return-warning nil))

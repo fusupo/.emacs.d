@@ -306,13 +306,6 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 (define-key ac-completing-map "\r" 'nil)))
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
-;;(use-package ac-js2
-;;:ensure ac-js2
-;;:config (progn 
-;;(add-hook 'js2-mode-hook 'ac-js2)
-;;))
-#+END_SRC
 *** Helm
 
 #+begin_src emacs-lisp

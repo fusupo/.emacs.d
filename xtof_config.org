@@ -813,6 +813,12 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)))
 #+end_src
 
+**** quick repls
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-quick-repls
+    :ensure clojure-quick-repls
+    :defer t)
+#+END_SRC
 **** 4Clojure
 
 #+begin_src emacs-lisp

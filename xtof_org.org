@@ -325,7 +325,7 @@ Too many clock entries clutter up a heading.
                 :ensure org2blog
                 :defer t
                 :init (progn 
-                        (setq org2blog/wp-keep-new-lines t)
+                        ;;(setq org2blog/wp-keep-new-lines nil)
                         (setq org2blog/wp-blog-alist
                               `(("marcchristophe.com"
                                  :url ,xtof/wp-blog-marcchristophe-alist-url

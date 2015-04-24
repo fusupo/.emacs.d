@@ -85,7 +85,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
              (require 'smartparens-config)
              (smartparens-global-mode t)
 
-             ;;  ;; highlights matching pairs
+             ;; highlights matching pairs
              (show-smartparens-global-mode t)
 
              ;; ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -256,7 +256,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 (ac-config-default)
                 (ac-flyspell-workaround)
                 (setq ac-comphist-file (concat xtof/savefile-directory "/" "ac-comphist.dat"))
-                (global-auto-complete-mode t)
+                ;;(global-auto-complete-mode t)
                 (setq ac-auto-show-menu t)
                 (setq ac-dwim t)
  ;;               (setq ac-use-menu-map t)
@@ -266,27 +266,27 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                 (setq ac-show-menu-immediately-on-auto-complete t)
                 (setq ac-auto-start 2)
                 (setq ac-candidate-menu-min 0)
-
-                (set-default 'ac-sources
-                             '(ac-source-dictionary
-                               ac-source-words-in-buffer
-  ;                             ac-source-words-in-same-mode-buffers
+                
+                ;;(setq ac-sources (append '(ac-source-yasnippet ac-source-gtags) ac-sources)))
+                ;;(set-default 'ac-sources
+                  ;;           '(
+  ;                             ac-source-words-in-buffer
   ;                             ac-source-semantic
   ;                             ac-source-yasnippet
-                               ))
+                    ;;           ))
 
                 ;; Exclude very large buffers from dabbrev
   ;;              (defun xtof/dabbrev-friend-buffer (other-buffer)
   ;;                (< (buffer-size other-buffer) (* 1 1024 1024)))
   ;;             (setq dabbrev-friend-buffer-function 'xtof/dabbrev-friend-buffer)
 
-                (dolist
-                    (mode '(lisp-mode
-                            sh-mode
-                            html-mode
-                            org-mode
-                            scss-mode))
-                  (add-to-list 'ac-modes mode))
+               ;; (dolist
+               ;;     (mode '(lisp-mode
+               ;;             sh-mode
+               ;;             html-mode
+               ;;             org-mode
+               ;;             scss-mode))
+               ;;   (add-to-list 'ac-modes mode))
 
                 ;;;;Key triggers
                 (define-key ac-completing-map (kbd "C-M-n") 'ac-next)
@@ -392,12 +392,17 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** EShell
 
 #+BEGIN_SRC emacs-lisp
-  ;; (require 'em-smart)
 
+  ;; (require 'eshell)
+  ;; (require 'em-smart)
   ;; ;; smart display
   ;; (setq eshell-where-to-jump 'begin)
   ;; (setq eshell-review-quick-commands nil)
   ;; (setq eshell-smart-space-goes-to-end t)
+
+
+
+
 
   ;; (setq eshell-directory-name (expand-file-name "./" (expand-file-name "eshell" xtof/savefile-directory)))
 
@@ -645,37 +650,71 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                            (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
 #+end_src
 
-*** js2-mode
+*** js2-mode (hobbled)
 
 #+begin_src emacs-lisp
   (use-package js2-mode
     :ensure js2-mode
     :mode (("\\.js\\'" . js2-mode)
            ("\\.json\\'" . js2-mode))
-    :interpreter ("node" . js2mode)
+    ;;:interpreter ("node" . js2mode)
     :config (progn
-              (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
-              (setq js-indent-level 2)
-              (setq js2-indent-level 2)
-              (setq js2-basic-offset 2)
-              (setq js2-highlight-level 3)
-              (setq js2-indent-switch-body t)
-              (setq js2-mode-indent-inhibit-undo t)
-              (setq js2-strict-inconsistent-return-warning nil)
+              (use-package nodejs-repl-eval
+                ;; https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
+                ;; via https://atlanis.net/blog/posts/nodejs-repl-eval.html
+                :config (progn
+                          (add-hook 'js2-mode-hook '(lambda ()
+                                                      (local-set-key "\C-x\C-e" 'nodejs-repl-eval-dwim)))))
+              ;;           (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+              ;;           (setq js-indent-level 2)
+              ;;           (setq js2-indent-level 2)
+              ;;           (setq js2-basic-offset 2)
+              ;;           (setq js2-highlight-level 3)
+              ;;           (setq js2-indent-switch-body t)
+              ;;           (setq js2-mode-indent-inhibit-undo t)
+              ;;           (setq js2-strict-inconsistent-return-warning nil)
               (add-hook 'js2-mode-hook '(lambda ()
                                           (local-set-key (kbd "RET") 'newline-and-indent)))))
 #+end_src
-
-*** skewer-mode
+*** nodejs-repl
+#+begin_src emacs-lisp
+  (use-package nodejs-repl
+    :ensure nodejs-repl)
+#+end_src
+*** js-comint (disabled)
+#+begin_src emacs-lisp
+  ;; (use-package js-comint
+  ;;   :ensure js-comint
+  ;;   :config (progn
+  ;;             (setq inferior-js-program-command "node")
+  ;;             (setq inferior-js-mode-hook
+  ;;                   (lambda ()
+  ;;                     ;; We like nice colors
+  ;;                     (ansi-color-for-comint-mode-on)
+  ;;                     ;; Deal with some prompt nonsense
+  ;;                     (add-to-list 'comint-preoutput-filter-functions
+  ;;                                  (lambda (output)
+  ;;                                    (replace-regexp-in-string ".*1G\.\.\..*5G" "..."
+  ;;                                                              (replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
+  ;;             (add-hook 'js2-mode-hook '(lambda () 
+  ;;                                         (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+  ;;                                         (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+  ;;                                         (local-set-key "\C-cb" 'js-send-buffer)
+  ;;                                         (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+  ;;                                         (local-set-key "\C-cl" 'js-load-file-and-go)
+  ;;                                         ))))
+  ;;             ;;(setenv "NODE_NO_READLINE" "1")
+#+end_src
+*** skewer-mode (disabled)
 
 #+begin_src emacs-lisp
-  (use-package skewer-mode
-    :ensure skewer-mode
-    :defer t
-    :config (progn
-              (add-hook 'js2-mode-hook 'skewer-mode)
-              (add-hook 'css-mode-hook 'skewer-css-mode)
-              (add-hook 'html-mode-hook 'skewer-html-mode)))
+  ;; (use-package skewer-mode
+  ;;   :ensure skewer-mode
+  ;;   :defer t
+  ;;   :config (progn
+  ;;             ;;(add-hook 'js2-mode-hook 'skewer-mode)
+  ;;             (add-hook 'css-mode-hook 'skewer-css-mode)
+  ;;             (add-hook 'html-mode-hook 'skewer-html-mode)))
 #+end_src
 
 *** ac-html

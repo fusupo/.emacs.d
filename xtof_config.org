@@ -238,69 +238,49 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** Auto-complete
 
 #+begin_src emacs-lisp
-  (use-package auto-complete
-    :ensure auto-complete
-    :config (progn
-              
-              (ac-config-default)
-              (ac-flyspell-workaround)
-              (setq ac-comphist-file (concat xtof/savefile-directory "/" "ac-comphist.dat"))
-              
-              (setq ac-auto-start nil)
-              (setq ac-dwim t)
-              (setq ac-quick-help-delay 0.7)
-              
-              ;;Key triggers
-              (ac-set-trigger-key "TAB")
-              
-              (define-key ac-completing-map "\t" 'ac-complete)
-              (define-key ac-completing-map (kbd "M-RET") 'ac-help)
-              (define-key ac-completing-map "\r" 'nil)
-              
-              (setq ac-use-menu-map t)
-              (define-key ac-menu-map "\C-n" 'ac-next)
-              (define-key ac-menu-map "\C-p" 'ac-previous)
-              ;;
-              
-              ;;(setq ac-sources (append '(ac-source-yasnippet ac-source-gtags) ac-sources)))
-              ;; (set-default 'ac-sources
-              ;;              '(
-              ;;                ac-source-words-in-buffer
-              ;;                ac-source-semantic
-              ;;                ac-source-yasnippet
-              ;;                ))
+    (use-package auto-complete
+      :ensure auto-complete
+      :config (progn
+                (ac-config-default)
+                (ac-flyspell-workaround)
+                (setq ac-comphist-file (concat xtof/savefile-directory "/" "ac-comphist.dat"))
+                
+                (setq ac-auto-start nil)
+                (setq ac-dwim t)
+                (setq ac-quick-help-delay 0.7)
+                
+                ;;;;;;;;;;;;;;;;;;;;
+                ;;  Key triggers  ;;
+                (ac-set-trigger-key "TAB")
+                
+                (define-key ac-completing-map "\t" 'ac-complete)
+                (define-key ac-completing-map (kbd "M-RET") 'ac-help)
+                (define-key ac-completing-map "\r" 'nil)
+                
+                (setq ac-use-menu-map t)
+                (define-key ac-menu-map "\C-n" 'ac-next)
+                (define-key ac-menu-map "\C-p" 'ac-previous)
+                ;;;;;;;;;;;;;;;;;;;;
+                ;;;;;;;;;;;;;;;;;;;;
 
-              ;; Exclude very large buffers from dabbrev
-              ;;              (defun xtof/dabbrev-friend-buffer (other-buffer)
-              ;;                (< (buffer-size other-buffer) (* 1 1024 1024)))
-              ;;             (setq dabbrev-friend-buffer-function 'xtof/dabbrev-friend-buffer)
-
-              ;; (dolist
-              ;;     (mode '(lisp-mode
-              ;;             sh-mode
-              ;;             html-mode
-              ;;             org-mode
-              ;;             scss-mode))
-              ;;   (add-to-list 'ac-modes mode))
-
-              ;; Disable fci when popup is shown/renamble on popup close
-              ;; see: http://emacs.stackexchange.com/questions/147/how-can-i-get-a-ruler-at-column-80
-              (defun sanityinc/fci-enabled-p () (symbol-value 'fci-mode))
-              (defvar sanityinc/fci-mode-suppressed nil)
-              (make-variable-buffer-local 'sanityinc/fci-mode-suppressed)
-              (defadvice popup-create (before suppress-fci-mode activate)
-                "Suspend fci-mode while popups are visible"
-                (let ((fci-enabled (sanityinc/fci-enabled-p)))
-                  (when fci-enabled
-                    (setq sanityinc/fci-mode-suppressed fci-enabled)
-                    (turn-off-fci-mode))))
-              (defadvice popup-delete (after restore-fci-mode activate)
-                "Restore fci-mode when all popups have closed"
-                (when (and sanityinc/fci-mode-suppressed
-                         (null popup-instances))
-                  (setq sanityinc/fci-mode-suppressed nil)
-                  (turn-on-fci-mode)))
-              ))
+                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                ;;  Disable fci when popup is shown/renamble on popup close  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                ;;  see: http://emacs.stackexchange.com/questions/147/how-can-i-get-a-ruler-at-column-80  ;;
+                (defun sanityinc/fci-enabled-p () (symbol-value 'fci-mode))
+                (defvar sanityinc/fci-mode-suppressed nil)
+                (make-variable-buffer-local 'sanityinc/fci-mode-suppressed)
+                (defadvice popup-create (before suppress-fci-mode activate)
+                  "Suspend fci-mode while popups are visible"
+                  (let ((fci-enabled (sanityinc/fci-enabled-p)))
+                    (when fci-enabled
+                      (setq sanityinc/fci-mode-suppressed fci-enabled)
+                      (turn-off-fci-mode))))
+                (defadvice popup-delete (after restore-fci-mode activate)
+                  "Restore fci-mode when all popups have closed"
+                  (when (and sanityinc/fci-mode-suppressed
+                           (null popup-instances))
+                    (setq sanityinc/fci-mode-suppressed nil)
+                    (turn-on-fci-mode)))))
 #+end_src
 
 *** Helm

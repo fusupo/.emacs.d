@@ -76,16 +76,16 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   (use-package smartparens
     :ensure smartparens
     :config (progn
-             ;;;;;;;;;
-             ;; global
+             ;;;;;;;;;;;;
+             ;;  global
              (require 'smartparens-config)
              (smartparens-global-mode t)
 
              ;; highlights matching pairs
              (show-smartparens-global-mode t)
 
-             ;; ;;;;;;;;;;;;;;;;;;;;;;;;
-             ;;  ;; keybinding management
+             ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+             ;;  keybinding management
 
              ;;  (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
              ;;  (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
@@ -602,8 +602,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     ;;:interpreter ("node" . js2mode)
     :config (progn
               (use-package nodejs-repl-eval
-                ;; https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
-                ;; via https://atlanis.net/blog/posts/nodejs-repl-eval.html
+                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                ;;  https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el  ;;
+                ;;  via https://atlanis.net/blog/posts/nodejs-repl-eval.html  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 :config (progn
                           (add-hook 'js2-mode-hook '(lambda ()
                                                       (local-set-key "\C-x\C-e" 'nodejs-repl-eval-dwim)))))
@@ -615,6 +616,11 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               ;;           (setq js2-indent-switch-body t)
               ;;           (setq js2-mode-indent-inhibit-undo t)
               ;;           (setq js2-strict-inconsistent-return-warning nil)
+              (use-package js2-refactor
+                :ensure t
+                :config (progn
+                          (js2r-add-keybindings-with-prefix "C-c C-m")))
+              (add-hook 'js2-mode-hook (lambda () (smartparens-mode -1)) t)
               (add-hook 'js2-mode-hook '(lambda ()
                                           (local-set-key (kbd "RET") 'newline-and-indent)))))
 #+end_src

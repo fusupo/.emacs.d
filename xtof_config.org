@@ -602,6 +602,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
    
 * //////////////////////////////////////----------------------  LANGUAGE SUPPORT
 ** WEB
+
 *** web-mode
 
 #+begin_src emacs-lisp
@@ -610,6 +611,92 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 ;;    (progn
 ;;      (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))))
 #+end_src
+
+*** js2-mode (hobbled)
+
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :ensure js2-mode
+    :mode (("\\.js\\'" . js2-mode)
+           ("\\.json\\'" . js2-mode))
+    ;;:interpreter ("node" . js2mode)
+    :config (progn
+              (use-package nodejs-repl-eval
+                ;; https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
+                ;; via https://atlanis.net/blog/posts/nodejs-repl-eval.html
+                :config (progn
+                          (add-hook 'js2-mode-hook '(lambda ()
+                                                      (local-set-key "\C-x\C-e" 'nodejs-repl-eval-dwim)))))
+              ;;           (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+              ;;           (setq js-indent-level 2)
+              ;;           (setq js2-indent-level 2)
+              ;;           (setq js2-basic-offset 2)
+              ;;           (setq js2-highlight-level 3)
+              ;;           (setq js2-indent-switch-body t)
+              ;;           (setq js2-mode-indent-inhibit-undo t)
+              ;;           (setq js2-strict-inconsistent-return-warning nil)
+              (add-hook 'js2-mode-hook '(lambda ()
+                                          (local-set-key (kbd "RET") 'newline-and-indent)))))
+#+end_src
+
+*** tern
+
+#+begin_src emacs-lisp
+  (use-package tern
+    :ensure t
+    :init (progn
+            (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+            (use-package tern-auto-complete
+              :ensure t
+              :init (progn
+                      (tern-ac-setup)))))
+#+end_src
+
+*** nodejs-repl
+
+#+begin_src emacs-lisp
+  (use-package nodejs-repl
+    :ensure nodejs-repl)
+#+end_src
+
+*** js-comint (disabled)
+
+#+begin_src emacs-lisp
+  ;; (use-package js-comint
+  ;;   :ensure js-comint
+  ;;   :config (progn
+  ;;             (setq inferior-js-program-command "node")
+  ;;             (setq inferior-js-mode-hook
+  ;;                   (lambda ()
+  ;;                     ;; We like nice colors
+  ;;                     (ansi-color-for-comint-mode-on)
+  ;;                     ;; Deal with some prompt nonsense
+  ;;                     (add-to-list 'comint-preoutput-filter-functions
+  ;;                                  (lambda (output)
+  ;;                                    (replace-regexp-in-string ".*1G\.\.\..*5G" "..."
+  ;;                                                              (replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
+  ;;             (add-hook 'js2-mode-hook '(lambda () 
+  ;;                                         (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+  ;;                                         (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+  ;;                                         (local-set-key "\C-cb" 'js-send-buffer)
+  ;;                                         (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+  ;;                                         (local-set-key "\C-cl" 'js-load-file-and-go)
+  ;;                                         ))))
+  ;;             ;;(setenv "NODE_NO_READLINE" "1")
+#+end_src
+
+*** skewer-mode (disabled)
+
+#+begin_src emacs-lisp
+  ;; (use-package skewer-mode
+  ;;   :ensure skewer-mode
+  ;;   :defer t
+  ;;   :config (progn
+  ;;             ;;(add-hook 'js2-mode-hook 'skewer-mode)
+  ;;             (add-hook 'css-mode-hook 'skewer-css-mode)
+  ;;             (add-hook 'html-mode-hook 'skewer-html-mode)))
+#+end_src
+
 *** web-beautify
 
 #+begin_src emacs-lisp
@@ -650,73 +737,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                          (lambda ()
                            (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
 #+end_src
-*** js2-mode (hobbled)
 
-#+begin_src emacs-lisp
-  (use-package js2-mode
-    :ensure js2-mode
-    :mode (("\\.js\\'" . js2-mode)
-           ("\\.json\\'" . js2-mode))
-    ;;:interpreter ("node" . js2mode)
-    :config (progn
-              (use-package nodejs-repl-eval
-                ;; https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
-                ;; via https://atlanis.net/blog/posts/nodejs-repl-eval.html
-                :config (progn
-                          (add-hook 'js2-mode-hook '(lambda ()
-                                                      (local-set-key "\C-x\C-e" 'nodejs-repl-eval-dwim)))))
-              ;;           (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
-              ;;           (setq js-indent-level 2)
-              ;;           (setq js2-indent-level 2)
-              ;;           (setq js2-basic-offset 2)
-              ;;           (setq js2-highlight-level 3)
-              ;;           (setq js2-indent-switch-body t)
-              ;;           (setq js2-mode-indent-inhibit-undo t)
-              ;;           (setq js2-strict-inconsistent-return-warning nil)
-              (add-hook 'js2-mode-hook '(lambda ()
-                                          (local-set-key (kbd "RET") 'newline-and-indent)))))
-#+end_src
-*** nodejs-repl
-#+begin_src emacs-lisp
-  (use-package nodejs-repl
-    :ensure nodejs-repl)
-#+end_src
-*** js-comint (disabled)
-#+begin_src emacs-lisp
-  ;; (use-package js-comint
-  ;;   :ensure js-comint
-  ;;   :config (progn
-  ;;             (setq inferior-js-program-command "node")
-  ;;             (setq inferior-js-mode-hook
-  ;;                   (lambda ()
-  ;;                     ;; We like nice colors
-  ;;                     (ansi-color-for-comint-mode-on)
-  ;;                     ;; Deal with some prompt nonsense
-  ;;                     (add-to-list 'comint-preoutput-filter-functions
-  ;;                                  (lambda (output)
-  ;;                                    (replace-regexp-in-string ".*1G\.\.\..*5G" "..."
-  ;;                                                              (replace-regexp-in-string ".*1G.*3G" "&gt;" output))))))
-  ;;             (add-hook 'js2-mode-hook '(lambda () 
-  ;;                                         (local-set-key "\C-x\C-e" 'js-send-last-sexp)
-  ;;                                         (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
-  ;;                                         (local-set-key "\C-cb" 'js-send-buffer)
-  ;;                                         (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
-  ;;                                         (local-set-key "\C-cl" 'js-load-file-and-go)
-  ;;                                         ))))
-  ;;             ;;(setenv "NODE_NO_READLINE" "1")
-#+end_src
-*** skewer-mode (disabled)
-
-#+begin_src emacs-lisp
-  ;; (use-package skewer-mode
-  ;;   :ensure skewer-mode
-  ;;   :defer t
-  ;;   :config (progn
-  ;;             ;;(add-hook 'js2-mode-hook 'skewer-mode)
-  ;;             (add-hook 'css-mode-hook 'skewer-css-mode)
-  ;;             (add-hook 'html-mode-hook 'skewer-html-mode)))
-#+end_src
 *** ac-html
+
 # ;;#+begin_src emacs-lisp
 # ;;  (use-package ac-html
 # ;;    :init
@@ -747,6 +770,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #             ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
 #           )))
 # #+end_src
+
 *** php-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -757,6 +781,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
       (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))))
 #+END_SRC
+
 *** scss-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -768,6 +793,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :config (progn
               (add-hook 'scss-mode-hook 'flymake-mode)))
 #+END_SRC
+
 *** grunt
 
 #+BEGIN_SRC emacs-lisp
@@ -786,6 +812,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 (global-set-key (kbd "C-S-p") 'grunt)
 (setq grunt-cmd "grunt --no-color --config ~/grunt.js")
 #+END_SRC
+
 ** Lisp
 *** Clojure
 

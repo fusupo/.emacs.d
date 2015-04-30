@@ -580,12 +580,12 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 ** magit
 
 #+begin_src emacs-lisp
+  (setq magit-last-seen-setup-instructions "1.4.0")
   (use-package magit
     :ensure magit
     :defer t
     :config
     (progn
-      (setq magit-last-seen-setup-instructions "1.4.0")
       (use-package git-commit-mode
         :ensure git-commit-mode
         :defer t)
@@ -672,7 +672,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+begin_src emacs-lisp
   (use-package skewer-mode
     :ensure skewer-mode
-    :defer t 
+    ;;:defer t 
     :config
     (progn
       (add-hook 'js2-mode-hook 'skewer-mode)

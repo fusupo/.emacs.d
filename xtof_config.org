@@ -565,6 +565,17 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :config (progn
               (setq clean-buffer-list-delay-general 1)))
 #+END_SRC
+*** golden-ratio-mode
+#+begin_src emacs-lisp
+  (use-package golden-ratio-mode
+    :ensure golden-ratio-mode
+    :config (progn
+              (golden-ratio-mode 1)))
+
+  ;; (setq golden-ratio-exclude-modes '("ediff-mode"
+  ;;                                    "eshell-mode"
+  ;;                                    "dired-mode"))
+#+end_src
 * //////////////////////////////////////----------------------------  NAVIGATION
 ** ace-jump-mode
 

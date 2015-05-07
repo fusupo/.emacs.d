@@ -567,8 +567,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+END_SRC
 *** golden-ratio-mode
 #+begin_src emacs-lisp
-  (use-package golden-ratio-mode
-    :ensure golden-ratio-mode
+  (use-package golden-ratio
+    :ensure golden-ratio
     :config (progn
               (golden-ratio-mode 1)))
 

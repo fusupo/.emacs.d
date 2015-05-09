@@ -157,21 +157,22 @@ Init use-package
 ** Misc
 
 #+BEGIN_SRC emacs-lisp
-; save cursor position within files
-(require 'saveplace)
-(setq save-place-file (expand-file-name "saveplace" xtof/savefile-directory))
-(setq-default save-place t)
+  ; save cursor position within files
+  (require 'saveplace)
+  (setq save-place-file (expand-file-name "saveplace" xtof/savefile-directory))
+  (setq-default save-place t)
 
-; save minibuffer history across sessions
-(setq savehist-file (expand-file-name "savehist" xtof/savefile-directory))
-(savehist-mode 1)
+  ; save minibuffer history across sessions
+  (setq savehist-file (expand-file-name "savehist" xtof/savefile-directory))
+  (savehist-mode t)
 
-; pick up changes to files on disk automatically (ie, after git pull)
-(global-auto-revert-mode 1)
+  ; pick up changes to files on disk automatically (ie, after git pull)
+  (global-auto-revert-mode t)
 
-; wrap lines in a tasteful way
-;;(global-visual-line-mode nil)
+  ; wrap lines in a tasteful way
+  ;;(global-visual-line-mode nil)
 
+  (delete-selection-mode t) ; delete seleted text when typing
 #+END_SRC
 
 * ///////////  FREQUENTLY_ACCESSED FILES

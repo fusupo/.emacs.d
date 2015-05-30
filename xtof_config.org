@@ -160,6 +160,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       ;; ;;; lisp modes
       ;;  (sp-with-modes sp--lisp-modes
       ;;    (sp-local-pair "(" nil :bind "C-("))
+      (progn
+        (add-hook 'emacs-lisp-mode-hook 'smartparens-strict-mode)
+        (add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode))
       ))
 #+end_src
 
@@ -727,7 +730,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                      (add-hook 'before-save-hook 'web-beautify-css-buffer t t))))))
 #+end_src
 
-*** ac-html
+*** ac-html DISABLED
 
 # ;;#+begin_src emacs-lisp
 # ;;  (use-package ac-html
@@ -772,11 +775,12 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))))
 #+END_SRC
 
-*** scss-mode
+*** scss-mode DISABLED
 
 #+BEGIN_SRC emacs-lisp
   (use-package scss-mode
     :ensure scss-mode
+    :disabled t
     :init
     (progn
       ;;(setq exec-path (cons (expand-file-name "~/.gem/ruby/1.8/bin") exec-path))
@@ -917,6 +921,28 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
           xtof/mitschem-library-path)
 #+end_src
 
+** flycheck
+
+#+BEGIN_SRC emacs-lisp
+  ;;; flycheck -- somecrap
+  ;;; Commentary:
+  ;;; Code:
+  (use-package flycheck
+    :ensure flycheck
+    :init
+    (progn
+      (use-package flycheck-ledger
+        :ensure flycheck-ledger
+        :init (progn ))
+      ;;(use-package flycheck-clojure
+      ;;:ensure flycheck-clojure
+      ;;:init (progn (eval-after-load 'flycheck '(flycheck-clojure-setup))))
+      (use-package flycheck-pos-tip
+        :ensure flycheck-pos-tip
+        :init (progn (eval-after-load 'flycheck
+                       '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
+      (add-hook 'after-init-hook #'global-flycheck-mode)))
+#+END_SRC
 * //////////////////////////////////////--------------------------  PRODUCTIVITY
 ** Ledger Mode
 

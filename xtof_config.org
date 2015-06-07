@@ -121,10 +121,10 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       ;; (define-key sp-keymap (kbd "C-M-<left>") 'sp-backward-slurp-sexp)
       ;; (define-key sp-keymap (kbd "C-M-<right>") 'sp-backward-barf-sexp)
       ;; PAREDIT STYLE
-      (define-key sp-keymap (kbd "C-S-9") 'sp-forward-slurp-sexp)
-      (define-key sp-keymap (kbd "C-S-]") 'sp-forward-barf-sexp)
-      (define-key sp-keymap (kbd "C-S-0") 'sp-backward-slurp-sexp)
-      (define-key sp-keymap (kbd "C-S-[") 'sp-backward-barf-sexp)
+      (define-key sp-keymap (kbd "C-(") 'sp-forward-slurp-sexp)
+      (define-key sp-keymap (kbd "C-}") 'sp-forward-barf-sexp)
+      (define-key sp-keymap (kbd "C-(") 'sp-backward-slurp-sexp)
+      (define-key sp-keymap (kbd "C-{") 'sp-backward-barf-sexp)
 
       ;;  (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
       ;;  (define-key sp-keymap (kbd "C-M-<delete>") 'sp-splice-sexp-killing-forward)

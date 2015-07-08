@@ -9,6 +9,7 @@
     :config
     (progn
       (when (memq window-system '(mac ns))
+        (exec-path-from-shell-copy-env "TEXINPUTS")
         (exec-path-from-shell-initialize))))
 #+end_src
 
@@ -123,7 +124,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       ;; PAREDIT STYLE
       (define-key sp-keymap (kbd "C-(") 'sp-forward-slurp-sexp)
       (define-key sp-keymap (kbd "C-}") 'sp-forward-barf-sexp)
-      (define-key sp-keymap (kbd "C-(") 'sp-backward-slurp-sexp)
+      (define-key sp-keymap (kbd "C-)") 'sp-backward-slurp-sexp)
       (define-key sp-keymap (kbd "C-{") 'sp-backward-barf-sexp)
 
       ;;  (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
@@ -641,7 +642,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     ;;:interpreter ("node" . js2mode)
     :config
     (progn
-      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;  https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
       ;;  via https://atlanis.net/blog/posts/nodejs-repl-eval.html
       (use-package nodejs-repl-eval
@@ -651,14 +652,16 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         :ensure t
         :config (progn
                   (js2r-add-keybindings-with-prefix "C-c C-m")))
-      ;;;;;;
+        ;;;;;;
+      (setq js-indent-level 2)
       (setq js2-basic-offset 2)
       (setq js2-highlight-level 3)
       (setq js2-indent-switch-body t)
       ;;(setq js2-mode-indent-inhibit-undo nil)
-      ;;;;;;
+        ;;;;;;
       (add-hook 'js2-mode-hook (lambda () (smartparens-mode -1)) t)
-      (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))))
+      (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
+      ))
 #+end_src
 
 *** tern

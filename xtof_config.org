@@ -655,6 +655,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         ;;;;;;
       (setq js-indent-level 2)
       (setq js2-basic-offset 2)
+      (setq js2-basic-offset 2)
       (setq js2-highlight-level 3)
       (setq js2-indent-switch-body t)
       ;;(setq js2-mode-indent-inhibit-undo nil)
@@ -663,6 +664,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
       ))
 #+end_src
+
+#+RESULTS:
 
 *** tern
 

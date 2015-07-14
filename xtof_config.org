@@ -642,7 +642,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     ;;:interpreter ("node" . js2mode)
     :config
     (progn
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;  https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
       ;;  via https://atlanis.net/blog/posts/nodejs-repl-eval.html
       (use-package nodejs-repl-eval
@@ -653,14 +653,18 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         :config (progn
                   (js2r-add-keybindings-with-prefix "C-c C-m")))
       (setq js-indent-level 2)
-      (setq js2-basic-offset 2)
-      (setq js2-basic-offset 2)
+      ;;(setq js2-basic-offset 2)
       (setq js2-highlight-level 3)
       (setq js2-indent-switch-body t)
       ;;(setq js2-mode-indent-inhibit-undo nil)
-      (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
-      (add-hook 'js2-mode-hook (lambda () (smartparens-strict-mode t)) t)
-      (add-hook 'js2-mode-hook (lambda () (show-smartparens-mode t)) t)
+      ;; (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
+      ;; (add-hook 'js2-mode-hook (lambda () (smartparens-strict-mode t)) t)
+      ;; (add-hook 'js2-mode-hook (lambda () (show-smartparens-mode t)) t)
+      ;; (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2)) t)
+      (add-hook 'js2-mode-hook (lambda ()
+                                 (smartparens-strict-mode t)
+                                 (show-smartparens-mode t)
+                                 (setq js2-basic-offset 2)) t)
       ))
 #+end_src
 

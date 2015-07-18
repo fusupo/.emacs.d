@@ -669,7 +669,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+end_src
 
 #+RESULTS:
-
+   
 *** tern
 
 #+begin_src emacs-lisp
@@ -705,14 +705,31 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-hook 'html-mode-hook 'skewer-html-mode)))
 #+end_src
 
+*** js-doc
+
+#+begin_src emacs-lisp
+  (use-package js-doc
+    :ensure t
+    :config
+    (progn
+      (setq js-doc-mail-address "m@xtof.net"
+            js-doc-author (format "Marc Christophe <%s>" js-doc-mail-address)
+            js-doc-url "xtof.net"
+            js-doc-license "MIT")
+      
+      (add-hook 'js2-mode-hook
+                #'(lambda ()
+                    (define-key js2-mode-map "\C-ci" 'js-doc-insert-function-doc)
+                    (define-key js2-mode-map "@" 'js-doc-insert-tag)))))
+#+end_src
+
 *** web-beautify
 
 #+begin_src emacs-lisp
   (use-package web-beautify
-    :ensure web-beautify
-    :defer t
+    :ensure t
     :config
-    (progn  
+    (progn
       (eval-after-load 'js2-mode
         '(define-key js2-mode-map (kbd "C-c b") 'web-beautify-js))
       (eval-after-load 'json-mode
@@ -721,14 +738,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
       (eval-after-load 'css-mode
         '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
-      (eval-after-load 'js2-mode
-        '(add-hook 'js2-mode-hook
-                   (lambda ()
-                     (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
-      (eval-after-load 'json-mode
-        '(add-hook 'json-mode-hook
-                   (lambda ()
-                     (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+      ;; (eval-after-load 'js2-mode
+      ;;   '(add-hook 'js2-mode-hook
+      ;;              (lambda ()
+      ;;                (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+      ;; (eval-after-load 'json-mode
+      ;;   '(add-hook 'json-mode-hook
+      ;;              (lambda ()
+      ;;                (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
       (eval-after-load 'sgml-mode
         '(add-hook 'html-mode-hook
                    (lambda ()

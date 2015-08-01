@@ -182,26 +182,28 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-hook 'slime-mode-hook 'rainbow-delimiters-mode)))
 #+end_src
 
-*** volatile-highlights
+*** volatile-highlights DISABLED
 
 #+begin_src emacs-lisp
   (use-package volatile-highlights
+:disabled t
     :ensure volatile-highlights
     :config (volatile-highlights-mode t))
 #+end_src
 
-*** Pretty Mode
+*** Pretty Mode DISABLED
 
 #+begin_src emacs-lisp
-  (use-package pretty-mode
-    :ensure pretty-mode
-    :init
-    (progn
-      (global-pretty-mode t)))
+    (use-package pretty-mode
+      :disabled t
+      :ensure pretty-mode
+      :init
+      (progn
+        (global-pretty-mode t)))
 #+end_src
 
 *** fci-mode
-							  
+			  
 #+begin_src emacs-lisp
   (use-package fill-column-indicator
     :ensure fill-column-indicator
@@ -219,19 +221,18 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 *** indent-guide
 
 #+begin_src emacs-lisp
-  ;; (use-package indent-guide
-  ;;   :ensure indent-guide
-  ;;   :config
-  ;;   (progn
-  ;;     (setq indent-guide-char "'")
-  ;;     (indent-guide-global-mode nil)))
+  (use-package indent-guide
+    :ensure indent-guide
+    :config
+    (progn
+      (setq indent-guide-char "'")
+      (indent-guide-global-mode nil)))
 #+end_src
 
-*** Zone
+*** Zone DISABLED
 
 #+begin_src emacs-lisp
   ;;(require 'zone)
-
   ;; (defun zone-choose (pgm)
   ;;   "Choose a PGM to run for `zone'."
   ;;   (interactive
@@ -241,9 +242,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   ;;      (mapcar 'symbol-name zone-programs))))
   ;;   (let ((zone-programs (list (intern pgm))))
   ;;     (zone)))
-
   ;;(setq zone-programs [zone-pgm-paragraph-spaz])
 #+end_src
+
 *** Eldoc
 
 #+BEGIN_SRC emacs-lisp
@@ -255,6 +256,20 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+END_SRC
 
 ** Feel
+*** sr-speedbar
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sr-speedbar
+    :ensure t
+    :init
+    (progn
+      (setq speedbar-use-images nil)
+      (setq sr-speedbar-right-side nil)
+      (sr-speedbar-open)
+(with-current-buffer sr-speedbar-buffer-name
+  (setq window-size-fixed 'width))))
+#+END_SRC
+
 *** Auto-complete
 
 #+begin_src emacs-lisp
@@ -356,13 +371,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-to-list 'aggressive-indent-excluded-modes 'ledger-mode)))
 #+end_src
 
-*** Workgroups2
+*** Workgroups2 DISABLED
 
 #+begin_src emacs-lisp
-  (use-package workgroups2
-    :ensure workgroups2
-    :config (progn
-              (workgroups-mode 1)))
+    (use-package workgroups2
+      :disabled t
+      :ensure workgroups2
+      :config (progn
+                (workgroups-mode 1)))
 #+end_src
 *** IBuffer
 
@@ -399,7 +415,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   (setq ibuffer-show-empty-filter-groups nil)
 #+END_SRC
 
-*** EShell
+*** EShell DISABLED
 
 #+BEGIN_SRC emacs-lisp
 
@@ -563,30 +579,33 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   ;; ;;       (pop-to-buffer buffer))))
 #+END_SRC
     
-*** Midnight Mode
+*** Midnight Mode DISABLED
 
 #+BEGIN_SRC emacs-lisp
-  (use-package midnight
-    :ensure midnight
-    :config (progn
-              (setq clean-buffer-list-delay-general 1)))
+    (use-package midnight
+      :disabled t
+      :ensure midnight
+      :config (progn
+                (setq clean-buffer-list-delay-general 1)))
 #+END_SRC
-*** golden-ratio-mode
+*** golden-ratio-mode DISABLED
 #+begin_src emacs-lisp
-  (use-package golden-ratio
-    :ensure golden-ratio
-    :config (progn
-              (golden-ratio-mode 1)))
+    (use-package golden-ratio
+      :disabled t
+      :ensure golden-ratio
+      :config (progn
+                (golden-ratio-mode 1)))
 
-  ;; (setq golden-ratio-exclude-modes '("ediff-mode"
-  ;;                                    "eshell-mode"
-  ;;                                    "dired-mode"))
+    ;; (setq golden-ratio-exclude-modes '("ediff-mode"
+    ;;                                    "eshell-mode"
+    ;;                                    "dired-mode"))
 #+end_src
 * //////////////////////////////////////----------------------------  NAVIGATION
-** ace-jump-mode
+** ace-jump-mode DISABLED
 
 #+begin_src emacs-lisp
   (use-package ace-jump-mode
+:disabled t
     :ensure ace-jump-mode
     :bind
     ("M-SPC" . ace-jump-mode)
@@ -950,9 +969,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 ** flycheck
 
 #+BEGIN_SRC emacs-lisp
-  ;;; flycheck -- somecrap
-  ;;; Commentary:
-  ;;; Code:
+  ;; flycheck -- somecrap
+  ;; Commentary:
+  ;; Code:
   (use-package flycheck
     :ensure flycheck
     :init
@@ -983,38 +1002,39 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))))
 #+end_src
 
-** Projectile
+** Projectile DISABLED
 
 #+begin_src emacs-lisp
 
-  ;; (defun xtof/helm-project ()
-  ;;   "Preconfigured `helm'."
-  ;;   (interactive)
-  ;;   (condition-case nil
-  ;;       (if (projectile-project-root)
-  ;;           ;; add project files and buffers when in project
-  ;;           (helm-other-buffer '(helm-c-source-projectile-files-list
-  ;;                                helm-c-source-projectile-buffers-list
-  ;;                                helm-c-source-buffers-list
-  ;;                                helm-c-source-recentf
-  ;;                                helm-c-source-buffer-not-found)
-  ;;                              "*helm prelude*")
-  ;;         ;; otherwise fallback to helm-mini
-  ;;         (helm-mini))
-  ;;     ;; fall back to helm mini if an error occurs (usually in projectile-project-root)
-  ;;     (error (helm-mini))))
+    ;; (defun xtof/helm-project ()
+    ;;   "Preconfigured `helm'."
+    ;;   (interactive)
+    ;;   (condition-case nil
+    ;;       (if (projectile-project-root)
+    ;;           ;; add project files and buffers when in project
+    ;;           (helm-other-buffer '(helm-c-source-projectile-files-list
+    ;;                                helm-c-source-projectile-buffers-list
+    ;;                                helm-c-source-buffers-list
+    ;;                                helm-c-source-recentf
+    ;;                                helm-c-source-buffer-not-found)
+    ;;                              "*helm prelude*")
+    ;;         ;; otherwise fallback to helm-mini
+    ;;         (helm-mini))
+    ;;     ;; fall back to helm mini if an error occurs (usually in projectile-project-root)
+    ;;     (error (helm-mini))))
 
-  (use-package projectile
-    :ensure projectile
-    ;;:defer t
-    :init
-    (progn 
-      (setq projectile-cache-file (expand-file-name  "projectile.cache" xtof/savefile-directory)))
-    :config
-    (progn
-      (projectile-global-mode t))
-    ;;:bind ("C-c H" . xtof/helm-project)
-    )
+    (use-package projectile
+      :disabled t
+      :ensure projectile
+      ;;:defer t
+      :init
+      (progn 
+        (setq projectile-cache-file (expand-file-name  "projectile.cache" xtof/savefile-directory)))
+      :config
+      (progn
+        (projectile-global-mode t))
+      ;;:bind ("C-c H" . xtof/helm-project)
+      )
 #+end_src
 
 ** gnus

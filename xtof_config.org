@@ -13,12 +13,14 @@
         (exec-path-from-shell-initialize))))
 #+end_src
 
-** Guide-key
+** Guide-key DISABLED
 
 It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
 #+begin_src emacs-lisp
   (use-package guide-key
     :ensure guide-key
+    :disabled t
+    :END:
     :init
     (progn  (setq guide-key/guide-key-sequence '("C-x"
                                                  "C-c"
@@ -266,8 +268,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (setq speedbar-use-images nil)
       (setq sr-speedbar-right-side nil)
       (sr-speedbar-open)
-(with-current-buffer sr-speedbar-buffer-name
-  (setq window-size-fixed 'width))))
+      (with-current-buffer sr-speedbar-buffer-name
+        (setq window-size-fixed 'width))
+      (setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")))
 #+END_SRC
 
 *** Auto-complete

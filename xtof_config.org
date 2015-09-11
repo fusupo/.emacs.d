@@ -258,11 +258,27 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+END_SRC
 
 ** Feel
-*** sr-speedbar
+*** neotree
+
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree
+    :ensure t
+    :init
+    (progn
+      (setq neo-create-file-auto-open t)
+      (setq neo-modern-sidebar t)
+      (setq neo-show-hidden-files t)
+      (setq neo-smart-open t)
+      (setq neo-theme (quote nerd))
+      (setq neo-vc-integration (quote (face char)))))
+#+END_SRC
+
+*** sr-speedbar DISABLED
 
 #+BEGIN_SRC emacs-lisp
   (use-package sr-speedbar
     :ensure t
+    :disabled t
     :init
     (progn
       (setq speedbar-use-images nil)
@@ -270,7 +286,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (sr-speedbar-open)
       (with-current-buffer sr-speedbar-buffer-name
         (setq window-size-fixed 'width))
-      (setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")))
+      (setq speedbar-directory-unshown-regexp "^$")))
 #+END_SRC
 
 *** Auto-complete

@@ -263,7 +263,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
     :ensure t
-    :init
+    :config
     (progn
       (setq neo-create-file-auto-open t)
       (setq neo-modern-sidebar t)
@@ -285,23 +285,10 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                           :foreground "White"
                           :weight 'bold)
       (neotree-show)))
+
 #+END_SRC
 
-*** sr-speedbar DISABLED
-    
-#+BEGIN_SRC emacs-lisp
-  (use-package sr-speedbar
-    :ensure t
-    :disabled t
-    :init
-    (progn
-      (setq speedbar-use-images nil)
-      (setq sr-speedbar-right-side nil)
-      (sr-speedbar-open)
-      (with-current-buffer sr-speedbar-buffer-name
-        (setq window-size-fixed 'width))
-      (setq speedbar-directory-unshown-regexp "^$")))
-#+END_SRC
+#+RESULTS:
 
 *** Auto-complete
 

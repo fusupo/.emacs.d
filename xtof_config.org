@@ -1078,3 +1078,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         smtpmail-auth-credentials `((,xtof/gnus-nnimap-address 587 ,xtof/gnus-auth-user nil))
         smtpmail-local-domain xtof/gnus-local-domain)
 #+END_SRC
+** org-gcal
+#+BEGIN_SRC emacs-lisp
+  (use-package org-gcal
+    :ensure t
+    :config (progn
+              (setq org-gcal-client-id xtof/org-gcal-client-id
+                    org-gcal-client-secret xtof/org-gcal-client-secret
+                    org-gcal-file-alist '(("marc.christophe@telegraphacademy.com" .  "~/Documents/org/gcal_tga_hir.org")
+                                          ("fusupo@gmail.com" . "~/Documents/org/gcal_personal.org")
+                                          ("telegraphacademy.com_sq72k3lbvth430pd91c2tifgic@group.calendar.google.com" . "~/Documents/org/gcal_tga_senior.org")))))
+#+END_SRC

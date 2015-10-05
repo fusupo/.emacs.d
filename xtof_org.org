@@ -1,8 +1,3 @@
-#+BLOG: christophilos.com
-#+POSTID: 11
-#+DATE: [2015-03-30 Mon 10:20]
-#+TITLE xtof_org
-
 * //////////////////////////////////////-------------------------------  MODULES
 
 #+BEGIN_SRC emacs-lisp
@@ -134,7 +129,7 @@ Too many clock entries clutter up a heading.
 #+begin_src emacs-lisp
 (defun xtof/org-capture-setup ()
   (defvar xtof/org-capture-project-template 
-    "* TODO %^{Project} %^G:PROJ:
+    "* PROJ %^{Project} %^G:PROJ:
     %?")
   (defvar xtof/org-capture-task-template
     "* TODO %^{Task} %^G
@@ -670,9 +665,7 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
 
   (defun xtof/org-agenda-setup-custom-commands ()
     (setq org-agenda-custom-commands
-          `(
-
-            ("T" tags-todo "TODO=\"TODO\"-goal-routine-SCHEDULED={.+}")
+          `(("T" tags-todo "TODO=\"TODO\"-goal-routine-SCHEDULED={.+}")
             ("b" todo "" ((org-agenda-files '("~/Documents/org/projects.org"))))
             ("n" todo ""
              (

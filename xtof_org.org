@@ -851,11 +851,8 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
                                      "~/Documents/org/flagged.org"
                                      "~/Documents/org/projects.org"
                                      "~/Documents/org/notes.org"
-                                     "/Users/fusupo/Documents/org/.org2blog.org"
-                                     "/Users/fusupo/Documents/org/cooking.org"
-                                     "/Users/fusupo/Documents/org/gcal_tga_senior.org"
-                                     "/Users/fusupo/Documents/org/gcal_personal.org"
-                                     "/Users/fusupo/Documents/org/gcal_tga_hir.org")))
+                                     "~/Documents/org/tga.org"
+)))
       (setq org-agenda-time-grid
             '((daily today require-timed)
               "----------------"

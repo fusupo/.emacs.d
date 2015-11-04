@@ -15,7 +15,7 @@
     ;; init directories
     (setq org-directory xtof/org-directory)
     (setq org-default-notes-file  (format "%s/%s" xtof/org-directory "inbox.org"))
-    (setq org-mobile-files '(org-agenda-files xtof/org-directory)))
+)
 #+END_SRC
 * //////////////////////////////////////----------------------  TRACK TODO STATE
 
@@ -246,10 +246,6 @@ Too many clock entries clutter up a heading.
             (xtof/org-modules-setup)
             (xtof/org-directories-setup)
             
-            ;; mobile org
-            (setq org-mobile-inbox-for-pull (format "%s/%s" xtof/org-directory "inbox.org"))
-            (setq org-mobile-directory xtof/org-mobile-directory)
-
             ;; refile
             (setq org-reverse-note-order t)
             (setq org-refile-use-outline-path nil)
@@ -300,9 +296,6 @@ Too many clock entries clutter up a heading.
               (org-load-modules-maybe t)
               ;; Org Panel
               (define-key org-mode-map [(control ?c) ?p] 'orgpan-panel)
-              ;; mobile org
-              (add-hook 'after-init-hook 'org-mobile-pull)
-              (add-hook 'kill-emacs-hook 'org-mobile-push)
               
               (xtof/org-setup-todos)
               (xtof/org-setup-projects)
@@ -840,16 +833,15 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
     (progn
       (setq org-agenda-tags-column -136)
       (setq org-agenda-use-tag-inheritance nil)
-      (setq org-agenda-files (quote ("~/Documents/org/inbox.org"
-                                     "~/Documents/org/activity_log.org"
-                                     "~/Documents/org/meditation_log.org"
-                                     "~/Documents/org/dream_log.org"
-                                     "~/Documents/org/memos.org"
-                                     "~/Documents/org/flagged.org"
-                                     "~/Documents/org/projects.org"
-                                     "~/Documents/org/notes.org"
-                                     "~/Documents/org/tga.org"
-)))
+      ;; (setq org-agenda-files (quote ("~/Documents/org/inbox.org"
+      ;;                                "~/Documents/org/activity_log.org"
+      ;;                                "~/Documents/org/meditation_log.org"
+      ;;                                "~/Documents/org/dream_log.org"
+      ;;                                "~/Documents/org/memos.org"
+      ;;                                "~/Documents/org/flagged.org"
+      ;;                                "~/Documents/org/projects.org"
+      ;;                                "~/Documents/org/notes.org"
+      ;;                                "~/Documents/org/tga.org")))
       (setq org-agenda-time-grid
             '((daily today require-timed)
               "----------------"
@@ -861,9 +853,9 @@ inspired by http://doc.norang.ca/org-mode.html#GTD
       (setq org-agenda-window-setup (quote current-window))
       (add-hook 'org-agenda-mode-hook (lambda () (hl-line-mode 1)))
       (setq
-                  ;;org-agenda-include-diary t
-                  ;;org-agenda-start-on-weekday nil
-                  org-agenda-log-mode-items (quote (closed clock state)))
+       ;;org-agenda-include-diary t
+       ;;org-agenda-start-on-weekday nil
+       org-agenda-log-mode-items (quote (closed clock state)))
 
       (xtof/org-agenda-setup-custom-commands)
       ))

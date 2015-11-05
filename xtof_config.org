@@ -620,6 +620,15 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     ;;                                    "eshell-mode"
     ;;                                    "dired-mode"))
 #+end_src
+*** multipl-cursors mode
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :init (progn
+              (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+              (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+              (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+              (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)))
+#+end_src
 * //////////////////////////////////////----------------------------  NAVIGATION
 ** ace-jump-mode DISABLED
 

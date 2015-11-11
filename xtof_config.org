@@ -13,31 +13,20 @@
         (exec-path-from-shell-initialize))))
 #+end_src
 
-** Guide-key DISABLED
-
-It's hard to remember keyboard shortcuts. The =guide-key= package pops up help after a short delay.
+** which-key
 #+begin_src emacs-lisp
-  (use-package guide-key
-    :ensure guide-key
-    :disabled t
-    :END:
-    :init
-    (progn  (setq guide-key/guide-key-sequence '("C-x"
-                                                 "C-c"
-                                                 "C-c p"
-                                                 "C-c C-x")))
-    :config
-    (guide-key-mode 1)) ; Enable guide-key-mode
+  (use-package which-key
+    :ensure which-key
+    :config (which-key-mode 1))
 #+end_src
-
 * //////////////////////////////////////---------------------------  LOOK & FEEL
 ** Look
-*** Color Theme (gotham-theme)
+*** Color Theme (darktooth)
 
 #+begin_src emacs-lisp
-  (use-package gotham-theme
-    :ensure gotham-theme
-    :config (load-theme 'gotham t))
+  (use-package darktooth-theme
+    :ensure darktooth-theme
+    :config (load-theme 'darktooth t))
 #+end_src
 
 *** smart-mode-line

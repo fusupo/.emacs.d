@@ -12,13 +12,17 @@
         (exec-path-from-shell-copy-env "TEXINPUTS")
         (exec-path-from-shell-initialize))))
 #+end_src
-
+   
 ** which-key
+
 #+begin_src emacs-lisp
   (use-package which-key
     :ensure which-key
-    :config (which-key-mode 1))
+    :config (progn
+              (which-key-mode 1)
+              (setq which-key-idle-delay 0.4)))
 #+end_src
+
 * //////////////////////////////////////---------------------------  LOOK & FEEL
 ** Look
 *** Color Theme (darktooth)
@@ -29,45 +33,45 @@
     :config (load-theme 'darktooth t))
 #+end_src
 
-*** smart-mode-line
-
+*** smart-mode-line DISABLED
 #+BEGIN_SRC emacs-lisp
-  (use-package smart-mode-line
-    :ensure smart-mode-line
-    :init
-    (use-package smart-mode-line-powerline-theme
-      :ensure smart-mode-line-powerline-theme)
-    :config
-    (progn
-      (sml/setup)
-      (setq sml/theme 'powerline)
-      (set-face-attribute 'sml/folder
-                          nil
-                          :inherit 'sml/global
-                          :background "#091f2e"
-                          :foreground "gray40"
-                          :weight 'normal)
-      (set-face-attribute 'sml/modes
-                          nil 
-                          :inherit 'sml/global
-                          :background "#0a3749"
-                          :foreground "gray65")
-      (set-face-attribute 'sml/position-percentage
-                          nil 
-                          :inherit 'sml/prefix
-                          :background "#0a3749"
-                          :foreground "gray100"
-                          :weight 'normal)
-      (set-face-attribute 'sml/vc
-                          nil 
-                          :inherit 'sml/git
-                          :background "#0a3749"
-                          :foreground "#2aa889")
-      (set-face-attribute 'sml/vc-edited
-                          nil
-                          :inherit 'sml/prefix
-                          :background "#0a3749"
-                          :foreground "OrangeRed1")))
+  ;; (use-package smart-mode-line
+  ;;   :disabled t 
+  ;;   :ensure smart-mode-line
+  ;;   :init
+  ;;   ;; (use-package smart-mode-line-powerline-theme
+  ;;   ;;   :ensure smart-mode-line-powerline-theme)
+  ;;   :config
+  ;;   (progn
+  ;;     (sml/setup)
+  ;;     (setq sml/theme 'powerline)
+  ;;     (set-face-attribute 'sml/folder
+  ;;                         nil
+  ;;                         :inherit 'sml/global
+  ;;                         :background "#091f2e"
+  ;;                         :foreground "gray40"
+  ;;                         :weight 'normal)
+  ;;     (set-face-attribute 'sml/modes
+  ;;                         nil 
+  ;;                         :inherit 'sml/global
+  ;;                         :background "#0a3749"
+  ;;                         :foreground "gray65")
+  ;;     (set-face-attribute 'sml/position-percentage
+  ;;                         nil 
+  ;;                         :inherit 'sml/prefix
+  ;;                         :background "#0a3749"
+  ;;                         :foreground "gray100"
+  ;;                         :weight 'normal)
+  ;;     (set-face-attribute 'sml/vc
+  ;;                         nil 
+  ;;                         :inherit 'sml/git
+  ;;                         :background "#0a3749"
+  ;;                         :foreground "#2aa889")
+  ;;     (set-face-attribute 'sml/vc-edited
+  ;;                         nil
+  ;;                         :inherit 'sml/prefix
+  ;;                         :background "#0a3749"
+  ;;                         :foreground "OrangeRed1")))
 #+END_SRC
 
 *** Smartparens
@@ -177,7 +181,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
 #+begin_src emacs-lisp
   (use-package volatile-highlights
-:disabled t
+    :disabled t
     :ensure volatile-highlights
     :config (volatile-highlights-mode t))
 #+end_src
@@ -623,12 +627,20 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
 #+begin_src emacs-lisp
   (use-package ace-jump-mode
-:disabled t
+    :disabled t
     :ensure ace-jump-mode
     :bind
     ("M-SPC" . ace-jump-mode)
     ("M-S-SPC" . just-one-space))
  #+end_src
+
+** evil-mode
+
+#+begin_src emacs-lisp
+  (use-package evil
+    :ensure evil
+    :config (evil-mode 1))
+#+end_src
 
 * //////////////////////////////////////-----------------------  VERSION CONTROL
 ** magit
@@ -1087,3 +1099,4 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                                           ("fusupo@gmail.com" . "~/Documents/org/gcal_personal.org")
                                           ("telegraphacademy.com_sq72k3lbvth430pd91c2tifgic@group.calendar.google.com" . "~/Documents/org/gcal_tga_senior.org")))))
 #+END_SRC
+   

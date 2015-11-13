@@ -13,16 +13,6 @@
         (exec-path-from-shell-initialize))))
 #+end_src
    
-** which-key
-
-#+begin_src emacs-lisp
-  (use-package which-key
-    :ensure which-key
-    :config (progn
-              (which-key-mode 1)
-              (setq which-key-idle-delay 0.4)))
-#+end_src
-
 * //////////////////////////////////////---------------------------  LOOK & FEEL
 ** Look
 *** Color Theme (darktooth)
@@ -33,47 +23,57 @@
     :config (load-theme 'darktooth t))
 #+end_src
 
-*** smart-mode-line DISABLED
+*** smart-mode-line
+
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package smart-mode-line
-  ;;   :disabled t 
-  ;;   :ensure smart-mode-line
-  ;;   :init
-  ;;   ;; (use-package smart-mode-line-powerline-theme
-  ;;   ;;   :ensure smart-mode-line-powerline-theme)
-  ;;   :config
-  ;;   (progn
-  ;;     (sml/setup)
-  ;;     (setq sml/theme 'powerline)
-  ;;     (set-face-attribute 'sml/folder
-  ;;                         nil
-  ;;                         :inherit 'sml/global
-  ;;                         :background "#091f2e"
-  ;;                         :foreground "gray40"
-  ;;                         :weight 'normal)
-  ;;     (set-face-attribute 'sml/modes
-  ;;                         nil 
-  ;;                         :inherit 'sml/global
-  ;;                         :background "#0a3749"
-  ;;                         :foreground "gray65")
-  ;;     (set-face-attribute 'sml/position-percentage
-  ;;                         nil 
-  ;;                         :inherit 'sml/prefix
-  ;;                         :background "#0a3749"
-  ;;                         :foreground "gray100"
-  ;;                         :weight 'normal)
-  ;;     (set-face-attribute 'sml/vc
-  ;;                         nil 
-  ;;                         :inherit 'sml/git
-  ;;                         :background "#0a3749"
-  ;;                         :foreground "#2aa889")
-  ;;     (set-face-attribute 'sml/vc-edited
-  ;;                         nil
-  ;;                         :inherit 'sml/prefix
-  ;;                         :background "#0a3749"
-  ;;                         :foreground "OrangeRed1")))
+  (use-package smart-mode-line
+    :ensure t
+    :init
+    (use-package smart-mode-line-powerline-theme
+      :ensure t)
+    :config
+    (progn
+      (setq sml/no-confirm-load-theme t) 
+      (setq sml/theme 'powerline)
+      (sml/setup)
+      ;; (set-face-attribute 'sml/folder
+      ;;                     nil
+      ;;                     :inherit 'sml/global
+      ;;                     :background "#091f2e"
+      ;;                     :foreground "gray40"
+      ;;                     :weight 'normal)
+      ;; (set-face-attribute 'sml/modes
+      ;;                     nil 
+      ;;                     :inherit 'sml/global
+      ;;                     :background "#0a3749"
+      ;;                     :foreground "gray65")
+      ;; (set-face-attribute 'sml/position-percentage
+      ;;                     nil 
+      ;;                     :inherit 'sml/prefix
+      ;;                     :background "#0a3749"
+      ;;                     :foreground "gray100"
+      ;;                     :weight 'normal)
+      ;; (set-face-attribute 'sml/vc
+      ;;                     nil 
+      ;;                     :inherit 'sml/git
+      ;;                     :background "#0a3749"
+      ;;                     :foreground "#2aa889")
+      ;; (set-face-attribute 'sml/vc-edited
+      ;;                     nil
+      ;;                     :inherit 'sml/prefix
+      ;;                     :background "#0a3749"
+      ;;                     :foreground "OrangeRed1")
+      ))
 #+END_SRC
 
+*** powerline DISABLED
+#+begin_src emacs-lisp
+  ;; (use-package powerline
+  ;;   :ensure t
+  ;;   :config (powerline-center-evil-theme))
+  ;; (use-package powerline-evil
+  ;;   :ensure t)
+#+end_src
 *** Smartparens
 
 https://github.com/Fuco1/smartparens/wiki/Example-configuration
@@ -638,8 +638,43 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
 #+begin_src emacs-lisp
   (use-package evil
-    :ensure evil
-    :config (evil-mode 1))
+    :ensure t
+    :init (use-package evil-leader
+            :ensure t
+            :config (progn 
+                      (evil-leader/set-leader "<SPC>")
+                      (evil-leader/set-key
+                        "xf" 'ido-find-file
+                        "xb" 'ido-switch-buffer
+                        "xc" 'save-buffers-kill-terminal
+                        "jj" 'w3mext-search-js-api-mdn
+                        "xz" 'suspend-frame
+                        "xvv" 'vc-next-action
+                        "xv=" 'vc-diff
+                        "xvl" 'vc-print-log
+                        "gs" 'magit-status
+                        "gp" 'magit-push
+                        )))
+    :config (progn
+              (global-evil-leader-mode)
+              (evil-mode 1)))
+#+end_src
+   
+** which-key
+
+#+begin_src emacs-lisp
+    (use-package which-key
+      :ensure t
+      :config (progn
+                (which-key-mode 1)
+                (setq which-key-idle-delay 0.4)
+                (setq which-key-show-prefix 'left)
+                ;; (add-to-list 'which-key-key-replacement-alist '("TAB" . "tab"))
+                ;; (add-to-list 'which-key-key-replacement-alist '("RET" . "ret"))
+                ;; (add-to-list 'which-key-key-replacement-alist '("DEL" . "del"))
+                ;; (add-to-list 'which-key-key-replacement-alist '("SPC" . "spc"))
+                ;; (add-to-list 'which-key-key-replacement-alist '("ESC" . "esc"))
+  ))
 #+end_src
 
 * //////////////////////////////////////-----------------------  VERSION CONTROL
@@ -691,7 +726,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     ;;:interpreter ("node" . js2mode)
     :config
     (progn
-          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       ;;  https://github.com/jakubholynet/dotfiles/blob/dotf/.live-packs/jholy-pack/lib/nodejs-repl-eval.el
       ;;  via https://atlanis.net/blog/posts/nodejs-repl-eval.html
       (use-package nodejs-repl-eval

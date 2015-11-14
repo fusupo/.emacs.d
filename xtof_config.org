@@ -645,6 +645,18 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
             :config (progn 
                       (evil-leader/set-leader "<SPC>")
                       (evil-leader/set-key
+                        "hfu" 'describe-function
+                        "hfa" 'describe-face
+                        "hfo" 'describe-font
+                        "hv" 'describe-variable
+                        "hk" 'describe-key
+                        "hc" 'describe-char
+                        "hm" 'describe-mode
+                        "ht" 'describe-theme
+                        "hs" 'describe-syntax
+                        "hpa" 'describe-package
+                        "hpr" 'describe-project
+                        
                         "xf" 'ido-find-file
                         "xb" 'ido-switch-buffer
                         "xc" 'save-buffers-kill-terminal
@@ -670,7 +682,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               (setq which-key-idle-delay 0.4)
               (setq which-key-show-prefix 'left)
               (which-key-add-key-based-replacements
-                "SPC g" "magit")
+                "SPC g" "magit"
+                "SPC h" "help(describe)")
               ;; (add-to-list 'which-key-key-replacement-alist '("TAB" . "tab"))
               ;; (add-to-list 'which-key-key-replacement-alist '("RET" . "ret"))
               ;; (add-to-list 'which-key-key-replacement-alist '("DEL" . "del"))

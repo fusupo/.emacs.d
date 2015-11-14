@@ -19,6 +19,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(js2-function-call ((t (:inherit default :foreground "DarkSeaGreen4"))))
+ '(neo-dir-link-face ((t (:foreground "#528B8B" :weight bold))))
+ '(neo-vc-default-face ((t (:foreground "#7C6F64"))))
+ '(neo-vc-edited-face ((t (:foreground "#DD6F48"))))
+ '(neo-vc-up-to-date-face ((t (:foreground "#FDF4C1"))))
  '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
 
 (custom-set-variables

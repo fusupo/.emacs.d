@@ -698,25 +698,22 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+begin_src emacs-lisp
   (setq magit-last-seen-setup-instructions "1.4.0")
   (use-package magit
-    :ensure magit
+    :ensure t
     :defer t
     :config
     (progn
       (use-package git-commit-mode
-        :ensure git-commit-mode
+        :ensure t
         :defer t)
       (use-package gitconfig-mode
-        :ensure gitconfig-mode
+        :ensure t
         :defer t)
       (use-package gitignore-mode
-        :ensure gitignore-mode
+        :ensure t
         :defer t)
       (use-package gitattributes-mode
-        :ensure gitattributes-mode
-        :defer t))
-    :bind
-    ("C-x g" . magit-status)
-    ("C-x C-g p" . magit-push))
+        :ensure t
+        :defer t)))
 #+end_src
    
 * //////////////////////////////////////----------------------  LANGUAGE SUPPORT

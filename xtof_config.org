@@ -210,7 +210,8 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (setq fci-dash-pattern 0.25)
       (setq fci-rule-color "DeepSkyBlue4")
       (define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-      (global-fci-mode 1)))
+      (global-fci-mode 1)
+      (add-hook 'Custom-mode-hook (lambda () (turn-off-fci-mode)))))
 #+end_src
 
 *** indent-guide
@@ -220,7 +221,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :ensure indent-guide
     :config
     (progn
-      (setq indent-guide-char "'")
+      (setq indent-guide-char "|")
       (indent-guide-global-mode nil)))
 #+end_src
 
@@ -653,7 +654,6 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                         "xv=" 'vc-diff
                         "xvl" 'vc-print-log
                         "gs" 'magit-status
-                        "gp" 'magit-push
                         )))
     :config (progn
               (global-evil-leader-mode)
@@ -663,18 +663,20 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 ** which-key
 
 #+begin_src emacs-lisp
-    (use-package which-key
-      :ensure t
-      :config (progn
-                (which-key-mode 1)
-                (setq which-key-idle-delay 0.4)
-                (setq which-key-show-prefix 'left)
-                ;; (add-to-list 'which-key-key-replacement-alist '("TAB" . "tab"))
-                ;; (add-to-list 'which-key-key-replacement-alist '("RET" . "ret"))
-                ;; (add-to-list 'which-key-key-replacement-alist '("DEL" . "del"))
-                ;; (add-to-list 'which-key-key-replacement-alist '("SPC" . "spc"))
-                ;; (add-to-list 'which-key-key-replacement-alist '("ESC" . "esc"))
-  ))
+  (use-package which-key
+    :ensure t
+    :config (progn
+              (which-key-mode 1)
+              (setq which-key-idle-delay 0.4)
+              (setq which-key-show-prefix 'left)
+              (which-key-add-key-based-replacements
+                "SPC g" "magit")
+              ;; (add-to-list 'which-key-key-replacement-alist '("TAB" . "tab"))
+              ;; (add-to-list 'which-key-key-replacement-alist '("RET" . "ret"))
+              ;; (add-to-list 'which-key-key-replacement-alist '("DEL" . "del"))
+              ;; (add-to-list 'which-key-key-replacement-alist '("SPC" . "spc"))
+              ;; (add-to-list 'which-key-key-replacement-alist '("ESC" . "esc"))
+              ))
 #+end_src
 
 * //////////////////////////////////////-----------------------  VERSION CONTROL
@@ -737,14 +739,10 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         :config (progn
                   (js2r-add-keybindings-with-prefix "C-c C-m")))
       (setq js-indent-level 2)
-      ;;(setq js2-basic-offset 2)
       (setq js2-highlight-level 3)
       (setq js2-indent-switch-body t)
       ;;(setq js2-mode-indent-inhibit-undo nil)
       ;; (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
-      ;; (add-hook 'js2-mode-hook (lambda () (smartparens-strict-mode t)) t)
-      ;; (add-hook 'js2-mode-hook (lambda () (show-smartparens-mode t)) t)
-      ;; (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2)) t)
       (add-hook 'js2-mode-hook (lambda ()
                                  (smartparens-strict-mode t)
                                  (show-smartparens-mode t)

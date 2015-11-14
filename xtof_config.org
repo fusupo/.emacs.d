@@ -645,6 +645,13 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
             :config (progn 
                       (evil-leader/set-leader "<SPC>")
                       (evil-leader/set-key
+                        
+                        "bk" 'kill-buffer
+                        "bs" 'save-buffer
+                        "bS" 'save-some-buffers
+                        
+                        "gs" 'magit-status
+
                         "hfu" 'describe-function
                         "hfa" 'describe-face
                         "hfo" 'describe-font
@@ -657,15 +664,22 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                         "hpa" 'describe-package
                         "hpr" 'describe-project
                         
-                        "xf" 'ido-find-file
-                        "xb" 'ido-switch-buffer
-                        "xc" 'save-buffers-kill-terminal
-                        "jj" 'w3mext-search-js-api-mdn
-                        "xz" 'suspend-frame
-                        "xvv" 'vc-next-action
-                        "xv=" 'vc-diff
-                        "xvl" 'vc-print-log
-                        "gs" 'magit-status
+                        
+                        "w0" 'delete-window
+                        "w1" 'delete-other-windows
+                        "w2" 'split-window-below
+                        "w3" 'split-window-right
+                        "wo" 'other-window
+                        
+
+                        ;; "xf" 'ido-find-file
+                        ;; "xb" 'ido-switch-buffer
+                        ;; "xc" 'save-buffers-kill-terminal
+                        ;; "jj" 'w3mext-search-js-api-mdn
+                        ;; "xz" 'suspend-frame
+                        ;; "xvv" 'vc-next-action
+                        ;; "xv=" 'vc-diff
+                        ;; "xvl" 'vc-print-log
                         )))
     :config (progn
               (global-evil-leader-mode)
@@ -682,8 +696,10 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               (setq which-key-idle-delay 0.4)
               (setq which-key-show-prefix 'left)
               (which-key-add-key-based-replacements
+                "SPC b" "buffer"
                 "SPC g" "magit"
-                "SPC h" "help(describe)")
+                "SPC h" "help(describe)"
+                "SPC w" "window")
               ;; (add-to-list 'which-key-key-replacement-alist '("TAB" . "tab"))
               ;; (add-to-list 'which-key-key-replacement-alist '("RET" . "ret"))
               ;; (add-to-list 'which-key-key-replacement-alist '("DEL" . "del"))

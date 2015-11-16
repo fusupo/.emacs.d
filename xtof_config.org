@@ -218,7 +218,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
 #+begin_src emacs-lisp
   (use-package indent-guide
-    :ensure indent-guide
+    :ensure t
     :config
     (progn
       (setq indent-guide-char "|")
@@ -252,33 +252,57 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 #+END_SRC
 
 ** Feel
+*** hide fci and indent-guide on popup show
+#+begin_src emacs-lisp
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;  Disable fci when popup is shown/renamble on popup close  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;  see: http://emacs.stackexchange.com/questions/147/how-can-i-get-a-ruler-at-column-80  ;;
+  (defun sanityinc/fci-enabled-p () (symbol-value 'fci-mode))
+  (defvar sanityinc/fci-mode-suppressed nil)
+  (make-variable-buffer-local 'sanityinc/fci-mode-suppressed)
+  (defadvice popup-create (before suppress-fci-mode activate)
+    (make-variable-buffer-local 'sanityinc/fci-mode-suppressed)
+    "Suspend fci-mode while popups are visible"
+    (let ((fci-enabled (sanityinc/fci-enabled-p)))
+      (when fci-enabled
+        (setq sanityinc/fci-mode-suppressed fci-enabled)
+        (indent-guide-mode -1)
+        (turn-off-fci-mode))))
+  (defadvice popup-delete (after restore-fci-mode activate)
+    "Restore fci-mode when all popups have closed"
+    (when (and sanityinc/fci-mode-suppressed
+               (null popup-instances))
+      (setq sanityinc/fci-mode-suppressed nil)
+      (indent-guide-mode 1)
+      (turn-on-fci-mode)))
+
+#+end_src
 *** neotree
 
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
     :ensure t
-    :config
-    (progn
-      (setq neo-create-file-auto-open t)
-      (setq neo-modern-sidebar t)
-      (setq neo-show-hidden-files t)
-      (setq neo-smart-open t)
-      (setq neo-theme (quote nerd))
-      (setq neo-vc-integration (quote (face char)))
-      (set-face-attribute 'neo-root-dir-face
-                          nil
-                          :background "#0c2938"
-                          :foreground "#ffd746")
-      (set-face-attribute 'neo-dir-link-face
-                          nil
-                          :foreground "DeepSkyBlue"
-                          :weight 'bold)
-      (set-face-attribute 'neo-vc-default-face
-                          nil
-                          :background "gray20"
-                          :foreground "White"
-                          :weight 'bold)
-      (neotree-show)))
+    :config (progn
+              (setq neo-create-file-auto-open t)
+              (setq neo-modern-sidebar t)
+              (setq neo-show-hidden-files t)
+              (setq neo-smart-open t)
+              (setq neo-theme (quote nerd))
+              (setq neo-vc-integration (quote (face char)))
+              (set-face-attribute 'neo-root-dir-face
+                                  nil
+                                  :background "#0c2938"
+                                  :foreground "#ffd746")
+              (set-face-attribute 'neo-dir-link-face
+                                  nil
+                                  :foreground "DeepSkyBlue"
+                                  :weight 'bold)
+              (set-face-attribute 'neo-vc-default-face
+                                  nil
+                                  :background "gray20"
+                                  :foreground "White"
+                                  :weight 'bold)
+              (neotree-show)))
 
 #+END_SRC
 
@@ -299,7 +323,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (setq ac-dwim t)
       (setq ac-quick-help-delay 0.7)
       
-              ;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;
       ;;  Key triggers  ;;
       (ac-set-trigger-key "TAB")
       
@@ -310,29 +334,10 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       (setq ac-use-menu-map t)
       (define-key ac-menu-map "\C-n" 'ac-next)
       (define-key ac-menu-map "\C-p" 'ac-previous)
-              ;;;;;;;;;;;;;;;;;;;;
-              ;;;;;;;;;;;;;;;;;;;;
+      ;;;;;;;;;;;;;;;;;;;;
 
-              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      ;;  Disable fci when popup is shown/renamble on popup close  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      ;;  see: http://emacs.stackexchange.com/questions/147/how-can-i-get-a-ruler-at-column-80  ;;
-      (defun sanityinc/fci-enabled-p () (symbol-value 'fci-mode))
-      (defvar sanityinc/fci-mode-suppressed nil)
-      (make-variable-buffer-local 'sanityinc/fci-mode-suppressed)
-      (defadvice popup-create (before suppress-fci-mode activate)
-        "Suspend fci-mode while popups are visible"
-        (let ((fci-enabled (sanityinc/fci-enabled-p)))
-          (when fci-enabled
-            (setq sanityinc/fci-mode-suppressed fci-enabled)
-            (turn-off-fci-mode))))
-      (defadvice popup-delete (after restore-fci-mode activate)
-        "Restore fci-mode when all popups have closed"
-        (when (and sanityinc/fci-mode-suppressed
-                 (null popup-instances))
-          (setq sanityinc/fci-mode-suppressed nil)
-          (turn-on-fci-mode)))))
+            ))
 #+end_src
-
 *** Helm
 
 #+begin_src emacs-lisp
@@ -1072,11 +1077,12 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       ;;:ensure flycheck-clojure
       ;;:init (progn (eval-after-load 'flycheck '(flycheck-clojure-setup))))
       (use-package flycheck-pos-tip
-        :ensure flycheck-pos-tip
+        :ensure t
         :init (progn (eval-after-load 'flycheck
                        '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
       (add-hook 'after-init-hook #'global-flycheck-mode)))
 #+END_SRC
+
 * //////////////////////////////////////--------------------------  PRODUCTIVITY
 ** Ledger Mode
 

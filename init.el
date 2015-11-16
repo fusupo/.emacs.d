@@ -1,3 +1,4 @@
+(package-initialize)
 (require 'org)
 (require 'ob-tangle)
 

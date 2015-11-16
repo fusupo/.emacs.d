@@ -222,9 +222,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :config
     (progn
       (setq indent-guide-char "|")
+      (setq indent-guide-threshold 0)
       (indent-guide-global-mode nil)))
 #+end_src
-
 *** Zone DISABLED
 
 #+begin_src emacs-lisp
@@ -1076,10 +1076,17 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
       ;;(use-package flycheck-clojure
       ;;:ensure flycheck-clojure
       ;;:init (progn (eval-after-load 'flycheck '(flycheck-clojure-setup))))
-      (use-package flycheck-pos-tip
+      ;; (use-package flycheck-pos-tip
+      ;;   :ensure t
+      ;;   :init (progn (eval-after-load 'flycheck
+      ;;                  '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
+      (use-package flycheck-tip
         :ensure t
-        :init (progn (eval-after-load 'flycheck
-                       '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
+        :config (progn
+                  (setq flycheck-tip-timer-delay 0.2)
+                  (flycheck-tip-use-timer 'verbose)
+                  (define-key global-map (kbd "C-0") 'error-tip-cycle-dwim)
+                  (define-key global-map (kbd "C-9") 'error-tip-cycle-dwim-reverse)))
       (add-hook 'after-init-hook #'global-flycheck-mode)))
 #+END_SRC
 

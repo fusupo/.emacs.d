@@ -24,7 +24,8 @@
  '(neo-vc-default-face ((t (:foreground "#7C6F64"))))
  '(neo-vc-edited-face ((t (:foreground "#DD6F48"))))
  '(neo-vc-up-to-date-face ((t (:foreground "#FDF4C1"))))
- '(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t))
+ ;;'(org-mode-line-clock ((t (:background "grey75" :foreground "red" :box (:line-width -1 :style released-button)))) t)
+ )
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -39,67 +40,68 @@
    (quote
     ("~/Documents/org/inbox.org" "~/Documents/org/activity_log.org" "~/Documents/org/meditation_log.org" "~/Documents/org/dream_log.org" "~/Documents/org/memos.org" "~/Documents/org/flagged.org" "~/Documents/org/projects.org" "~/Documents/org/notes.org" "~/Documents/org/tga.org")))
  '(powerline-default-separator (quote contour))
- '(sml/mode-width
-   (if
-       (eq powerline-default-separator
-           (quote arrow))
-       (quote right)
-     (quote full)))
- '(sml/pos-id-separator
-   (quote
-    (""
-     (:propertize " " face powerline-active1)
-     (:eval
-      (propertize " "
-                  (quote display)
-                  (funcall
-                   (intern
-                    (format "powerline-%s-%s" powerline-default-separator
-                            (car powerline-default-separator-dir)))
-                   (quote powerline-active1)
-                   (quote powerline-active2))))
-     (:propertize " " face powerline-active2))))
- '(sml/pos-minor-modes-separator
-   (quote
-    (""
-     (:propertize " " face powerline-active1)
-     (:eval
-      (propertize " "
-                  (quote display)
-                  (funcall
-                   (intern
-                    (format "powerline-%s-%s" powerline-default-separator
-                            (cdr powerline-default-separator-dir)))
-                   (quote powerline-active1)
-                   nil)))
-     (:propertize " " face sml/global))))
- '(sml/pre-id-separator
-   (quote
-    (""
-     (:propertize " " face sml/global)
-     (:eval
-      (propertize " "
-                  (quote display)
-                  (funcall
-                   (intern
-                    (format "powerline-%s-%s" powerline-default-separator
-                            (car powerline-default-separator-dir)))
-                   nil
-                   (quote powerline-active1))))
-     (:propertize " " face powerline-active1))))
- '(sml/pre-minor-modes-separator
-   (quote
-    (""
-     (:propertize " " face powerline-active2)
-     (:eval
-      (propertize " "
-                  (quote display)
-                  (funcall
-                   (intern
-                    (format "powerline-%s-%s" powerline-default-separator
-                            (cdr powerline-default-separator-dir)))
-                   (quote powerline-active2)
-                   (quote powerline-active1))))
-     (:propertize " " face powerline-active1))))
- '(sml/pre-modes-separator (propertize " " (quote face) (quote sml/modes)))
- '(timesheet-invoice-number 104))
+ ;; '(sml/mode-width
+ ;;   (if
+ ;;       (eq powerline-default-separator
+ ;;           (quote arrow))
+ ;;       (quote right)
+ ;;     (quote full)))
+ ;; '(sml/pos-id-separator
+ ;;   (quote
+ ;;    (""
+ ;;     (:propertize " " face powerline-active1)
+ ;;     (:eval
+ ;;      (propertize " "
+ ;;                  (quote display)
+ ;;                  (funcall
+ ;;                   (intern
+ ;;                    (format "powerline-%s-%s" powerline-default-separator
+ ;;                            (car powerline-default-separator-dir)))
+ ;;                   (quote powerline-active1)
+ ;;                   (quote powerline-active2))))
+ ;;     (:propertize " " face powerline-active2))))
+ ;; '(sml/pos-minor-modes-separator
+ ;;   (quote
+ ;;    (""
+ ;;     (:propertize " " face powerline-active1)
+ ;;     (:eval
+ ;;      (propertize " "
+ ;;                  (quote display)
+ ;;                  (funcall
+ ;;                   (intern
+ ;;                    (format "powerline-%s-%s" powerline-default-separator
+ ;;                            (cdr powerline-default-separator-dir)))
+ ;;                   (quote powerline-active1)
+ ;;                   nil)))
+ ;;     (:propertize " " face sml/global))))
+ ;; '(sml/pre-id-separator
+ ;;   (quote
+ ;;    (""
+ ;;     (:propertize " " face sml/global)
+ ;;     (:eval
+ ;;      (propertize " "
+ ;;                  (quote display)
+ ;;                  (funcall
+ ;;                   (intern
+ ;;                    (format "powerline-%s-%s" powerline-default-separator
+ ;;                            (car powerline-default-separator-dir)))
+ ;;                   nil
+ ;;                   (quote powerline-active1))))
+ ;;     (:propertize " " face powerline-active1))))
+ ;; '(sml/pre-minor-modes-separator
+ ;;   (quote
+ ;;    (""
+ ;;     (:propertize " " face powerline-active2)
+ ;;     (:eval
+ ;;      (propertize " "
+ ;;                  (quote display)
+ ;;                  (funcall
+ ;;                   (intern
+ ;;                    (format "powerline-%s-%s" powerline-default-separator
+ ;;                            (cdr powerline-default-separator-dir)))
+ ;;                   (quote powerline-active2)
+ ;;                   (quote powerline-active1))))
+ ;;     (:propertize " " face powerline-active1))))
+ ;; '(sml/pre-modes-separator (propertize " " (quote face) (quote sml/modes)))
+ ;; '(timesheet-invoice-number 104)
+ )

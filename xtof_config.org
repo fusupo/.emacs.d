@@ -690,10 +690,9 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
               (global-evil-leader-mode)
               (evil-mode 1)))
 #+end_src
-** evil-magit DISABLED
+** evil-magit
 #+begin_src emacs-lisp
   (use-package evil-magit
-:diabled t
     :ensure t)
 #+end_src   
 ** which-key

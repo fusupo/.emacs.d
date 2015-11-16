@@ -728,9 +728,6 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :defer t
     :config
     (progn
-      (use-package git-commit-mode
-        :ensure t
-        :defer t)
       (use-package gitconfig-mode
         :ensure t
         :defer t)

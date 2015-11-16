@@ -23,56 +23,56 @@
     :config (load-theme 'darktooth t))
 #+end_src
 
-*** smart-mode-line
+*** smart-mode-line DISABLED
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smart-mode-line
-    :ensure t
-    :init
-    (use-package smart-mode-line-powerline-theme
-      :ensure t)
-    :config
-    (progn
-      (setq sml/no-confirm-load-theme t) 
-      (setq sml/theme 'powerline)
-      (sml/setup)
-      ;; (set-face-attribute 'sml/folder
-      ;;                     nil
-      ;;                     :inherit 'sml/global
-      ;;                     :background "#091f2e"
-      ;;                     :foreground "gray40"
-      ;;                     :weight 'normal)
-      ;; (set-face-attribute 'sml/modes
-      ;;                     nil 
-      ;;                     :inherit 'sml/global
-      ;;                     :background "#0a3749"
-      ;;                     :foreground "gray65")
-      ;; (set-face-attribute 'sml/position-percentage
-      ;;                     nil 
-      ;;                     :inherit 'sml/prefix
-      ;;                     :background "#0a3749"
-      ;;                     :foreground "gray100"
-      ;;                     :weight 'normal)
-      ;; (set-face-attribute 'sml/vc
-      ;;                     nil 
-      ;;                     :inherit 'sml/git
-      ;;                     :background "#0a3749"
-      ;;                     :foreground "#2aa889")
-      ;; (set-face-attribute 'sml/vc-edited
-      ;;                     nil
-      ;;                     :inherit 'sml/prefix
-      ;;                     :background "#0a3749"
-      ;;                     :foreground "OrangeRed1")
-      ))
+  ;; (use-package smart-mode-line
+  ;;   :ensure t
+  ;;   :init
+  ;;   (use-package smart-mode-line-powerline-theme
+  ;;     :ensure t)
+  ;;   :config
+  ;;   (progn
+  ;;     (setq sml/no-confirm-load-theme t) 
+  ;;     (setq sml/theme 'powerline)
+  ;;     (sml/setup)
+  ;;     ;; (set-face-attribute 'sml/folder
+  ;;     ;;                     nil
+  ;;     ;;                     :inherit 'sml/global
+  ;;     ;;                     :background "#091f2e"
+  ;;     ;;                     :foreground "gray40"
+  ;;     ;;                     :weight 'normal)
+  ;;     ;; (set-face-attribute 'sml/modes
+  ;;     ;;                     nil 
+  ;;     ;;                     :inherit 'sml/global
+  ;;     ;;                     :background "#0a3749"
+  ;;     ;;                     :foreground "gray65")
+  ;;     ;; (set-face-attribute 'sml/position-percentage
+  ;;     ;;                     nil 
+  ;;     ;;                     :inherit 'sml/prefix
+  ;;     ;;                     :background "#0a3749"
+  ;;     ;;                     :foreground "gray100"
+  ;;     ;;                     :weight 'normal)
+  ;;     ;; (set-face-attribute 'sml/vc
+  ;;     ;;                     nil 
+  ;;     ;;                     :inherit 'sml/git
+  ;;     ;;                     :background "#0a3749"
+  ;;     ;;                     :foreground "#2aa889")
+  ;;     ;; (set-face-attribute 'sml/vc-edited
+  ;;     ;;                     nil
+  ;;     ;;                     :inherit 'sml/prefix
+  ;;     ;;                     :background "#0a3749"
+  ;;     ;;                     :foreground "OrangeRed1")
+  ;;     ))
 #+END_SRC
 
-*** powerline DISABLED
+*** powerline 
 #+begin_src emacs-lisp
-  ;; (use-package powerline
-  ;;   :ensure t
-  ;;   :config (powerline-center-evil-theme))
-  ;; (use-package powerline-evil
-  ;;   :ensure t)
+  (use-package powerline
+    :ensure t
+    :config (powerline-center-evil-theme))
+  (use-package powerline-evil
+    :ensure t)
 #+end_src
 *** Smartparens
 

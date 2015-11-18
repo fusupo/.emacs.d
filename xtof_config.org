@@ -308,6 +308,12 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
 #+RESULTS:
 
+*** yas
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config (yas-global-mode t))
+#+end_src
 *** Auto-complete
 
 #+begin_src emacs-lisp
@@ -315,13 +321,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
     :ensure auto-complete
     :config
     (progn
+      (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
       (ac-config-default)
       (ac-flyspell-workaround)
       (setq ac-comphist-file (concat xtof/savefile-directory "/" "ac-comphist.dat"))
       
-      (setq ac-auto-start nil)
+      (setq ac-auto-start 2)
       (setq ac-dwim t)
-      (setq ac-quick-help-delay 0.7)
+      (setq ac-quick-help-delay 0.4)
       
       ;;;;;;;;;;;;;;;;;;;;
       ;;  Key triggers  ;;
@@ -633,11 +640,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
 
 #+begin_src emacs-lisp
   (use-package ace-jump-mode
-    :disabled t
     :ensure ace-jump-mode
+    :disabled t
     :bind
-    ("M-SPC" . ace-jump-mode)
-    ("M-S-SPC" . just-one-space))
+    ("M-j" . ace-jump-mode)
+    ("M-S-j" . just-one-space)
+    ("C-c SPC" . ace-jump-word-mode)
+    ("C-c C-u SPC" . ace-jump-char-mode)
+    ("C-c C-u C-u SPC" . ace-jump-line-mode))
  #+end_src
 
 ** evil-mode
@@ -650,45 +660,83 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
             :config (progn 
                       (evil-leader/set-leader "<SPC>")
                       (evil-leader/set-key
-                        
-                        "bk" 'kill-buffer
-                        "bs" 'save-buffer
-                        "bS" 'save-some-buffers
-                        
-                        "gs" 'magit-status
+                   
+                       "bk" 'kill-buffer
+                       "bs" 'save-buffer
+                       "bS" 'save-some-buffers
+                   
+                       "gs" 'magit-status
 
-                        "hfu" 'describe-function
-                        "hfa" 'describe-face
-                        "hfo" 'describe-font
-                        "hv" 'describe-variable
-                        "hk" 'describe-key
-                        "hc" 'describe-char
-                        "hm" 'describe-mode
-                        "ht" 'describe-theme
-                        "hs" 'describe-syntax
-                        "hpa" 'describe-package
-                        "hpr" 'describe-project
-                        
-                        
-                        "w0" 'delete-window
-                        "w1" 'delete-other-windows
-                        "w2" 'split-window-below
-                        "w3" 'split-window-right
-                        "wo" 'other-window
-                        
+                       "hfu" 'describe-function
+                       "hfa" 'describe-face
+                       "hfo" 'describe-font
+                       "hv" 'describe-variable
+                       "hk" 'describe-key
+                       "hc" 'describe-char
+                       "hm" 'describe-mode
+                       "ht" 'describe-theme
+                       "hs" 'describe-syntax
+                       "hpa" 'describe-package
+                       "hpr" 'describe-project
+                   
+                   
+                       "w0" 'delete-window
+                       "w1" 'delete-other-windows
+                       "w2" 'split-window-below
+                       "w3" 'split-window-right
+                       "wo" 'other-window
+                   
 
-                        ;; "xf" 'ido-find-file
-                        ;; "xb" 'ido-switch-buffer
-                        ;; "xc" 'save-buffers-kill-terminal
-                        ;; "jj" 'w3mext-search-js-api-mdn
-                        ;; "xz" 'suspend-frame
-                        ;; "xvv" 'vc-next-action
-                        ;; "xv=" 'vc-diff
-                        ;; "xvl" 'vc-print-log
-                        )))
+                       ;; "xf" 'ido-find-file
+                       ;; "xb" 'ido-switch-buffer
+                       ;; "xc" 'save-buffers-kill-terminal
+                       ;; "jj" 'w3mext-search-js-api-mdn
+                       ;; "xz" 'suspend-frame
+                       ;; "xvv" 'vc-next-action
+                       ;; "xv=" 'vc-diff
+                       ;; "xvl" 'vc-print-log
+                       )))
     :config (progn
               (global-evil-leader-mode)
-              (evil-mode 1)))
+              (evil-mode 1)
+              ;; evil mode everywhere
+              ;; (setq evil-overriding-maps nil)
+              ;;(setq evil-intercept-maps nil))
+                ;;; C-c as general purpose escape key sequence.
+
+              ;; http://www.emacswiki.org/emacs/Evil#toc16
+              ;;(defun my-esc (prompt)
+              ;;  "Functionality for escaping generally.  Includes exiting Evil insert state and C-g binding. "
+              ;;  (cond
+              ;;   ;; If we're in one of the Evil states that defines [escape] key, return [escape] so as
+              ;;   ;; Key Lookup will use it.
+              ;;   ((or (evil-insert-state-p) (evil-normal-state-p) (evil-replace-state-p) (evil-visual-state-p)) [escape])
+              ;;   ;; This is the best way I could infer for now to have C-c work during evil-read-key.
+              ;;   ;; Note: As long as I return [escape] in normal-state, I don't need this.
+              ;;   ;;((eq overriding-terminal-local-map evil-read-key-map) (keyboard-quit) (kbd ""))
+              ;;   (t (kbd "C-g"))))
+              ;;(define-key key-translation-map (kbd "C-c") 'my-esc)
+                ;;;; Works around the fact that Evil uses read-event directly when in operator state, which
+                ;;;; doesn't use the key-translation-map.
+              ;;(define-key evil-operator-state-map (kbd "C-c") 'keyboard-quit)
+                ;;;; Not sure what behavior this changes, but might as well set it, seeing the Elisp manual's
+                ;;;; documentation of it.
+              ;;(set-quit-char "C-c")
+              ;;
+                ;;;; http://www.emacswiki.org/emacs/Evil#toc18
+                ;;;; change mode-line color by evil state
+              ;;(lexical-let ((default-color (cons (face-background 'mode-line)
+              ;;                                   (face-foreground 'mode-line))))
+              ;;  (add-hook 'post-command-hook
+              ;;            (lambda ()
+              ;;              (let ((color (cond ((minibufferp) default-color)
+              ;;                                 ((evil-insert-state-p) '("#e80000" . "#ffffff"))
+              ;;                                 ((evil-emacs-state-p)  '("#444488" . "#ffffff"))
+              ;;                                 ((buffer-modified-p)   '("#006fa0" . "#ffffff"))
+              ;;                                (t default-color))))
+              ;;                (set-face-background 'mode-line (car color))
+              ;;                (set-face-foreground 'mode-line (cdr color)))))))
+              ))
 #+end_src
 ** evil-magit
 #+begin_src emacs-lisp
@@ -740,7 +788,7 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
    
 * //////////////////////////////////////----------------------  LANGUAGE SUPPORT
 ** WEB
-*** web-mode
+*** web-mode DISABLED
 
 #+begin_src emacs-lisp
 ;;  (use-package web-mode
@@ -772,37 +820,47 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
                   (js2r-add-keybindings-with-prefix "C-c C-m")))
       (setq js-indent-level 2)
       (setq js2-highlight-level 3)
-      (setq js2-indent-switch-body t)
+      (setq js2-indent-switc-body t)
       ;;(setq js2-mode-indent-inhibit-undo nil)
       ;; (add-hook 'js2-mode-hook '(lambda () (local-set-key (kbd "RET") 'newline-and-indent)))
       (add-hook 'js2-mode-hook (lambda ()
                                  (smartparens-strict-mode t)
                                  (show-smartparens-mode t)
                                  (setq js2-basic-offset 2)) t)
+      (yas-reload-all)
+      (add-hook 'js2-mode-hook #'yas-minor-mode)
       ))
 #+end_src
 
-#+RESULTS:
-   
+*** ac-js2
+
+#+begin_src emacs-lisp
+  (use-package ac-js2
+    :ensure t
+    :config (add-hook 'js2-mode-hook 'ac-js2-mode))
+#+end_src
+
 *** tern
 
+https://truongtx.me/2014/04/20/emacs-javascript-completion-and-refactoring/
 #+begin_src emacs-lisp
   (use-package tern
     :ensure t
-    :init
+    :config
     (progn
       (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
       (use-package tern-auto-complete
         :ensure t
-        :init
+        :config
         (progn
           (tern-ac-setup)))))
 #+end_src
 
-*** nodejs-repl
-
+*** nodejs-repl DISABLED
+    
 #+begin_src emacs-lisp
   (use-package nodejs-repl
+    :disabled t
     :ensure nodejs-repl)
 #+end_src
 
@@ -852,14 +910,14 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
         '(define-key html-mode-map (kbd "C-c b") 'web-beautify-html))
       (eval-after-load 'css-mode
         '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
-      ;; (eval-after-load 'js2-mode
-      ;;   '(add-hook 'js2-mode-hook
-      ;;              (lambda ()
-      ;;                (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
-      ;; (eval-after-load 'json-mode
-      ;;   '(add-hook 'json-mode-hook
-      ;;              (lambda ()
-      ;;                (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+      (eval-after-load 'js2-mode
+        '(add-hook 'js2-mode-hook
+                   (lambda ()
+                     (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
+      (eval-after-load 'json-mode
+        '(add-hook 'json-mode-hook
+                   (lambda ()
+                     (add-hook 'before-save-hook 'web-beautify-js-buffer t t))))
       (eval-after-load 'sgml-mode
         '(add-hook 'html-mode-hook
                    (lambda ()
@@ -1068,26 +1126,26 @@ https://github.com/Fuco1/smartparens/wiki/Example-configuration
   ;; Commentary:
   ;; Code:
   (use-package flycheck
-    :ensure flycheck
+    :ensure t
     :init
     (progn
       (use-package flycheck-ledger
-        :ensure flycheck-ledger
+        :ensure t
         :init (progn ))
       ;;(use-package flycheck-clojure
       ;;:ensure flycheck-clojure
       ;;:init (progn (eval-after-load 'flycheck '(flycheck-clojure-setup))))
-      ;; (use-package flycheck-pos-tip
-      ;;   :ensure t
-      ;;   :init (progn (eval-after-load 'flycheck
-      ;;                  '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
-      (use-package flycheck-tip
+      (use-package flycheck-pos-tip
         :ensure t
-        :config (progn
-                  (setq flycheck-tip-timer-delay 0.2)
-                  (flycheck-tip-use-timer 'verbose)
-                  (define-key global-map (kbd "C-0") 'error-tip-cycle-dwim)
-                  (define-key global-map (kbd "C-9") 'error-tip-cycle-dwim-reverse)))
+        :init (progn (eval-after-load 'flycheck
+                       '(setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages))))
+      ;; (use-package flycheck-tip
+      ;;   :ensure t
+      ;;   :config (progn
+      ;;             (setq flycheck-tip-timer-delay 0.2)
+      ;;             (flycheck-tip-use-timer 'verbose)
+      ;;             (define-key global-map (kbd "C-0") 'error-tip-cycle-dwim)
+      ;;             (define-key global-map (kbd "C-9") 'error-tip-cycle-dwim-reverse)))
       (add-hook 'after-init-hook #'global-flycheck-mode)))
 #+END_SRC
 

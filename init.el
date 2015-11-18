@@ -1,4 +1,10 @@
-(package-initialize)
+(require 'package)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize) 
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
 (require 'org)
 (require 'ob-tangle)
 
@@ -13,6 +19,7 @@
 (defun load-config (filename)
   (org-babel-load-file filename))
 (mapc #'load-config config-files)
+(toggle-frame-maximized)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

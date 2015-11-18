@@ -33,15 +33,15 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 
 Initialize Package System
 #+begin_src emacs-lisp
-  (require 'package)
+  ;; (require 'package)
 
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  ;; (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+  ;; (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 
-  (package-initialize)
+  ;; ;;(package-initialize) this makes it's appearance as the first statement in init.el
 
-  (when (not package-archive-contents)
-        (package-refresh-contents))
+  ;; (when (not package-archive-contents)
+  ;;       (package-refresh-contents))
 #+end_src
 
 Additional Package load Paths
